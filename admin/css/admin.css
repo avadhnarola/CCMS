@@ -1,0 +1,303 @@
+/* ============================================================
+   CCMS ADMIN PANEL - SUPER ADMIN COMMAND DESIGN SYSTEM
+============================================================ */
+
+/* Light Theme (Default Admin Light) */
+:root, [data-theme="light"] {
+  --bg-main: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-subtle: #e2e8f0;
+  --bg-sidebar: #0f172a;
+  --text-sidebar: #94a3b8;
+  --text-sidebar-active: #ffffff;
+  
+  --border-color: #cbd5e1;
+  --border-hover: #94a3b8;
+  
+  --clr-primary: #4f46e5;
+  --clr-primary-hover: #4338ca;
+  --clr-primary-light: rgba(79, 70, 229, 0.08);
+  
+  --clr-violet: #7c3aed;
+  --clr-violet-light: rgba(124, 58, 237, 0.08);
+  
+  --clr-emerald: #059669;
+  --clr-emerald-light: rgba(5, 150, 105, 0.1);
+  
+  --clr-amber: #d97706;
+  --clr-amber-light: rgba(217, 119, 6, 0.1);
+  
+  --clr-rose: #e11d48;
+  --clr-rose-light: rgba(225, 29, 72, 0.1);
+
+  --clr-cyan: #0891b2;
+  --clr-cyan-light: rgba(8, 145, 178, 0.1);
+  
+  --text-heading: #0f172a;
+  --text-body: #334155;
+  --text-muted: #64748b;
+  
+  --gradient-admin: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --gradient-emerald: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+  
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
+  --shadow-hover: 0 15px 35px -10px rgba(79, 70, 229, 0.18);
+  
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+  --transition: all 0.25s cubic-bezier(.25, .8, .25, 1);
+}
+
+/* Dark Theme Overrides (Admin Cyber Dark) */
+[data-theme="dark"] {
+  --bg-main: #090d16;
+  --bg-surface: #111827;
+  --bg-subtle: #1f2937;
+  --bg-sidebar: #060911;
+  --text-sidebar: #64748b;
+  --text-sidebar-active: #a78bfa;
+  
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(167, 139, 250, 0.4);
+  
+  --clr-primary: #818cf8;
+  --clr-primary-hover: #6366f1;
+  --clr-primary-light: rgba(129, 140, 248, 0.12);
+  
+  --clr-violet: #a78bfa;
+  --clr-violet-light: rgba(167, 139, 250, 0.12);
+  
+  --clr-emerald: #34d399;
+  --clr-emerald-light: rgba(52, 211, 153, 0.15);
+  
+  --clr-amber: #fbbf24;
+  --clr-amber-light: rgba(251, 191, 36, 0.15);
+  
+  --clr-rose: #f87171;
+  --clr-rose-light: rgba(248, 113, 113, 0.15);
+  
+  --clr-cyan: #22d3ee;
+  --clr-cyan-light: rgba(34, 211, 238, 0.15);
+  
+  --text-heading: #f8fafc;
+  --text-body: #cbd5e1;
+  --text-muted: #94a3b8;
+  
+  --gradient-admin: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+  --gradient-emerald: linear-gradient(135deg, #059669 0%, #38bdf8 100%);
+  
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 15px 35px rgba(129, 140, 248, 0.2);
+}
+
+/* Global Reset & Typography */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-body);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+  display: flex;
+}
+a { text-decoration: none; color: inherit; }
+
+/* Hide Scrollbar Line Across All Containers While Preserving Scroll */
+::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+}
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* ============================================================
+   ADMIN LAYOUT (SIDEBAR + MAIN PANEL)
+============================================================ */
+.admin-wrapper {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  width: 270px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  z-index: 1020;
+  transition: var(--transition);
+  overflow-y: auto;
+}
+
+.admin-sidebar-header {
+  padding: 24px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.admin-logo {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #a78bfa;
+  letter-spacing: 2px;
+}
+.admin-badge-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.15);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  padding: 2px 8px;
+  border-radius: 50px;
+  text-transform: uppercase;
+}
+
+.admin-sidebar-nav {
+  padding: 16px 12px;
+  flex: 1;
+}
+.admin-nav-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--text-sidebar);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 8px 12px 6px;
+  margin-top: 8px;
+}
+
+.admin-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  color: var(--text-sidebar);
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: var(--transition);
+  margin-bottom: 3px;
+}
+.admin-link i { font-size: 1.05rem; width: 22px; text-align: center; }
+.admin-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+.admin-link.active {
+  color: #fff;
+  background: var(--gradient-admin);
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.35);
+}
+
+.admin-main {
+  flex: 1;
+  margin-left: 270px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-topbar {
+  height: 70px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  position: sticky;
+  top: 0;
+  z-index: 1010;
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  color: var(--text-heading);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.admin-content {
+  padding: 30px;
+  flex: 1;
+}
+
+/* ============================================================
+   CARDS & STATS
+============================================================ */
+.admin-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition);
+  height: 100%;
+}
+.admin-card:hover { border-color: var(--border-hover); }
+
+.stat-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition);
+}
+.stat-box:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* ============================================================
+   GREEDY ALGORITHM WORKLOAD VISUALIZER
+============================================================ */
+.greedy-officer-card {
+  background: var(--bg-surface);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: var(--transition);
+}
+.greedy-officer-card.greedy-choice {
+  border-color: var(--clr-emerald);
+  background: var(--clr-emerald-light);
+}
+
+.workload-meter {
+  height: 10px;
+  border-radius: 99px;
+  background: var(--bg-subtle);
+  overflow: hidden;
+}
+.workload-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--gradient-admin);
+}
+
+@media (max-width: 991px) {
+  .admin-sidebar { transform: translateX(-100%); }
+  .admin-sidebar.show { transform: translateX(0); }
+  .admin-main { margin-left: 0; }
+}

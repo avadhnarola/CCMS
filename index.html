@@ -1,0 +1,2348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CCMS – Corruption Complaint Management System. Report corruption confidently, track your complaint in real time, and protect integrity with military-grade encryption." />
+  <title>CCMS | Corruption Complaint Management System</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- AOS Animation Library CSS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       LIGHT THEME VARIABLES & DESIGN SYSTEM
+    ============================================================ */
+    :root {
+      --clr-bg:            #f8fafc;
+      --clr-surface:       #ffffff;
+      --clr-card:          #ffffff;
+      --clr-subtle:        #f1f5f9;
+      --clr-border:        #e2e8f0;
+      --clr-border-hover:  #cbd5e1;
+      
+      --clr-primary:       #2563eb;
+      --clr-primary-dark:  #1d4ed8;
+      --clr-primary-light: rgba(37, 99, 235, 0.08);
+      
+      --clr-accent:        #7c3aed;
+      --clr-accent-light:  rgba(124, 58, 237, 0.08);
+      
+      --clr-danger:        #e11d48;
+      --clr-danger-light:  rgba(225, 29, 72, 0.08);
+      
+      --clr-success:       #059669;
+      --clr-success-light: rgba(5, 150, 105, 0.1);
+      
+      --clr-warning:       #d97706;
+      --clr-warning-light: rgba(217, 119, 6, 0.1);
+      
+      --clr-heading:       #0f172a;
+      --clr-text:          #334155;
+      --clr-muted:         #64748b;
+      
+      --gradient-hero:     radial-gradient(circle at 50% 0%, #eff6ff 0%, #f8fafc 85%);
+      --gradient-brand:    linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      --gradient-accent:   linear-gradient(135deg, #059669 0%, #2563eb 100%);
+      --gradient-card:     linear-gradient(145deg, #ffffff, #f8fafc);
+      --gradient-glow:     linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(124, 58, 237, 0.08));
+      
+      --font-brand:        'Orbitron', sans-serif;
+      --font-body:         'Inter', sans-serif;
+      
+      --radius-lg:         20px;
+      --radius-md:         14px;
+      --radius-sm:         8px;
+      
+      --shadow-sm:         0 2px 8px rgba(15, 23, 42, 0.04);
+      --shadow-card:       0 10px 30px -10px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+      --shadow-hover:      0 20px 40px -15px rgba(37, 99, 235, 0.15);
+      --shadow-glow:       0 0 35px rgba(37, 99, 235, 0.12);
+      
+      --transition:        all 0.3s cubic-bezier(.25, .8, .25, 1);
+    }
+
+    /* Reset & Core Body */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background-color: var(--clr-bg);
+      color: var(--clr-text);
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+    ::selection { background: rgba(37, 99, 235, 0.2); color: var(--clr-primary-dark); }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; }
+
+    /* Custom Light Scrollbar */
+    ::-webkit-scrollbar { width: 9px; }
+    ::-webkit-scrollbar-track { background: var(--clr-bg); }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Canvas Background */
+    #particles-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ============================================================
+       TOP ANNOUNCEMENT & LANGUAGE HELPLINE BAR
+    ============================================================ */
+    .top-bar {
+      background: var(--clr-heading);
+      color: #f8fafc;
+      font-size: 0.8rem;
+      padding: 6px 0;
+      position: relative;
+      z-index: 1001;
+    }
+    .top-bar a { color: #38bdf8; font-weight: 600; }
+    .top-bar a:hover { text-decoration: underline; }
+    .lang-select {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      padding: 2px 6px;
+    }
+
+    /* ============================================================
+       NAVBAR (LIGHT THEME)
+    ============================================================ */
+    .navbar-ccms {
+      position: fixed;
+      top: 33px; left: 0; right: 0;
+      z-index: 1000;
+      padding: 16px 0;
+      transition: var(--transition);
+      background: rgba(248, 250, 252, 0.7);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid transparent;
+    }
+    .navbar-ccms.scrolled {
+      top: 0;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--clr-border);
+      padding: 12px 0;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    }
+    .brand-logo {
+      font-family: var(--font-brand);
+      font-size: 1.6rem;
+      font-weight: 900;
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1.5px;
+      display: inline-flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .brand-logo .brand-sub {
+      font-family: var(--font-body);
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--clr-muted);
+      -webkit-text-fill-color: var(--clr-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .nav-link-ccms {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--clr-text) !important;
+      padding: 8px 14px !important;
+      border-radius: 8px;
+      transition: var(--transition);
+      position: relative;
+    }
+    .nav-link-ccms::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%; right: 50%;
+      height: 2.5px;
+      background: var(--clr-primary);
+      transition: var(--transition);
+      border-radius: 99px;
+    }
+    .nav-link-ccms:hover { color: var(--clr-primary) !important; }
+    .nav-link-ccms:hover::after { left: 14px; right: 14px; }
+
+    .btn-nav-action {
+      background: var(--gradient-brand);
+      color: #fff !important;
+      border-radius: 50px;
+      padding: 10px 24px !important;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+      transition: var(--transition);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-nav-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+      color: #fff !important;
+    }
+    .btn-nav-secondary {
+      background: var(--clr-subtle);
+      color: var(--clr-heading) !important;
+      border: 1px solid var(--clr-border);
+      border-radius: 50px;
+      padding: 9px 20px !important;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: var(--transition);
+    }
+    .btn-nav-secondary:hover {
+      background: var(--clr-primary-light);
+      border-color: var(--clr-primary);
+      color: var(--clr-primary) !important;
+    }
+
+    .navbar-toggler {
+      border: 1px solid var(--clr-border);
+      color: var(--clr-heading);
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+
+    /* ============================================================
+       HERO SECTION (LIGHT THEME)
+    ============================================================ */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      background: var(--gradient-hero);
+      padding-top: 155px;
+      padding-bottom: 80px;
+      position: relative;
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(37, 99, 235, 0.06);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--clr-primary-dark);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-pill .status-pulse {
+      width: 9px; height: 9px;
+      background: var(--clr-success);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--clr-success);
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 5.2vw, 4rem);
+      font-weight: 900;
+      color: var(--clr-heading);
+      line-height: 1.15;
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+    }
+    .text-gradient {
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--clr-text);
+      max-width: 580px;
+      margin-bottom: 36px;
+      line-height: 1.8;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .btn-primary-glow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--gradient-brand);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 16px 34px;
+      border-radius: 50px;
+      border: none;
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .btn-primary-glow:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 35px rgba(124, 58, 237, 0.4);
+      color: #fff;
+    }
+    .btn-outline-glow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--clr-surface);
+      color: var(--clr-heading);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 15px 30px;
+      border-radius: 50px;
+      border: 1.5px solid var(--clr-border);
+      transition: var(--transition);
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-outline-glow:hover {
+      border-color: var(--clr-primary);
+      color: var(--clr-primary);
+      background: var(--clr-primary-light);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Hero Visual Light Console Card */
+    .hero-visual-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hero-center-graphic {
+      width: 100%;
+      max-width: 490px;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      box-shadow: var(--shadow-card), var(--shadow-glow);
+      position: relative;
+      z-index: 2;
+    }
+    .graphic-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--clr-border);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    .graphic-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--clr-success);
+      background: var(--clr-success-light);
+      padding: 4px 12px;
+      border-radius: 50px;
+      border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+
+    .badge-float {
+      position: absolute;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: float 4s ease-in-out infinite;
+    }
+    .float-1 { top: -20px; right: -15px; animation-delay: 0s; }
+    .float-2 { bottom: -20px; left: -15px; animation-delay: 2s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* ============================================================
+       QUICK STATUS TRACKING STRIP (NEW)
+    ============================================================ */
+    .status-strip-section {
+      position: relative;
+      z-index: 3;
+      margin-top: -30px;
+    }
+    .status-strip-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 24px 30px;
+      box-shadow: var(--shadow-card);
+    }
+    .quick-sample-badge {
+      cursor: pointer;
+      font-family: monospace;
+      font-size: 0.78rem;
+      background: var(--clr-subtle);
+      border: 1px solid var(--clr-border);
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: var(--clr-primary-dark);
+      transition: var(--transition);
+    }
+    .quick-sample-badge:hover {
+      background: var(--clr-primary);
+      color: #fff;
+      border-color: var(--clr-primary);
+    }
+
+    /* ============================================================
+       TRUST MARQUEE (LIGHT THEME)
+    ============================================================ */
+    .trust-marquee {
+      background: var(--clr-surface);
+      border-top: 1px solid var(--clr-border);
+      border-bottom: 1px solid var(--clr-border);
+      padding: 22px 0;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+    }
+    .marquee-content {
+      display: flex;
+      gap: 60px;
+      white-space: nowrap;
+      animation: marquee 32s linear infinite;
+      width: max-content;
+    }
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--clr-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+    .marquee-item i { color: var(--clr-primary); font-size: 1.1rem; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ============================================================
+       SECTION HEADINGS & UTILS
+    ============================================================ */
+    .section-pad { padding: 100px 0; position: relative; z-index: 2; }
+    .section-tag {
+      font-family: var(--font-brand);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--clr-primary);
+      display: inline-block;
+      margin-bottom: 12px;
+      background: var(--clr-primary-light);
+      padding: 4px 14px;
+      border-radius: 50px;
+      border: 1px solid rgba(37, 99, 235, 0.15);
+    }
+    .section-title {
+      font-size: clamp(2rem, 3.5vw, 2.7rem);
+      font-weight: 900;
+      color: var(--clr-heading);
+      line-height: 1.25;
+      margin-bottom: 18px;
+      letter-spacing: -0.5px;
+    }
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--clr-muted);
+      max-width: 620px;
+      line-height: 1.8;
+    }
+
+    /* ============================================================
+       CORE FEATURES SECTION (LIGHT THEME)
+    ============================================================ */
+    #features { background: var(--clr-bg); }
+    .feature-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 36px 30px;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--gradient-brand);
+      opacity: 0;
+      transition: var(--transition);
+    }
+    .feature-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(37, 99, 235, 0.3);
+      box-shadow: var(--shadow-hover);
+    }
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon-box {
+      width: 62px; height: 62px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 24px;
+      background: var(--clr-primary-light);
+      color: var(--clr-primary);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      transition: var(--transition);
+    }
+    .feature-card:hover .feature-icon-box {
+      background: var(--gradient-brand);
+      color: #fff;
+      transform: scale(1.08) rotate(-4deg);
+    }
+    .feature-card h4 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--clr-heading);
+      margin-bottom: 12px;
+    }
+    .feature-card p {
+      font-size: 0.92rem;
+      color: var(--clr-muted);
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    /* ============================================================
+       HOW IT WORKS SECTION
+    ============================================================ */
+    #how-it-works { background: var(--clr-subtle); }
+    .process-step {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+      height: 100%;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .process-step:hover {
+      border-color: var(--clr-accent);
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+    }
+    .step-badge {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--gradient-brand);
+      color: #fff;
+      font-family: var(--font-brand);
+      font-size: 1.15rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+    }
+    .process-step h4 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--clr-heading);
+      margin-bottom: 12px;
+    }
+    .process-step p {
+      font-size: 0.88rem;
+      color: var(--clr-muted);
+      margin: 0;
+    }
+
+    /* ============================================================
+       PUBLIC AUDIT LEDGER & RESOLVED CASES FEED (NEW)
+    ============================================================ */
+    #audit-ledger { background: var(--clr-bg); }
+    .audit-filter-btn {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      color: var(--clr-text);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 50px;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .audit-filter-btn.active, .audit-filter-btn:hover {
+      background: var(--clr-primary);
+      color: #fff;
+      border-color: var(--clr-primary);
+    }
+    .audit-table-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+    .table-audit th {
+      background: var(--clr-subtle);
+      color: var(--clr-heading);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .table-audit td {
+      padding: 18px 20px;
+      vertical-align: middle;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .table-audit tr:last-child td { border-bottom: none; }
+    .table-audit tr:hover td { background: rgba(37, 99, 235, 0.02); }
+
+    /* ============================================================
+       RIGHTS & PROTECTION MATRIX (NEW)
+    ============================================================ */
+    #rights-matrix { background: var(--clr-subtle); }
+    .rights-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      height: 100%;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .rights-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--clr-success);
+      box-shadow: var(--shadow-hover);
+    }
+    .rights-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: var(--clr-success-light);
+      color: var(--clr-success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+
+    /* ============================================================
+       DEPARTMENT SLA SCORECARD (NEW)
+    ============================================================ */
+    #dept-scorecard { background: var(--clr-bg); }
+    .scorecard-box {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      height: 100%;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .scorecard-box:hover {
+      border-color: var(--clr-primary);
+      box-shadow: var(--shadow-card);
+    }
+    .progress-bar-custom {
+      height: 8px;
+      border-radius: 99px;
+      background: var(--clr-subtle);
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--gradient-brand);
+      border-radius: 99px;
+    }
+
+    /* ============================================================
+       STATISTICS & IMPACT
+    ============================================================ */
+    #stats {
+      background: var(--clr-subtle);
+      padding: 80px 0;
+      position: relative;
+      z-index: 2;
+    }
+    .stats-banner {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 50px 30px;
+      box-shadow: var(--shadow-card);
+    }
+    .stat-number {
+      font-family: var(--font-brand);
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 900;
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--clr-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ============================================================
+       COMPLAINT CATEGORIES
+    ============================================================ */
+    #complaint-types { background: var(--clr-bg); }
+    .category-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: 24px 22px;
+      transition: var(--transition);
+      height: 100%;
+      box-shadow: var(--shadow-sm);
+    }
+    .category-box:hover {
+      border-color: var(--clr-primary);
+      transform: translateX(8px);
+      box-shadow: var(--shadow-card);
+    }
+    .category-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: var(--clr-accent-light);
+      color: var(--clr-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .category-box h5 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--clr-heading);
+      margin-bottom: 6px;
+    }
+    .category-box p {
+      font-size: 0.85rem;
+      color: var(--clr-muted);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       TESTIMONIALS / CITIZENS VOICE
+    ============================================================ */
+    #testimonials { background: var(--clr-subtle); }
+    .testimonial-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .testimonial-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--clr-primary);
+      box-shadow: var(--shadow-hover);
+    }
+    .stars { color: var(--clr-warning); font-size: 0.85rem; margin-bottom: 16px; }
+    .testimonial-quote {
+      font-size: 0.95rem;
+      color: var(--clr-text);
+      line-height: 1.8;
+      font-style: italic;
+      margin-bottom: 24px;
+    }
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .user-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--gradient-brand);
+      color: #fff;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .user-name { font-size: 0.92rem; font-weight: 800; color: var(--clr-heading); }
+    .user-role { font-size: 0.78rem; color: var(--clr-muted); }
+
+    /* ============================================================
+       FAQ ACCORDION & LIVE SEARCH (LIGHT THEME)
+    ============================================================ */
+    #faq { background: var(--clr-bg); }
+    .faq-search-box {
+      background: var(--clr-surface);
+      border: 1.5px solid var(--clr-border);
+      border-radius: 50px;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .faq-search-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      background: transparent;
+      font-size: 0.95rem;
+      color: var(--clr-heading);
+    }
+    .faq-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .faq-card:hover { border-color: var(--clr-primary); }
+    .faq-header {
+      padding: 22px 26px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      color: var(--clr-heading);
+      font-size: 1rem;
+    }
+    .faq-toggle-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--clr-primary-light);
+      color: var(--clr-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      transition: var(--transition);
+    }
+    .faq-card.active .faq-toggle-icon {
+      transform: rotate(45deg);
+      background: var(--clr-accent-light);
+      color: var(--clr-accent);
+    }
+    .faq-body {
+      padding: 0 26px 22px;
+      color: var(--clr-muted);
+      font-size: 0.9rem;
+      line-height: 1.8;
+      display: none;
+      border-top: 1px solid var(--clr-border);
+      padding-top: 16px;
+    }
+
+    /* ============================================================
+       CTA BANNER (LIGHT THEME)
+    ============================================================ */
+    #cta { background: var(--clr-subtle); }
+    .cta-box {
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      border-radius: 28px;
+      padding: 70px 40px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(37, 99, 235, 0.3);
+      color: #fff;
+    }
+
+    /* ============================================================
+       FOOTER (LIGHT THEME)
+    ============================================================ */
+    footer {
+      background: var(--clr-heading);
+      color: #94a3b8;
+      padding: 70px 0 30px;
+      position: relative;
+      z-index: 2;
+    }
+    footer .brand-logo { -webkit-text-fill-color: initial; color: #fff; }
+    footer .brand-sub { color: #94a3b8; -webkit-text-fill-color: #94a3b8; }
+    .footer-desc { font-size: 0.88rem; color: #94a3b8; margin-top: 16px; line-height: 1.8; }
+    .footer-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 20px;
+    }
+    .footer-links { list-style: none; padding: 0; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a {
+      font-size: 0.88rem;
+      color: #94a3b8;
+      transition: var(--transition);
+    }
+    .footer-links a:hover { color: #38bdf8; padding-left: 6px; }
+
+    .social-icon-btn {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1;
+      transition: var(--transition);
+      margin-right: 8px;
+    }
+    .social-icon-btn:hover {
+      background: var(--gradient-brand);
+      color: #fff;
+      transform: translateY(-3px);
+    }
+
+    /* Floating Controls */
+    #backToTop {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: var(--gradient-brand);
+      color: #fff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+      z-index: 999;
+    }
+    #backToTop.show { opacity: 1; pointer-events: auto; }
+    #backToTop:hover { transform: translateY(-4px); }
+
+    /* Modal Tweaks */
+    .modal-content-custom {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--clr-border);
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    }
+    .timeline-step {
+      position: relative;
+      padding-left: 30px;
+      margin-bottom: 20px;
+    }
+    .timeline-step::before {
+      content: '';
+      position: absolute;
+      left: 8px; top: 8px; bottom: -20px;
+      width: 2px;
+      background: var(--clr-border);
+    }
+    .timeline-step:last-child::before { display: none; }
+    .timeline-dot {
+      position: absolute;
+      left: 0; top: 4px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--clr-subtle);
+      border: 3px solid var(--clr-muted);
+    }
+    .timeline-step.completed .timeline-dot {
+      background: var(--clr-success);
+      border-color: var(--clr-success-light);
+    }
+    .timeline-step.active .timeline-dot {
+      background: var(--clr-primary);
+      border-color: var(--clr-primary-light);
+      animation: pulse 1.5s infinite;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Interactive Particles Canvas Background -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Top Emergency Helpline & Language Bar -->
+<div class="top-bar">
+  <div class="container d-flex flex-wrap justify-content-between align-items-center">
+    <div class="d-flex align-items-center gap-3">
+      <span><i class="fas fa-headset me-1 text-info"></i> 24/7 Anti-Corruption Helpline: <strong>1800-11-CCMS</strong></span>
+      <span class="d-none d-md-inline text-white-50">|</span>
+      <span class="d-none d-md-inline"><i class="fas fa-shield-halved text-success me-1"></i> Whistleblower Protection Verified</span>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center gap-1">
+        <i class="fas fa-globe text-muted me-1"></i>
+        <select class="lang-select" aria-label="Select Language">
+          <option value="en">English (US)</option>
+          <option value="es">Español</option>
+          <option value="hi">हिन्दी</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     NAVIGATION BAR
+============================================================ -->
+<nav class="navbar-ccms navbar navbar-expand-lg" id="mainNav">
+  <div class="container">
+    <a class="brand-logo" href="#">
+      CCMS
+      <span class="brand-sub">Corruption Complaint System</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-1">
+        <li class="nav-item"><a class="nav-link nav-link-ccms" href="#features">Features</a></li>
+        <li class="nav-item"><a class="nav-link nav-link-ccms" href="#how-it-works">How It Works</a></li>
+        <li class="nav-item"><a class="nav-link nav-link-ccms" href="#audit-ledger">Audit Ledger</a></li>
+        <li class="nav-item"><a class="nav-link nav-link-ccms" href="#rights-matrix">Whistleblower Rights</a></li>
+        <li class="nav-item"><a class="nav-link nav-link-ccms" href="#dept-scorecard">SLA Ratings</a></li>
+        <li class="nav-item"><a class="nav-link nav-link-ccms" href="#faq">FAQ</a></li>
+        
+        <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+          <button class="btn-nav-secondary" data-bs-toggle="modal" data-bs-target="#statusModal">
+            <i class="fas fa-magnifying-glass me-1"></i> Track Case
+          </button>
+        </li>
+        <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+          <button class="btn-nav-action" data-bs-toggle="modal" data-bs-target="#complaintModal">
+            <i class="fas fa-shield-halved"></i> File Complaint
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO SECTION (LIGHT THEME)
+============================================================ -->
+<section id="hero">
+  <div class="container position-relative" style="z-index: 2;">
+    <div class="row align-items-center g-5">
+      <!-- Left Column Text -->
+      <div class="col-lg-6" data-aos="fade-right">
+        <div class="hero-pill">
+          <span class="status-pulse"></span>
+          256-Bit Encrypted &amp; Zero Metadata Logged
+        </div>
+        <h1 class="hero-title">
+          Expose Corruption.<br />
+          <span class="text-gradient">Protect Integrity.</span><br />
+          Demand Justice.
+        </h1>
+        <p class="hero-sub">
+          CCMS provides a zero-knowledge, end-to-end encrypted, and anonymous portal for citizens and whistleblowers to report corruption and track investigation progress in real time.
+        </p>
+
+        <div class="hero-cta-group">
+          <button class="btn-primary-glow" data-bs-toggle="modal" data-bs-target="#complaintModal">
+            <i class="fas fa-file-signature"></i> File Anonymous Complaint
+          </button>
+          <button class="btn-outline-glow" data-bs-toggle="modal" data-bs-target="#statusModal">
+            <i class="fas fa-magnifying-glass"></i> Track Live Status
+          </button>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="d-flex align-items-center gap-4 mt-4 pt-2">
+          <div class="d-flex align-items-center gap-2 text-secondary small fw-semibold">
+            <i class="fas fa-user-secret text-primary"></i> 100% Anonymous Mode
+          </div>
+          <div class="d-flex align-items-center gap-2 text-secondary small fw-semibold">
+            <i class="fas fa-lock text-success"></i> AES-256 Client Encryption
+          </div>
+          <div class="d-flex align-items-center gap-2 text-secondary small fw-semibold">
+            <i class="fas fa-gavel text-accent"></i> Legal Protection Guarantee
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column Visual Card Stack -->
+      <div class="col-lg-6" data-aos="fade-left">
+        <div class="hero-visual-wrapper">
+          <!-- Floating Badge 1 -->
+          <div class="badge-float float-1">
+            <div class="p-2 rounded-circle bg-success bg-opacity-10 text-success">
+              <i class="fas fa-check-circle fa-lg"></i>
+            </div>
+            <div>
+              <div class="fw-bold text-dark small">Complaint #CCMS-8902</div>
+              <div class="text-muted" style="font-size:0.75rem;">Resolved &amp; Assets Recovered</div>
+            </div>
+          </div>
+
+          <!-- Main Graphic Box -->
+          <div class="hero-center-graphic">
+            <div class="graphic-header">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-shield-cat text-primary fa-lg"></i>
+                <span class="fw-bold text-dark">Live Vigilance Console</span>
+              </div>
+              <span class="graphic-status">
+                <i class="fas fa-circle" style="font-size: 7px;"></i> Active Protocol
+              </span>
+            </div>
+
+            <!-- Dashboard Console Snippet -->
+            <div class="p-3 mb-3 rounded" style="background: var(--clr-subtle); border: 1px solid var(--clr-border);">
+              <div class="d-flex justify-content-between text-muted small mb-2">
+                <span>Encryption Standard:</span>
+                <span class="text-primary font-monospace fw-bold">AES-GCM-256</span>
+              </div>
+              <div class="d-flex justify-content-between text-muted small mb-2">
+                <span>Whistleblower Identity:</span>
+                <span class="text-success font-monospace fw-bold">SCRUBBED &amp; ANONYMOUS</span>
+              </div>
+              <div class="d-flex justify-content-between text-muted small">
+                <span>Vigilance SLA Timer:</span>
+                <span class="text-warning font-monospace fw-bold">&lt; 24 Hours Response</span>
+              </div>
+            </div>
+
+            <div class="p-3 rounded d-flex align-items-center justify-content-between" style="background: var(--clr-accent-light); border: 1px solid rgba(124, 58, 237, 0.2);">
+              <div class="d-flex align-items-center gap-3">
+                <i class="fas fa-gavel text-accent fa-2x"></i>
+                <div>
+                  <div class="text-dark fw-bold small">Direct Legal Escalation</div>
+                  <div class="text-muted" style="font-size:0.75rem;">Automatic Triage to Vigilance Directors</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating Badge 2 -->
+          <div class="badge-float float-2">
+            <div class="p-2 rounded-circle bg-primary bg-opacity-10 text-primary">
+              <i class="fas fa-user-shield fa-lg"></i>
+            </div>
+            <div>
+              <div class="fw-bold text-dark small">Zero Metadata Logged</div>
+              <div class="text-muted" style="font-size:0.75rem;">IP &amp; Device Signatures Scrubbed</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     QUICK COMPLAINT STATUS TRACKING BAR (NEW)
+============================================================ -->
+<div class="container status-strip-section" data-aos="zoom-in">
+  <div class="status-strip-card">
+    <div class="row align-items-center g-3">
+      <div class="col-lg-4">
+        <h5 class="fw-bold mb-1 text-dark"><i class="fas fa-magnifying-glass-chart text-primary me-2"></i>Quick Case Lookup</h5>
+        <p class="text-muted small mb-0">Check real-time investigation status using your 16-digit tracking code.</p>
+      </div>
+      <div class="col-lg-8">
+        <form id="quickSearchForm" class="row g-2 align-items-center" onsubmit="event.preventDefault(); openSampleStatus($('#quickTrackingInput').val());">
+          <div class="col-md-8">
+            <input type="text" id="quickTrackingInput" class="form-control form-control-lg" placeholder="Enter 16-digit Key (e.g. CCMS-8902-X7K9)" style="font-size:0.95rem; border-color:var(--clr-border);" required />
+          </div>
+          <div class="col-md-4 d-grid">
+            <button type="submit" class="btn btn-primary btn-lg fw-bold" style="font-size:0.95rem; background:var(--gradient-brand); border:none;">
+              Track Case <i class="fas fa-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </form>
+        <div class="mt-2 d-flex align-items-center gap-2 text-muted small">
+          <span>Try sample tracking keys:</span>
+          <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-8902-X7K9')">CCMS-8902-X7K9</span>
+          <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-4412-B2M1')">CCMS-4412-B2M1</span>
+          <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-9920-K4L8')">CCMS-9920-K4L8</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TRUST MARQUEE
+============================================================ -->
+<div class="trust-marquee mt-5">
+  <div class="marquee-content">
+    <div class="marquee-item"><i class="fas fa-shield-alt"></i> 256-Bit SSL Client Encryption</div>
+    <div class="marquee-item"><i class="fas fa-eye-slash"></i> Anonymous Whistleblowing</div>
+    <div class="marquee-item"><i class="fas fa-balance-scale"></i> Anti-Corruption Bureau Integration</div>
+    <div class="marquee-item"><i class="fas fa-bolt"></i> AI Priority Urgency Triaging</div>
+    <div class="marquee-item"><i class="fas fa-clock"></i> 24/7 SLA Investigation Monitoring</div>
+    <div class="marquee-item"><i class="fas fa-file-contract"></i> Tamper-Proof Audit Ledger</div>
+
+    <!-- Duplicate for smooth loop -->
+    <div class="marquee-item"><i class="fas fa-shield-alt"></i> 256-Bit SSL Client Encryption</div>
+    <div class="marquee-item"><i class="fas fa-eye-slash"></i> Anonymous Whistleblowing</div>
+    <div class="marquee-item"><i class="fas fa-balance-scale"></i> Anti-Corruption Bureau Integration</div>
+    <div class="marquee-item"><i class="fas fa-bolt"></i> AI Priority Urgency Triaging</div>
+    <div class="marquee-item"><i class="fas fa-clock"></i> 24/7 SLA Investigation Monitoring</div>
+    <div class="marquee-item"><i class="fas fa-file-contract"></i> Tamper-Proof Audit Ledger</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CORE FEATURES
+============================================================ -->
+<section id="features" class="section-pad">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <span class="section-tag">Platform Capabilities</span>
+      <h2 class="section-title">Built for Uncompromising <span class="text-gradient">Transparency</span></h2>
+      <p class="section-subtitle mx-auto">State-of-the-art technological framework standardizing the fight against bribery, extortion, nepotism, and public fund misuse.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fas fa-user-secret"></i>
+          </div>
+          <h4>Zero-Knowledge Reporting</h4>
+          <p>Submit complaints without revealing personal identity. Advanced metadata stripping automatically scrubs IP addresses and device signatures.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fas fa-satellite-dish"></i>
+          </div>
+          <h4>Real-Time SLA Tracking</h4>
+          <p>Track your complaint lifecycle step-by-step with a unique 16-digit encrypted Tracking Key and automated status progress updates.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fas fa-vault"></i>
+          </div>
+          <h4>Encrypted Evidence Vault</h4>
+          <p>Upload video recordings, audio files, documents, and transaction slips directly into a tamper-proof AES-256 encrypted digital evidence vault.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h4>AI Urgency Triage</h4>
+          <p>Automated severity scoring routes high-value and high-urgency corruption complaints directly to senior anti-corruption vigilance directors.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fas fa-chart-pie"></i>
+          </div>
+          <h4>Public Audit Analytics</h4>
+          <p>Public analytics dashboard highlighting departmental resolution rates, average processing times, and systemic corruption bottlenecks.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fas fa-bell"></i>
+          </div>
+          <h4>Multi-Channel Notifications</h4>
+          <p>Receive optional encrypted updates via SMS, email, or Telegram whenever official actions or status updates occur on your case.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     HOW IT WORKS (PROCESS FLOW)
+============================================================ -->
+<section id="how-it-works" class="section-pad">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <span class="section-tag">5-Step Lifecycle</span>
+      <h2 class="section-title">From Complaint to <span class="text-gradient">Resolution</span></h2>
+      <p class="section-subtitle mx-auto">A transparent, accountable workflow ensuring every reported incident is verified and investigated.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg col-md-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="process-step">
+          <div class="step-badge">01</div>
+          <h4>File &amp; Encrypt</h4>
+          <p>Fill out the complaint form with attached evidence. Data is encrypted client-side before transmission.</p>
+        </div>
+      </div>
+
+      <div class="col-lg col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="process-step">
+          <div class="step-badge">02</div>
+          <h4>Generate Token</h4>
+          <p>Receive a unique 16-digit Complaint Key to safely check investigation progress anytime.</p>
+        </div>
+      </div>
+
+      <div class="col-lg col-md-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="process-step">
+          <div class="step-badge">03</div>
+          <h4>Vigilance Review</h4>
+          <p>An assigned vigilance officer verifies evidence authenticity within the mandated 24-hour SLA.</p>
+        </div>
+      </div>
+
+      <div class="col-lg col-md-6" data-aos="fade-up" data-aos-delay="400">
+        <div class="process-step">
+          <div class="step-badge">04</div>
+          <h4>Investigation</h4>
+          <p>Formal inquiry commences with departmental summons and forensic audit reviews.</p>
+        </div>
+      </div>
+
+      <div class="col-lg col-md-6" data-aos="fade-up" data-aos-delay="500">
+        <div class="process-step">
+          <div class="step-badge">05</div>
+          <h4>Action &amp; Audit</h4>
+          <p>Legal sanctions are executed, corrupt funds are recovered, and a public audit log is published.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PUBLIC AUDIT LEDGER & RECENT RESOLUTIONS (NEW SECTION)
+============================================================ -->
+<section id="audit-ledger" class="section-pad">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-5" data-aos="fade-up">
+      <div>
+        <span class="section-tag">Public Transparency</span>
+        <h2 class="section-title">Verified <span class="text-gradient">Audit Ledger</span></h2>
+        <p class="section-subtitle mb-0">Explore anonymized summaries of recently resolved corruption complaints and recovered public assets.</p>
+      </div>
+      <div class="d-flex flex-wrap gap-2 mt-3 mt-lg-0">
+        <button class="audit-filter-btn active" onclick="filterAuditTable('all')">All Cases</button>
+        <button class="audit-filter-btn" onclick="filterAuditTable('bribery')">Bribery</button>
+        <button class="audit-filter-btn" onclick="filterAuditTable('procurement')">Procurement</button>
+        <button class="audit-filter-btn" onclick="filterAuditTable('embezzlement')">Embezzlement</button>
+      </div>
+    </div>
+
+    <div class="audit-table-card" data-aos="fade-up" data-aos-delay="100">
+      <div class="table-responsive">
+        <table class="table table-audit mb-0">
+          <thead>
+            <tr>
+              <th>Case Reference</th>
+              <th>Department / Sector</th>
+              <th>Incident Summary</th>
+              <th>Resolution &amp; Asset Recovery</th>
+              <th>SLA Duration</th>
+              <th>Action Status</th>
+            </tr>
+          </thead>
+          <tbody id="auditTableBody">
+            <tr data-cat="bribery">
+              <td><span class="fw-bold font-monospace text-primary">#CCMS-8902</span></td>
+              <td><span class="badge bg-light text-dark border">Land Registration</span></td>
+              <td>Extortion of $1,200 bribe for property title transfer certificate</td>
+              <td><strong class="text-success">Officer Suspended</strong> + $1,200 Refunded</td>
+              <td>36 Hours</td>
+              <td><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1">Resolved</span></td>
+            </tr>
+            <tr data-cat="procurement">
+              <td><span class="fw-bold font-monospace text-primary">#CCMS-4412</span></td>
+              <td><span class="badge bg-light text-dark border">Public Works Dept</span></td>
+              <td>Rigged municipal road construction tender worth $450,000</td>
+              <td><strong class="text-success">Tender Cancelled</strong> + Firm Blacklisted</td>
+              <td>48 Hours</td>
+              <td><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1">Resolved</span></td>
+            </tr>
+            <tr data-cat="embezzlement">
+              <td><span class="fw-bold font-monospace text-primary">#CCMS-9920</span></td>
+              <td><span class="badge bg-light text-dark border">Education &amp; Grants</span></td>
+              <td>Siphoning of public school digital tablet procurement budget</td>
+              <td><strong class="text-success">$185,000 Recovered</strong> + Legal Charges</td>
+              <td>72 Hours</td>
+              <td><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1">Resolved</span></td>
+            </tr>
+            <tr data-cat="bribery">
+              <td><span class="fw-bold font-monospace text-primary">#CCMS-3105</span></td>
+              <td><span class="badge bg-light text-dark border">Transport &amp; RTO</span></td>
+              <td>Syndicate demanding illegal fees for commercial vehicle fitness permits</td>
+              <td><strong class="text-success">3 Officials Detained</strong> + Vigilance Audit</td>
+              <td>24 Hours</td>
+              <td><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1">Resolved</span></td>
+            </tr>
+            <tr data-cat="procurement">
+              <td><span class="fw-bold font-monospace text-primary">#CCMS-1284</span></td>
+              <td><span class="badge bg-light text-dark border">Healthcare &amp; Supplies</span></td>
+              <td>Inflated hospital equipment supply contracts</td>
+              <td><strong class="text-success">Contract Renegotiated</strong> ($90k Saved)</td>
+              <td>40 Hours</td>
+              <td><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1">Resolved</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     WHISTLEBLOWER RIGHTS & LEGAL PROTECTION MATRIX (NEW SECTION)
+============================================================ -->
+<section id="rights-matrix" class="section-pad">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <span class="section-tag">Citizen Safeguards</span>
+      <h2 class="section-title">Your Rights Under <span class="text-gradient">Whistleblower Protection</span></h2>
+      <p class="section-subtitle mx-auto">Robust legal guarantees ensuring full anonymity, zero retaliation, and financial incentives for integrity.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="rights-card">
+          <div class="rights-icon"><i class="fas fa-user-shield"></i></div>
+          <h4 class="fw-bold mb-2 text-dark">100% Identity Scrubbing</h4>
+          <p class="text-muted small">Server-side stripping of EXIF data, IP signatures, and browser details before filing into encrypted storage.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="rights-card">
+          <div class="rights-icon"><i class="fas fa-gavel"></i></div>
+          <h4 class="fw-bold mb-2 text-dark">Legal Retaliation Immunity</h4>
+          <p class="text-muted small">Protected under national Whistleblower Directives against employment termination, harassment, or civil suits.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="rights-card">
+          <div class="rights-icon"><i class="fas fa-sack-dollar"></i></div>
+          <h4 class="fw-bold mb-2 text-dark">Financial Reward Scheme</h4>
+          <p class="text-muted small">Citizens reporting high-level financial fraud are eligible for up to 10% of recovered corrupt public assets.</p>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+        <div class="rights-card">
+          <div class="rights-icon"><i class="fas fa-handshake-angle"></i></div>
+          <h4 class="fw-bold mb-2 text-dark">Free Legal Counsel</h4>
+          <p class="text-muted small">Access 24/7 confidential legal aid and witness protection protocols through our partnered anti-corruption attorneys.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     DEPARTMENT SLA SCORECARD (NEW SECTION)
+============================================================ -->
+<section id="dept-scorecard" class="section-pad">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <span class="section-tag">Accountability Ratings</span>
+      <h2 class="section-title">Departmental <span class="text-gradient">SLA Scorecard</span></h2>
+      <p class="section-subtitle mx-auto">Real-time performance metrics monitoring departmental response velocity and resolution rates.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="scorecard-box">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-building-columns text-primary me-2"></i>Public Works &amp; Infrastructure</h5>
+            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">96% SLA</span>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between text-muted small mb-1">
+              <span>Resolution Rate</span>
+              <span class="fw-bold text-dark">96.4%</span>
+            </div>
+            <div class="progress-bar-custom">
+              <div class="progress-bar-fill" style="width: 96.4%;"></div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between text-muted small">
+            <span>Avg Response SLA: <strong>32 Hours</strong></span>
+            <span>Total Resolved: <strong>3,420</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="scorecard-box">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-hand-holding-dollar text-primary me-2"></i>Revenue &amp; Taxation</h5>
+            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">94% SLA</span>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between text-muted small mb-1">
+              <span>Resolution Rate</span>
+              <span class="fw-bold text-dark">94.1%</span>
+            </div>
+            <div class="progress-bar-custom">
+              <div class="progress-bar-fill" style="width: 94.1%;"></div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between text-muted small">
+            <span>Avg Response SLA: <strong>28 Hours</strong></span>
+            <span>Total Resolved: <strong>4,110</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="scorecard-box">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-hospital text-primary me-2"></i>Healthcare &amp; Sanitation</h5>
+            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">98% SLA</span>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between text-muted small mb-1">
+              <span>Resolution Rate</span>
+              <span class="fw-bold text-dark">98.2%</span>
+            </div>
+            <div class="progress-bar-custom">
+              <div class="progress-bar-fill" style="width: 98.2%;"></div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between text-muted small">
+            <span>Avg Response SLA: <strong>24 Hours</strong></span>
+            <span>Total Resolved: <strong>2,850</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     IMPACT & STATS
+============================================================ -->
+<section id="stats">
+  <div class="container">
+    <div class="stats-banner" data-aos="zoom-in">
+      <div class="row g-4 text-center">
+        <div class="col-md-3 col-6">
+          <div class="stat-number counter" data-target="15420">0</div>
+          <div class="stat-label">Complaints Registered</div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="stat-number counter" data-target="95">0</div>
+          <div class="stat-label">Resolution Rate %</div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="stat-number counter" data-target="32">0</div>
+          <div class="stat-label">Avg. Response (Hours)</div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="stat-number counter" data-target="1280">0</div>
+          <div class="stat-label">Officers Penalized</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMPLAINT CATEGORIES
+============================================================ -->
+<section id="complaint-types" class="section-pad">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <span class="section-tag">Reportable Misconduct</span>
+      <h2 class="section-title">Supported <span class="text-gradient">Categories</span></h2>
+      <p class="section-subtitle mx-auto">CCMS accepts complaints across all public and governmental sector domains.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="category-box">
+          <div class="category-icon"><i class="fas fa-hand-holding-dollar"></i></div>
+          <div>
+            <h5>Bribery &amp; Extortion</h5>
+            <p>Demanding money, favors, or gifts in exchange for public permits, certificates, or services.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="category-box">
+          <div class="category-icon"><i class="fas fa-building-columns"></i></div>
+          <div>
+            <h5>Embezzlement &amp; Fraud</h5>
+            <p>Misuse, siphoning, or theft of public development funds, welfare grants, or budget allocations.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="category-box">
+          <div class="category-icon"><i class="fas fa-id-card-clip"></i></div>
+          <div>
+            <h5>Nepotism &amp; Favoritism</h5>
+            <p>Unfair hiring practices, rigged civil service exams, or biased contract awards to relatives.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
+        <div class="category-box">
+          <div class="category-icon"><i class="fas fa-file-signature"></i></div>
+          <div>
+            <h5>Procurement Malpractice</h5>
+            <p>Rigged tendering processes, inflated budget estimates, and kickback arrangements.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="500">
+        <div class="category-box">
+          <div class="category-icon"><i class="fas fa-scale-unbalanced"></i></div>
+          <div>
+            <h5>Judicial Misconduct</h5>
+            <p>Interference in legal proceedings, bribery of law enforcement or court administration.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="600">
+        <div class="category-box">
+          <div class="category-icon"><i class="fas fa-laptop-code"></i></div>
+          <div>
+            <h5>Cyber &amp; Digital Fraud</h5>
+            <p>Tampering with digital records, automated system manipulation, or online extortion.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TESTIMONIALS / CITIZENS VOICE
+============================================================ -->
+<section id="testimonials" class="section-pad">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <span class="section-tag">Citizen Impact</span>
+      <h2 class="section-title">Restoring Faith in <span class="text-gradient">Governance</span></h2>
+      <p class="section-subtitle mx-auto">Hear from citizens and whistleblowers who achieved accountability through CCMS.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="testimonial-card">
+          <div>
+            <div class="stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-quote">"I reported a land registration officer who demanded a bribe. Thanks to the encrypted evidence upload, an investigation was opened in under 48 hours."</p>
+          </div>
+          <div class="user-profile">
+            <div class="user-avatar">R</div>
+            <div>
+              <div class="user-name">Rajesh Kumar</div>
+              <div class="user-role">Civilian Whistleblower</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="testimonial-card">
+          <div>
+            <div class="stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-quote">"The Anonymous Mode gave me the confidence to report corrupt tender rigging in my municipality without fear of professional backlash."</p>
+          </div>
+          <div class="user-profile">
+            <div class="user-avatar">S</div>
+            <div>
+              <div class="user-name">Sneha Sharma</div>
+              <div class="user-role">Government Contractor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="testimonial-card">
+          <div>
+            <div class="stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-quote">"Real-time SLA tracking meant officers couldn't stall my complaint. CCMS is the single most effective tool against red-tape corruption."</p>
+          </div>
+          <div class="user-profile">
+            <div class="user-avatar">A</div>
+            <div>
+              <div class="user-name">Arjun Patel</div>
+              <div class="user-role">RTI Activist</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FAQ SECTION WITH SEARCH & ACCORDION
+============================================================ -->
+<section id="faq" class="section-pad">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-5" data-aos="fade-right">
+        <span class="section-tag">Got Questions?</span>
+        <h2 class="section-title">Frequently Asked <span class="text-gradient">Questions</span></h2>
+        <p class="section-subtitle mb-4">Everything you need to know about safety, filing complaints, and tracking resolution.</p>
+
+        <!-- Live FAQ Search Box -->
+        <div class="faq-search-box mb-4">
+          <i class="fas fa-magnifying-glass text-primary"></i>
+          <input type="text" id="faqSearchInput" placeholder="Type to search FAQs (e.g. anonymous, evidence, tracking)..." onkeyup="filterFaqs()" />
+        </div>
+
+        <div>
+          <button class="btn-primary-glow btn-sm" data-bs-toggle="modal" data-bs-target="#complaintModal">
+            <i class="fas fa-headset me-2"></i>File a Complaint Now
+          </button>
+        </div>
+      </div>
+
+      <div class="col-lg-7" data-aos="fade-left">
+        <div id="faqList">
+          <div class="faq-card">
+            <div class="faq-header">
+              <span>Is my identity 100% safe when reporting anonymously?</span>
+              <div class="faq-toggle-icon"><i class="fas fa-plus"></i></div>
+            </div>
+            <div class="faq-body">
+              Yes. When you choose Anonymous Mode, CCMS strips all IP addresses, browser user-agents, and location metadata. Files uploaded are automatically scrubbed of EXIF metadata before being stored in our zero-knowledge encrypted vault.
+            </div>
+          </div>
+
+          <div class="faq-card">
+            <div class="faq-header">
+              <span>What happens after I submit a corruption report?</span>
+              <div class="faq-toggle-icon"><i class="fas fa-plus"></i></div>
+            </div>
+            <div class="faq-body">
+              Your complaint is encrypted client-side and assigned a 16-digit Complaint Key. An automated urgency triage system checks completeness and routes the case to an independent Anti-Corruption Vigilance Director within 24 hours.
+            </div>
+          </div>
+
+          <div class="faq-card">
+            <div class="faq-header">
+              <span>What types of evidence can I attach?</span>
+              <div class="faq-toggle-icon"><i class="fas fa-plus"></i></div>
+            </div>
+            <div class="faq-body">
+              You can attach documents (PDF, DOCX), audio recordings (MP3, WAV), photos (PNG, JPG), and video clips (MP4). Files are encrypted with AES-GCM-256 before reaching the server.
+            </div>
+          </div>
+
+          <div class="faq-card">
+            <div class="faq-header">
+              <span>How do I track my complaint status without logging in?</span>
+              <div class="faq-toggle-icon"><i class="fas fa-plus"></i></div>
+            </div>
+            <div class="faq-body">
+              Simply click "Track Case" in the top navigation bar or status lookup section and enter your 16-digit Complaint Key. No account registration or phone number is required.
+            </div>
+          </div>
+
+          <div class="faq-card">
+            <div class="faq-header">
+              <span>Am I protected under national Whistleblower protection laws?</span>
+              <div class="faq-toggle-icon"><i class="fas fa-plus"></i></div>
+            </div>
+            <div class="faq-body">
+              Yes. CCMS operates under full compliance with national Whistleblower Protection Directives, granting full immunity from employer retaliation, career discrimination, and legal liability.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CTA BANNER
+============================================================ -->
+<section id="cta" class="section-pad">
+  <div class="container">
+    <div class="cta-box" data-aos="zoom-in">
+      <h2 class="section-title text-white mb-3">Ready to Demand Accountability?</h2>
+      <p class="section-subtitle mx-auto mb-4 text-white-50">
+        Silence enables systemic corruption. Take 3 minutes to submit your report with complete identity protection.
+      </p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <button class="btn btn-light btn-lg fw-bold rounded-pill px-4 shadow" data-bs-toggle="modal" data-bs-target="#complaintModal">
+          <i class="fas fa-paper-plane me-2 text-primary"></i>Submit Complaint Now
+        </button>
+        <button class="btn btn-outline-light btn-lg fw-bold rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#statusModal">
+          <i class="fas fa-shield-halved me-2"></i>Track Existing Case
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <a class="brand-logo" href="#">
+          CCMS
+          <span class="brand-sub">Corruption Complaint System</span>
+        </a>
+        <p class="footer-desc">
+          Official digital portal dedicated to eradication of systemic corruption, bribery, and misuse of public power through zero-knowledge technology.
+        </p>
+        <div class="mt-4">
+          <a href="#" class="social-icon-btn"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" class="social-icon-btn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-icon-btn"><i class="fab fa-github"></i></a>
+          <a href="#" class="social-icon-btn"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="col-lg-2 col-6">
+        <h5 class="footer-title">Platform</h5>
+        <ul class="footer-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#audit-ledger">Audit Ledger</a></li>
+          <li><a href="#rights-matrix">Whistleblower Rights</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-2 col-6">
+        <h5 class="footer-title">Resources</h5>
+        <ul class="footer-links">
+          <li><a href="#" data-bs-toggle="modal" data-bs-target="#statusModal">Track Complaint</a></li>
+          <li><a href="#dept-scorecard">SLA Ratings</a></li>
+          <li><a href="#faq">FAQ &amp; Help</a></li>
+          <li><a href="#">Privacy Protocol</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-4">
+        <h5 class="footer-title">24/7 Emergency Helpline</h5>
+        <p class="small mb-3">Available 24 hours for urgent corruption reporting &amp; protection support.</p>
+        <div class="p-3 rounded mb-3" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+          <div class="d-flex align-items-center gap-3">
+            <i class="fas fa-phone-volume text-info fa-2x"></i>
+            <div>
+              <div class="fw-bold text-white fs-5 font-monospace">1800-11-CCMS</div>
+              <div class="small">Toll-Free National Hotline</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr style="border-color: rgba(255,255,255,0.1); margin: 40px 0 20px;" />
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center small">
+      <div>&copy; 2026 CCMS. All Rights Reserved. Built with HTML5, Bootstrap 5, &amp; jQuery.</div>
+      <div class="d-flex gap-3">
+        <a href="#" class="text">Privacy Policy</a>
+        <a href="#" class="text">Terms of Service</a>
+        <a href="#" class="text">Security Guidelines</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Floating Back to Top Button -->
+<button id="backToTop" aria-label="Back to top">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- ============================================================
+     INTERACTIVE MODAL 1: ANONYMOUS COMPLAINT SUBMISSION FORM
+============================================================ -->
+<div class="modal fade" id="complaintModal" tabindex="-1" aria-labelledby="complaintModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content modal-content-custom bg-white">
+      <div class="modal-header border-bottom-0 pb-0">
+        <div class="d-flex align-items-center gap-2">
+          <div class="p-2 rounded bg-primary bg-opacity-10 text-primary">
+            <i class="fas fa-shield-halved fa-lg"></i>
+          </div>
+          <div>
+            <h5 class="modal-title fw-bold text-dark" id="complaintModalLabel">Submit Confidential Complaint</h5>
+            <p class="text-muted small mb-0">End-to-End Encrypted &amp; 100% Anonymous</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form id="complaintForm" onsubmit="handleComplaintSubmit(event)">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="sectorSelect" class="form-label fw-bold text-dark small">Department / Sector</label>
+              <select id="sectorSelect" class="form-select" required>
+                <option value="" selected disabled>Choose Sector...</option>
+                <option value="Land & Revenue">Land Registration &amp; Revenue</option>
+                <option value="Public Works">Public Works &amp; Infrastructure</option>
+                <option value="Police & Law">Police &amp; Law Enforcement</option>
+                <option value="Healthcare">Healthcare &amp; Supplies</option>
+                <option value="Education">Education &amp; University Grants</option>
+                <option value="Transport">Transport &amp; Licensing</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="misconductSelect" class="form-label fw-bold text-dark small">Misconduct Type</label>
+              <select id="misconductSelect" class="form-select" required>
+                <option value="" selected disabled>Select Misconduct Category...</option>
+                <option value="Bribery">Bribery &amp; Demand for Cash</option>
+                <option value="Embezzlement">Embezzlement of Public Funds</option>
+                <option value="Tender Rigging">Procurement / Tender Rigging</option>
+                <option value="Nepotism">Nepotism &amp; Unfair Hiring</option>
+                <option value="Extortion">Extortion &amp; Abuse of Power</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label for="complaintTitle" class="form-label fw-bold text-dark small">Incident Headline</label>
+              <input type="text" class="form-control" id="complaintTitle" placeholder="e.g. Demanding $500 bribe for commercial permit approval" required />
+            </div>
+
+            <div class="col-12">
+              <label for="complaintDesc" class="form-label fw-bold text-dark small">Detailed Description &amp; Location</label>
+              <textarea class="form-control" id="complaintDesc" rows="4" placeholder="Provide dates, office location, official names (if known), and exact sequence of events..." required></textarea>
+            </div>
+
+            <!-- Evidence File Upload -->
+            <div class="col-12">
+              <label class="form-label fw-bold text-dark small">Attach Evidence (Documents, Photos, Audio, Video)</label>
+              <div class="border border-2 border-dashed rounded p-4 text-center bg-light">
+                <i class="fas fa-cloud-arrow-up fa-2x text-primary mb-2"></i>
+                <div class="fw-bold text-dark small">Drag &amp; drop files here or click to browse</div>
+                <div class="text-muted" style="font-size:0.75rem;">Supported: PDF, DOCX, MP3, JPG, PNG, MP4 (Max 50MB). Automatically scrubbed of EXIF metadata.</div>
+                <input type="file" class="d-none" id="evidenceFileInput" onchange="showFileName(this)" />
+                <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="$('#evidenceFileInput').click()">Select Files</button>
+                <div id="selectedFileName" class="mt-2 text-success fw-bold small"></div>
+              </div>
+            </div>
+
+            <!-- Anonymous Toggle -->
+            <div class="col-12">
+              <div class="p-3 rounded bg-light border d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <i class="fas fa-user-secret text-primary fa-xl"></i>
+                  <div>
+                    <div class="fw-bold text-dark small">Anonymous Mode (Recommended)</div>
+                    <div class="text-muted" style="font-size:0.75rem;">No personal contact info will be recorded or associated with this report.</div>
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="anonymousSwitch" checked />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-light border fw-semibold" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" id="submitBtn" class="btn btn-primary fw-bold px-4" style="background:var(--gradient-brand); border:none;">
+              <i class="fas fa-lock me-1"></i> Encrypt &amp; Submit
+            </button>
+          </div>
+        </form>
+
+        <!-- Simulated Result Screen -->
+        <div id="submissionResult" class="d-none text-center py-4">
+          <div class="p-3 rounded-circle bg-success bg-opacity-10 text-success d-inline-flex mb-3">
+            <i class="fas fa-check-circle fa-3x"></i>
+          </div>
+          <h4 class="fw-bold text-dark mb-2">Complaint Encrypted &amp; Registered!</h4>
+          <p class="text-muted small mx-auto" style="max-width:480px;">Your report has been encrypted with AES-256 and dispatched to the Anti-Corruption Vigilance Bureau.</p>
+          
+          <div class="p-3 my-3 rounded bg-light border text-center">
+            <div class="text-muted small text-uppercase fw-bold mb-1">Your 16-Digit Complaint Tracking Key</div>
+            <div class="fs-4 fw-bold text-primary font-monospace" id="generatedKeyDisplay">CCMS-2026-X981</div>
+            <div class="text-muted" style="font-size:0.75rem;">Save this key! It is required to track investigation status anonymously.</div>
+          </div>
+
+          <button class="btn btn-outline-primary btn-sm fw-bold me-2" onclick="navigator.clipboard.writeText($('#generatedKeyDisplay').text()); alert('Tracking key copied to clipboard!');">
+            <i class="fas fa-copy me-1"></i> Copy Key
+          </button>
+          <button class="btn btn-primary btn-sm fw-bold" onclick="$('#complaintModal').modal('hide'); openSampleStatus($('#generatedKeyDisplay').text());">
+            <i class="fas fa-magnifying-glass me-1"></i> Track Live Status Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     INTERACTIVE MODAL 2: COMPLAINT STATUS TRACKER
+============================================================ -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content modal-content-custom bg-white">
+      <div class="modal-header border-bottom-0 pb-0">
+        <div class="d-flex align-items-center gap-2">
+          <div class="p-2 rounded bg-info bg-opacity-10 text-info">
+            <i class="fas fa-magnifying-glass-chart fa-lg"></i>
+          </div>
+          <div>
+            <h5 class="modal-title fw-bold text-dark" id="statusModalLabel">Live Complaint Tracker</h5>
+            <p class="text-muted small mb-0">Real-time status monitoring &amp; vigilance audit log</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <!-- Tracker Search Box inside modal -->
+        <div class="input-group mb-4">
+          <input type="text" id="modalKeyInput" class="form-control font-monospace" placeholder="Enter 16-digit Key (e.g. CCMS-8902-X7K9)" value="CCMS-8902-X7K9" />
+          <button class="btn btn-primary fw-bold" type="button" onclick="openSampleStatus($('#modalKeyInput').val())">Search Case</button>
+        </div>
+
+        <div class="p-3 rounded bg-light border mb-4">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-6">
+              <div class="text-muted small">Tracking Reference:</div>
+              <div class="fw-bold font-monospace text-primary fs-5" id="activeKeyTitle">CCMS-8902-X7K9</div>
+            </div>
+            <div class="col-md-6 text-md-end">
+              <div class="text-muted small">Current Investigation Stage:</div>
+              <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 fw-bold">Investigation Active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline Steps -->
+        <h6 class="fw-bold text-dark mb-3">Case Progression Timeline</h6>
+
+        <div class="timeline-step completed">
+          <div class="timeline-dot"></div>
+          <div class="fw-bold text-dark small">1. Encrypted Complaint Received</div>
+          <div class="text-muted" style="font-size:0.8rem;">Received via AES-GCM-256 vault. EXIF and IP metadata scrubbed.</div>
+          <div class="text-muted font-monospace" style="font-size:0.75rem;">Timestamp: 10 Aug 2026, 09:15 AM</div>
+        </div>
+
+        <div class="timeline-step completed">
+          <div class="timeline-dot"></div>
+          <div class="fw-bold text-dark small">2. AI Priority &amp; Evidence Validation</div>
+          <div class="text-muted" style="font-size:0.8rem;">Evidence files verified authentic. Urgency score calculated: High (8.9/10).</div>
+          <div class="text-muted font-monospace" style="font-size:0.75rem;">Timestamp: 10 Aug 2026, 11:30 AM</div>
+        </div>
+
+        <div class="timeline-step active">
+          <div class="timeline-dot"></div>
+          <div class="fw-bold text-dark small">3. Vigilance Officer Investigation</div>
+          <div class="text-muted" style="font-size:0.8rem;">Assigned to Senior Inspector A. Verma, Anti-Corruption Bureau. Official summons issued to department head.</div>
+          <div class="text-muted font-monospace text-primary" style="font-size:0.75rem;">Status: In Progress (SLA: &lt; 24h remaining)</div>
+        </div>
+
+        <div class="timeline-step">
+          <div class="timeline-dot"></div>
+          <div class="fw-bold text-dark small">4. Final Legal Sanction &amp; Audit Log</div>
+          <div class="text-muted" style="font-size:0.8rem;">Execution of disciplinary or criminal proceedings and publication to public audit ledger.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCRIPTS (BOOTSTRAP, JQUERY, AOS & CANVAS)
+============================================================ -->
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AOS Scroll Animations JS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<script>
+  $(document).ready(function () {
+    // 1. Initialize AOS Scroll Animation
+    AOS.init({
+      duration: 800,
+      once: true,
+      offset: 80
+    });
+
+    // 2. Navbar Scroll Effect & Back-to-Top Toggle
+    $(window).scroll(function () {
+      if ($(this).scrollTop() > 40) {
+        $('#mainNav').addClass('scrolled');
+        $('#backToTop').addClass('show');
+      } else {
+        $('#mainNav').removeClass('scrolled');
+        $('#backToTop').removeClass('show');
+      }
+    });
+
+    // 3. Back to Top Smooth Scroll
+    $('#backToTop').click(function () {
+      $('html, body').animate({ scrollTop: 0 }, 600);
+      return false;
+    });
+
+    // 4. FAQ Accordion Toggle
+    $('.faq-header').click(function () {
+      var $card = $(this).parent('.faq-card');
+      var $body = $card.find('.faq-body');
+
+      $body.slideToggle(300);
+      $card.toggleClass('active');
+
+      $('.faq-card').not($card).removeClass('active').find('.faq-body').slideUp(300);
+    });
+
+    // 5. Scroll Counter Animation
+    let counted = false;
+    $(window).scroll(function () {
+      let statsElem = $('#stats');
+      if (statsElem.length) {
+        let oTop = statsElem.offset().top - window.innerHeight;
+        if (!counted && $(window).scrollTop() > oTop) {
+          $('.counter').each(function () {
+            let $this = $(this),
+                countTo = $this.attr('data-target');
+            $({ countNum: $this.text() }).animate({
+              countNum: countTo
+            }, {
+              duration: 2000,
+              easing: 'swing',
+              step: function () {
+                $this.text(Math.floor(this.countNum).toLocaleString());
+              },
+              complete: function () {
+                $this.text(parseInt(this.countNum).toLocaleString());
+              }
+            });
+          });
+          counted = true;
+        }
+      }
+    });
+  });
+
+  // 6. Interactive Complaint Submission Simulation
+  function handleComplaintSubmit(e) {
+    e.preventDefault();
+    $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Encrypting Data...');
+    
+    setTimeout(function() {
+      // Generate a random 16-digit Tracking Key
+      const randomCode = 'CCMS-2026-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+      $('#generatedKeyDisplay').text(randomCode);
+      $('#complaintForm').addClass('d-none');
+      $('#submissionResult').removeClass('d-none');
+    }, 1200);
+  }
+
+  function showFileName(input) {
+    if (input.files && input.files[0]) {
+      $('#selectedFileName').text('Selected file: ' + input.files[0].name + ' (Metadata Stripped)');
+    }
+  }
+
+  // 7. Interactive Case Status Modal Trigger
+  function openSampleStatus(key) {
+    if (!key) key = 'CCMS-8902-X7K9';
+    $('#activeKeyTitle').text(key);
+    $('#modalKeyInput').val(key);
+    $('#statusModal').modal('show');
+  }
+
+  // 8. Filter Audit Table
+  function filterAuditTable(category) {
+    $('.audit-filter-btn').removeClass('active');
+    event.target.classList.add('active');
+    
+    if (category === 'all') {
+      $('#auditTableBody tr').fadeIn();
+    } else {
+      $('#auditTableBody tr').each(function() {
+        if ($(this).data('cat') === category) {
+          $(this).fadeIn();
+        } else {
+          $(this).fadeOut();
+        }
+      });
+    }
+  }
+
+  // 9. FAQ Live Search Filter
+  function filterFaqs() {
+    let query = $('#faqSearchInput').val().toLowerCase();
+    $('#faqList .faq-card').each(function() {
+      let text = $(this).text().toLowerCase();
+      if (text.indexOf(query) > -1) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+  }
+
+  // ============================================================
+  // PARTICLES / NETWORK MESH CANVAS BACKGROUND (LIGHT MODE)
+  // ============================================================
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+
+  let width, height;
+  let particles = [];
+
+  function initCanvas() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    particles = [];
+
+    const numParticles = Math.floor(width / 22);
+    for (let i = 0; i < numParticles; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: Math.random() * 2 + 1
+      });
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, width, height);
+
+    for (let i = 0; i < particles.length; i++) {
+      let p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < 0 || p.x > width) p.vx *= -1;
+      if (p.y < 0 || p.y > height) p.vy *= -1;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#2563eb';
+      ctx.fill();
+
+      for (let j = i + 1; j < particles.length; j++) {
+        let p2 = particles[j];
+        let dx = p.x - p2.x;
+        let dy = p.y - p2.y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 130) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.strokeStyle = `rgba(37, 99, 235, ${0.12 * (1 - dist / 130)})`;
+          ctx.lineWidth = 0.7;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animateParticles);
+  }
+
+  window.addEventListener('resize', initCanvas);
+  initCanvas();
+  animateParticles();
+</script>
+</body>
+</html>
