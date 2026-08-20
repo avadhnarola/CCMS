@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
@@ -152,85 +152,14 @@
 
 <div class="app-wrapper">
 
-  <!-- SIDEBAR NAVIGATION -->
-  <aside class="app-sidebar" id="appSidebar">
-    <div class="sidebar-header flex-column align-items-start">
-      <div class="d-flex align-items-center justify-content-between w-100 mb-1">
-        <a href="index.php" class="sidebar-logo">CCMS</a>
-        <span class="sidebar-badge">Citizen</span>
-      </div>
-      <div class=" small fw-semibold" style="letter-spacing: 1px; font-size: 0.65rem; text-transform: uppercase;">Whistleblower Portal</div>
-
-      <!-- User Info Badge in Sidebar -->
-      <div class="mt-3 p-2 rounded w-100 d-flex align-items-center gap-2" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
-        <div class="position-relative">
-          <div class="user-avatar-img" id="sideAvatar">RK</div>
-          <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-dark rounded-circle"></span>
-        </div>
-        <div class="overflow-hidden">
-          <div class="fw-bold text-white small text-truncate" id="sideUserName">Rajesh Kumar</div>
-          <div class="text-info small" style="font-size:0.7rem;"><i class="fas fa-shield-alt text-info me-1"></i> Verified Citizen</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="sidebar-nav">
-      <div class="nav-section-title">Main Dashboard</div>
-      <a href="index.php" class="sidebar-link active"><i class="fas fa-chart-pie"></i> Analytics &amp; Overview</a>
-      <a href="file-complaint.php" class="sidebar-link"><i class="fas fa-plus-circle"></i> File New Complaint</a>
-      <a href="my-complaints.php" class="sidebar-link"><i class="fas fa-folder-open"></i> My Complaints</a>
-      <a href="track.php" class="sidebar-link"><i class="fas fa-route"></i> Track Complaint</a>
-      <a href="evidence.php" class="sidebar-link"><i class="fas fa-photo-film"></i> Evidence Gallery</a>
-
-      <div class="nav-section-title">Engage &amp; Support</div>
-      <a href="feedback.php" class="sidebar-link"><i class="fas fa-star"></i> Feedback &amp; Rating</a>
-      <a href="notifications.php" class="sidebar-link"><i class="fas fa-bell"></i> Notifications <span class="badge bg-danger rounded-pill ms-auto" style="font-size:0.65rem;">3</span></a>
-      <a href="help.php" class="sidebar-link"><i class="fas fa-headset"></i> AI Assistance &amp; Help</a>
-      <a href="contact.php" class="sidebar-link"><i class="fas fa-envelope"></i> Contact Vigilance</a>
-
-      <div class="nav-section-title">Account Settings</div>
-      <a href="profile.php" class="sidebar-link"><i class="fas fa-user-gear"></i> Citizen Profile</a>
-      <a href="login.php" class="sidebar-link text-danger" onclick="localStorage.removeItem('ccms_loggedIn');"><i class="fas fa-arrow-right-from-bracket"></i> Sign Out</a>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="text-white small fw-bold"><i class="fas fa-lock text-success me-1"></i> Zero-Knowledge Encryption</div>
-      <div class="text-muted" style="font-size:0.7rem;">IP Scrubbed • AES-256 Protocol</div>
-    </div>
-  </aside>
+  <!-- SIDEBAR NAVIGATION INCLUDE -->
+  <?php include 'includes/sidebar.php'; ?>
 
   <!-- MAIN CONTENT AREA -->
   <main class="app-main">
 
-    <!-- TOP BAR -->
-    <header class="app-topbar">
-      <div class="d-flex align-items-center gap-3">
-        <button class="btn d-lg-none text-heading p-0 fs-4" onclick="$('#appSidebar').toggleClass('show')">
-          <i class="fas fa-bars"></i>
-        </button>
-        <!-- Search bar -->
-        <div class="position-relative d-none d-sm-block" style="width: 280px;">
-          <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.85rem;"></i>
-          <input type="text" class="form-control rounded-pill ps-5 bg-subtle border-0" placeholder="Search complaint ID or department..." style="font-size: 0.85rem;" />
-        </div>
-      </div>
-
-      <div class="d-flex align-items-center gap-3">
-
-        <!-- Notifications Quick Link -->
-        <a href="notifications.php" class="position-relative text-heading p-2 fs-5" title="Notifications">
-          <i class="far fa-bell"></i>
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.6rem;">3</span>
-        </a>
-
-        <!-- User Profile Button -->
-        <a href="profile.php" class="user-profile-btn ms-1">
-          <div class="user-avatar-img" id="userAvatarText">RK</div>
-          <span class="fw-bold small d-none d-md-inline text-heading me-1" id="userNameText">Rajesh Kumar</span>
-          <i class="fas fa-chevron-down text-muted small"></i>
-        </a>
-      </div>
-    </header>
+    <!-- TOP BAR INCLUDE -->
+    <?php include 'includes/topbar.php'; ?>
 
     <!-- CONTENT BODY -->
     <div class="app-content">
@@ -502,10 +431,8 @@
   </main>
 </div>
 
-<!-- SCRIPTS -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/citizen.js"></script>
+<!-- FOOTER INCLUDE -->
+<?php include 'includes/footer.php'; ?>
 
 <script>
   $(document).ready(function() {

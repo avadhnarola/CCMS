@@ -80,13 +80,13 @@ const DEFAULT_NOTIFICATIONS = [
 
 // Initial Default User Profile
 const DEFAULT_USER = {
-  name: "Rajesh Kumar",
-  email: "rajesh.kumar@example.com",
+  name: "Narola Avadh Shaileshbhai",
+  email: "avadh.narola@example.com",
   phone: "+91 98765 43210",
   nationalId: "IND-8849-2026",
   address: "74 Integrity Avenue, District Center",
   joinedDate: "January 2026",
-  avatarText: "RK"
+  avatarText: "NAS"
 };
 
 // ============================================================
@@ -319,3 +319,96 @@ function getAIChatbotResponse(userMessage) {
     return "I am the CCMS AI Vigilance Assistant. You can ask me about anonymous filing, tracking keys, evidence upload rules, withdrawing complaints, or legal protection!";
   }
 }
+
+// ============================================================
+// GLOBAL FLOATING TOAST NOTIFICATION HELPER
+// ============================================================
+function showCcmsToast(message, type = 'info', title = '') {
+  let container = document.getElementById('ccmsToastContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'ccmsToastContainer';
+    document.body.appendChild(container);
+  }
+
+  const icons = {
+    info: 'fas fa-info-circle text-info',
+    success: 'fas fa-check-circle text-success',
+    warning: 'fas fa-triangle-exclamation text-warning',
+    danger: 'fas fa-circle-exclamation text-danger'
+  };
+
+  const toastTitle = title || (type.charAt(0).toUpperCase() + type.slice(1));
+  const toast = document.createElement('div');
+  toast.className = 'ccms-toast';
+  toast.innerHTML = `
+    <div class="fs-4 ${icons[type] || icons.info}"></div>
+    <div class="flex-grow-1 overflow-hidden">
+      <div class="fw-bold text-heading small">${toastTitle}</div>
+      <div class="text-muted small text-truncate">${message}</div>
+    </div>
+    <button type="button" class="btn-close btn-close-sm ms-2" onclick="this.parentElement.remove()"></button>
+    <div class="ccms-toast-progress"></div>
+  `;
+
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(100%)';
+    setTimeout(() => toast.remove(), 400);
+  }, 4000);
+}
+
+// ============================================================
+// SWEETALERT2 INTEGRATION & GLOBAL MODAL POPUP HELPERS
+// ============================================================
+(function loadSweetAlert2() {
+  if (typeof Swal === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+    document.head.appendChild(script);
+  }
+})();
+
+window.showCcmsModalAlert = function(title, message, icon = 'info', confirmText = 'OK') {
+  if (typeof Swal !== 'undefined') {
+    return Swal.fire({
+      title: title,
+      text: message,
+      icon: icon,
+      confirmButtonText: confirmText,
+      customClass: { popup: 'swal2-popup' }
+    });
+  } else {
+    showCcmsToast(message, icon === 'error' ? 'danger' : icon, title);
+  }
+};
+
+window.showCcmsConfirm = function(title, message, callback) {
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({
+      title: title,
+      text: message,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Proceed',
+      cancelButtonText: 'Cancel',
+      customClass: { popup: 'swal2-popup' }
+    }).then((result) => {
+      if (result.isConfirmed && typeof callback === 'function') {
+        callback();
+      }
+    });
+  } else {
+    showCcmsToast(message, 'warning', title);
+  }
+};
+
+// Automatic Interception of Native Browser Popups
+window.alert = function(msg) {
+  window.showCcmsModalAlert('CCMS Notification', String(msg), 'info');
+};
+
+
+
