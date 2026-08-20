@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search &amp; Sort Engine | CCMS Admin</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@600;700;900&display=swap" rel="stylesheet" />
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+<div class="admin-wrapper">
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar-header">
+      <a href="index.php" class="admin-logo">CCMS</a>
+      <span class="admin-badge-tag"><i class="fas fa-user-shield me-1"></i> Super Admin</span>
+    </div>
+
+    <div class="admin-sidebar-nav">
+      <div class="admin-nav-title">Main Control</div>
+      <a href="index.php" class="admin-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
+      <a href="complaints.php" class="admin-link"><i class="fas fa-folder-tree"></i> Complaints Mgmt</a>
+      <a href="assignment.php" class="admin-link"><i class="fas fa-diagram-project"></i> Greedy Assignment</a>
+      <a href="analytics.php" class="admin-link"><i class="fas fa-chart-line"></i> Analytics Graphs</a>
+
+      <div class="admin-nav-title">Users &amp; Officers</div>
+      <a href="citizens.php" class="admin-link"><i class="fas fa-users"></i> Citizen Management</a>
+      <a href="officers.php" class="admin-link"><i class="fas fa-user-gear"></i> Officer Management</a>
+
+      <div class="admin-nav-title">Structure &amp; Rules</div>
+      <a href="departments.php" class="admin-link"><i class="fas fa-building-columns"></i> Departments</a>
+      <a href="categories.php" class="admin-link"><i class="fas fa-tags"></i> Categories</a>
+
+      <div class="admin-nav-title">Audit &amp; Tools</div>
+      <a href="reports.php" class="admin-link"><i class="fas fa-file-invoice"></i> Reports &amp; Exports</a>
+      <a href="search.php" class="admin-link active"><i class="fas fa-search"></i> Search &amp; Sort</a>
+      <a href="activity-logs.php" class="admin-link"><i class="fas fa-list-check"></i> Activity Logs</a>
+      <a href="notifications.php" class="admin-link"><i class="fas fa-bullhorn"></i> Broadcast Notices</a>
+      <a href="settings.php" class="admin-link"><i class="fas fa-sliders"></i> System Settings</a>
+      <a href="login.php" class="admin-link text-danger"><i class="fas fa-arrow-right-from-bracket"></i> Logout</a>
+    </div>
+  </aside>
+
+  <!-- MAIN PANEL -->
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn d-lg-none text-heading p-0 fs-4" onclick="$('#adminSidebar').toggleClass('show')">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h5 class="fw-bold mb-0 text-heading">Multi-Field Search &amp; Sort Engine</h5>
+      </div>
+
+      <div class="d-flex align-items-center gap-3">
+        <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleAdminTheme()" title="Toggle Theme">
+          <i class="fas fa-moon"></i>
+        </button>
+        <a href="settings.php" class="d-flex align-items-center gap-2 p-1.5 px-3 rounded-pill bg-subtle border text-heading">
+          <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center" style="width:32px; height:32px; font-size:0.8rem;">SA</div>
+          <span class="fw-bold small d-none d-md-inline">Super Admin</span>
+        </a>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <div class="admin-card mb-4">
+        <h5 class="fw-bold text-heading mb-3"><i class="fas fa-filter text-primary me-2"></i>Filter &amp; Sort Criteria</h5>
+        <form class="row g-3" onsubmit="event.preventDefault(); applyAdminSearch();">
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-heading">Search Keywords (ID, Citizen, Officer, Department)</label>
+            <input type="text" id="adminQuery" class="form-control" placeholder="Search ID (CCMS-8902), Citizen (Rajesh), Officer (Verma), Dept (Revenue)..." />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-bold text-heading">Sort Field</label>
+            <select class="form-select" id="sortFieldSelect">
+              <option value="date">Sort by Date</option>
+              <option value="priority">Sort by Priority</option>
+              <option value="status">Sort by Status</option>
+              <option value="officer">Sort by Officer</option>
+              <option value="department">Sort by Department</option>
+            </select>
+          </div>
+          <div class="col-md-3 d-grid align-self-end">
+            <button type="submit" class="btn btn-primary fw-bold" style="background:var(--gradient-admin); border:none;">
+              Apply Multi-Search &amp; Sort
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="admin-card">
+        <h5 class="fw-bold text-heading mb-3"><i class="fas fa-list text-primary me-2"></i>Sorted Search Results</h5>
+        <div class="table-responsive">
+          <table class="table table-custom mb-0">
+            <thead>
+              <tr>
+                <th>Complaint ID</th>
+                <th>Title</th>
+                <th>Department</th>
+                <th>Assigned Officer</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Filing Date</th>
+              </tr>
+            </thead>
+            <tbody id="sortedResultsTbody">
+              <!-- Dynamically Rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/admin.js"></script>
+<script>
+  $(document).ready(function() {
+    applyAdminSearch();
+  });
+
+  function applyAdminSearch() {
+    const complaints = JSON.parse(localStorage.getItem("ccms_complaints") || "[]");
+    const q = $('#adminQuery').val().toLowerCase();
+    const sortField = $('#sortFieldSelect').val();
+
+    let filtered = complaints.filter(c => {
+      if (!q) return true;
+      return c.id.toLowerCase().includes(q) || 
+             c.title.toLowerCase().includes(q) || 
+             c.department.toLowerCase().includes(q) || 
+             (c.assignedOfficer && c.assignedOfficer.toLowerCase().includes(q));
+    });
+
+    // Sorting Engine
+    filtered.sort((a, b) => {
+      if (sortField === 'date') return new Date(b.date) - new Date(a.date);
+      if (sortField === 'priority') return (b.priority || '').localeCompare(a.priority || '');
+      if (sortField === 'status') return a.status.localeCompare(b.status);
+      if (sortField === 'officer') return (a.assignedOfficer || '').localeCompare(b.assignedOfficer || '');
+      if (sortField === 'department') return a.department.localeCompare(b.department);
+      return 0;
+    });
+
+    let html = '';
+    if (filtered.length === 0) {
+      html = `<tr><td colspan="7" class="text-center text-muted py-4">No matching complaints found.</td></tr>`;
+    } else {
+      filtered.forEach(c => {
+        html += `
+          <tr>
+            <td><span class="font-monospace fw-bold text-primary">${c.id}</span></td>
+            <td class="fw-bold text-heading">${c.title}</td>
+            <td class="small text-muted">${c.department}</td>
+            <td><span class="fw-semibold text-heading">${c.assignedOfficer || 'Unassigned'}</span></td>
+            <td><span class="badge bg-subtle text-heading border">${c.priority || 'Medium'}</span></td>
+            <td><span class="badge bg-primary bg-opacity-10 text-primary border">${c.status}</span></td>
+            <td class="small text-muted">${c.date}</td>
+          </tr>
+        `;
+      });
+    }
+    $('#sortedResultsTbody').html(html);
+  }
+</script>
+</body>
+</html>
+
