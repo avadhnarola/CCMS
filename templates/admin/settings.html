@@ -1,0 +1,73 @@
+{% extends 'admin/base.html' %}
+
+{% set active_page = 'settings' %}
+{% block page_heading %}System Governance &amp; Security Controls{% endblock %}
+
+{% block content %}
+<div class="container py-2" style="max-width: 860px;">
+  <div class="ccms-card p-4 p-md-5 shadow-lg border-violet border-opacity-25">
+    <div class="d-flex align-items-center gap-3 pb-3 mb-4 border-bottom">
+      <div class="stat-icon" style="background: rgba(124,58,237,0.1); color: var(--accent-violet);">
+        <i class="fas fa-sliders"></i>
+      </div>
+      <div>
+        <h4 class="fw-bold text-heading mb-0">Platform Settings &amp; SLA Configurations</h4>
+        <span class="text-muted small">Configure vigilance routing, SLA deadlines, and encryption protocols</span>
+      </div>
+    </div>
+
+    <form action="{{ url_for('admin_settings') }}" method="POST">
+      <h5 class="fw-bold text-heading mb-3"><i class="fas fa-globe text-primary me-2"></i>General Information</h5>
+      <div class="mb-3">
+        <label class="form-label">Platform Portal Name</label>
+        <input type="text" name="site_name" class="form-control" value="{{ settings.get('site_name', 'CCMS - Anti-Corruption & Vigilance Command System') }}" required>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label">Helpline Number</label>
+          <input type="text" name="contact_phone" class="form-control" value="{{ settings.get('contact_phone', '1800-11-CCMS (2267)') }}" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Vigilance Intake Email</label>
+          <input type="email" name="contact_email" class="form-control" value="{{ settings.get('contact_email', 'whistleblower@ccms.gov.in') }}" required>
+        </div>
+      </div>
+
+      <h5 class="fw-bold text-heading mb-3"><i class="fas fa-hourglass-half text-amber me-2"></i>Investigation SLA Target Rules</h5>
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <label class="form-label">Critical Severity SLA</label>
+          <div class="input-group">
+            <input type="number" name="sla_hours_high" class="form-control" value="{{ settings.get('sla_hours_high', '24') }}" required>
+            <span class="input-group-text bg-subtle text-muted">Hours</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Medium Severity SLA</label>
+          <div class="input-group">
+            <input type="number" name="sla_hours_medium" class="form-control" value="{{ settings.get('sla_hours_medium', '72') }}" required>
+            <span class="input-group-text bg-subtle text-muted">Hours</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Low Severity SLA</label>
+          <div class="input-group">
+            <input type="number" name="sla_hours_low" class="form-control" value="{{ settings.get('sla_hours_low', '168') }}" required>
+            <span class="input-group-text bg-subtle text-muted">Hours</span>
+          </div>
+        </div>
+      </div>
+
+      <h5 class="fw-bold text-heading mb-3"><i class="fas fa-shield-halved text-emerald me-2"></i>Security &amp; Encryption</h5>
+      <div class="mb-4">
+        <label class="form-label">Active Encryption Protocol</label>
+        <input type="text" name="encryption_protocol" class="form-control" value="{{ settings.get('encryption_protocol', 'AES-256-GCM Military Grade') }}" required>
+      </div>
+
+      <button type="submit" class="btn btn-brand btn-lg w-100 justify-content-center py-2.5">
+        <i class="fas fa-floppy-disk me-1"></i> Save Platform Configurations
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

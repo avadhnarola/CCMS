@@ -1,0 +1,99 @@
+{% extends 'officer/base.html' %}
+
+{% set active_page = 'assigned_cases' %}
+{% block page_heading %}Officer Assigned Cases Archive{% endblock %}
+
+{% block content %}
+<div class="ccms-card p-4 shadow-sm mb-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-3">
+    <div>
+      <h5 class="fw-bold text-heading mb-0"><i class="fas fa-briefcase text-cyan me-2"></i>Investigation Case Dossiers
+      </h5>
+      <span class="text-muted small">Anti-Corruption Bureau active cases assigned to your badge</span>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2">
+      <!-- Search input -->
+      <div class="input-group input-group-sm" style="width: 240px;">
+        <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-search"></i></span>
+        <input type="text" id="officerSearchBox" class="form-control border-start-0"
+          placeholder="Filter by ID, category...">
+      </div>
+
+      <a href="{{ url_for('officer_priority_queue') }}" class="btn btn-sm btn-cyber">
+        <i class="fas fa-list-ol"></i> Priority Queue
+      </a>
+    </div>
+  </div>
+
+  {% if cases %}
+  <div class="table-responsive">
+    <table class="table-custom" id="officerCasesTable">
+      <thead>
+        <tr>
+          <th>Case ID</th>
+          <th>Title &amp; Location</th>
+          <th>Misconduct Category</th>
+          <th>Incident Date</th>
+          <th>Severity</th>
+          <th>Current Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in cases %}
+        <tr>
+          <td>
+            <span class="fw-bold text-cyan brand-font">{{ c.complaint_id }}</span>
+          </td>
+          <td>
+            <div class="fw-semibold text-heading text-truncate" style="max-width: 250px;">{{ c.complaint_title }}</div>
+            <span class="text-muted small">{{ c.location }}</span>
+          </td>
+          <td>
+            <span class="badge bg-subtle text-muted border">{{ c.misconduct_category }}</span>
+          </td>
+          <td>
+            <span class="small text-muted">{{ c.incident_date }}</span>
+          </td>
+          <td>
+            <span class="badge-priority {{ c.severity }}">{{ c.severity }}</span>
+          </td>
+          <td>
+            <span class="badge-status {{ c.complaint_status }}">{{ c.complaint_status }}</span>
+          </td>
+          <td class="text-end">
+            <a href="{{ url_for('officer_investigation', case_id=c.complaint_id) }}" class="btn btn-sm btn-brand"
+              style="background:var(--gradient-cyber);">
+              <i class="fas fa-magnifying-glass me-1"></i> Open Workbench
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <div class="stat-icon mx-auto mb-3" style="background: rgba(6,182,212,0.1); color: var(--accent-cyan);">
+      <i class="fas fa-folder-open"></i>
+    </div>
+    <h5 class="fw-bold text-heading mb-1">No Cases Assigned</h5>
+    <p class="text-muted small mb-0">You do not currently have any active corruption cases assigned to your badge.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('officerSearchBox')?.addEventListener('keyup', function () {
+    const query = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#officerCasesTable tbody tr');
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(query) ? '' : 'none';
+    });
+  });
+</script>
+{% endblock %}

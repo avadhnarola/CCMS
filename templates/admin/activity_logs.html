@@ -1,0 +1,46 @@
+{% extends 'admin/base.html' %}
+
+{% set active_page = 'activity_logs' %}
+{% block page_heading %}System Security &amp; Audit Logs{% endblock %}
+
+{% block content %}
+<div class="ccms-card p-4 shadow-sm mb-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-3">
+    <div>
+      <h5 class="fw-bold text-heading mb-0"><i class="fas fa-list-check text-violet me-2"></i>Audit Trail Ledger</h5>
+      <span class="text-muted small">Cryptographically timestamped record of administrative interventions and case dispatches</span>
+    </div>
+  </div>
+
+  {% if logs %}
+    <div class="table-responsive">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Actor</th>
+            <th>Action</th>
+            <th>Audit Details</th>
+            <th>IP Address</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td><span class="small text-muted text-nowrap">{{ log.timestamp }}</span></td>
+              <td><span class="badge bg-primary-subtle text-primary border">{{ log.actor }}</span></td>
+              <td><span class="fw-bold text-heading small">{{ log.action }}</span></td>
+              <td><span class="small text-muted">{{ log.details }}</span></td>
+              <td><code class="small">{{ log.ip_address or '127.0.0.1' }}</code></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="text-center py-5">
+      <p class="text-muted small">No activity logs recorded yet.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

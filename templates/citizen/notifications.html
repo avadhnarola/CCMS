@@ -1,0 +1,42 @@
+{% extends 'citizen/base.html' %}
+
+{% set active_page = 'notifications' %}
+{% block page_heading %}Vigilance Notices &amp; Security Alerts{% endblock %}
+
+{% block content %}
+<div class="ccms-card p-4 shadow-sm" style="max-width: 860px; margin: 0 auto;">
+  <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-4 border-bottom gap-3">
+    <div>
+      <h5 class="fw-bold text-heading mb-0"><i class="fas fa-bell text-primary me-2"></i>Whistleblower Alert Center</h5>
+      <span class="text-muted small">Official vigilance notices, system broadcasts, and case milestones</span>
+    </div>
+  </div>
+
+  {% if notifications %}
+    <div class="d-flex flex-column gap-3">
+      {% for notif in notifications %}
+        <div class="p-3 rounded bg-subtle border d-flex align-items-start gap-3">
+          <div class="stat-icon" style="width:42px; height:42px; font-size:1.1rem; background: rgba(37,99,235,0.1); color: var(--primary);">
+            <i class="fas fa-bullhorn"></i>
+          </div>
+          <div class="flex-grow-1">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <h6 class="fw-bold text-heading mb-0">{{ notif.title }}</h6>
+              <span class="text-muted" style="font-size:0.75rem;">{{ notif.created_at }}</span>
+            </div>
+            <p class="text-muted small mb-0">{{ notif.message }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center py-5">
+      <div class="stat-icon mx-auto mb-3" style="background: rgba(37,99,235,0.1); color: var(--primary);">
+        <i class="fas fa-bell-slash"></i>
+      </div>
+      <h5 class="fw-bold text-heading mb-1">No New Notifications</h5>
+      <p class="text-muted small mb-0">You're all caught up! Important case updates and security bulletins will appear here.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

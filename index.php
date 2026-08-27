@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1304,6 +1304,119 @@
       border-color: var(--clr-primary-light);
       animation: pulse 1.5s infinite;
     }
+
+    /* ============================================================
+       UNIVERSAL DROPDOWN DESIGN SYSTEM & SELECT ELEMENTS
+    ============================================================ */
+
+    select.form-select,
+    .form-select,
+    select.form-control,
+    select {
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      background-color: var(--clr-surface) !important;
+      color: var(--clr-heading) !important;
+      border: 1.5px solid var(--clr-border) !important;
+      border-radius: var(--radius-md, 12px) !important;
+      padding: 0.65rem 2.6rem 0.65rem 1.1rem !important;
+      font-weight: 500 !important;
+      font-size: 0.9rem !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 1rem center !important;
+      background-size: 1.1em !important;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      box-shadow: var(--shadow-sm) !important;
+    }
+
+    select.form-select:hover,
+    .form-select:hover,
+    select.form-control:hover,
+    select:hover {
+      border-color: var(--clr-primary) !important;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.12) !important;
+    }
+
+    select.form-select:focus,
+    .form-select:focus,
+    select.form-control:focus,
+    select:focus {
+      border-color: var(--clr-primary) !important;
+      box-shadow: 0 0 0 4px var(--clr-primary-light), 0 6px 18px rgba(37, 99, 235, 0.15) !important;
+      outline: none !important;
+    }
+
+    select option {
+      background-color: var(--clr-surface) !important;
+      color: var(--clr-heading) !important;
+      padding: 10px 14px !important;
+    }
+
+    .dropdown-menu {
+      background-color: var(--clr-surface) !important;
+      border: 1px solid var(--clr-border) !important;
+      border-radius: var(--radius-lg, 16px) !important;
+      box-shadow: 0 16px 40px -8px rgba(15, 23, 42, 0.15), 0 6px 16px -4px rgba(15, 23, 42, 0.08) !important;
+      backdrop-filter: blur(14px) !important;
+      -webkit-backdrop-filter: blur(14px) !important;
+      padding: 8px !important;
+    }
+
+    .dropdown-menu.show {
+      animation: mainDropdownSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes mainDropdownSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .dropdown-item {
+      color: var(--clr-text) !important;
+      font-weight: 500 !important;
+      font-size: 0.88rem !important;
+      border-radius: 10px !important;
+      padding: 9px 14px !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .dropdown-item i {
+      font-size: 1rem;
+      width: 20px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+      background-color: var(--clr-primary-light) !important;
+      color: var(--clr-primary) !important;
+      transform: translateX(4px);
+    }
+
+    .dropdown-item.active,
+    .dropdown-item:active {
+      background: var(--gradient-brand) !important;
+      color: #ffffff !important;
+    }
+
+    .dropdown-divider {
+      border-color: var(--clr-border) !important;
+      opacity: 0.7;
+    }
+
+    /* Remove default Bootstrap caret arrow */
+    .dropdown-toggle::after {
+      display: none !important;
+    }
   </style>
 </head>
 
@@ -1495,11 +1608,12 @@
               </button>
             </div>
           </form>
-          <div class="mt-2 d-flex align-items-center gap-2 text-muted small">
+          <div class="mt-2 d-flex align-items-center gap-2 text-muted small flex-wrap">
             <span>Try sample tracking keys:</span>
-            <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-8902-X7K9')">CCMS-8902-X7K9</span>
-            <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-4412-B2M1')">CCMS-4412-B2M1</span>
-            <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-9920-K4L8')">CCMS-9920-K4L8</span>
+            <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-2026-6775')">CCMS-2026-6775</span>
+            <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-2026-8902')">CCMS-2026-8902</span>
+            <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-2026-4412')">CCMS-2026-4412</span>
+            <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-2026-9920')">CCMS-2026-9920</span>
           </div>
         </div>
       </div>
@@ -2437,50 +2551,20 @@
             <div class="row g-2 align-items-center">
               <div class="col-md-6">
                 <div class="text-muted small">Tracking Reference:</div>
-                <div class="fw-bold font-monospace text-primary fs-5" id="activeKeyTitle">CCMS-8902-X7K9</div>
+                <div class="fw-bold font-monospace text-primary fs-5" id="activeKeyTitle">CCMS-2026-6775</div>
               </div>
               <div class="col-md-6 text-md-end">
                 <div class="text-muted small">Current Investigation Stage:</div>
-                <span
-                  class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 fw-bold">Investigation
-                  Active</span>
+                <span id="activeModalStageBadge"
+                  class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 fw-bold">Investigation Active</span>
               </div>
             </div>
           </div>
 
           <!-- Timeline Steps -->
           <h6 class="fw-bold text-dark mb-3">Case Progression Timeline</h6>
-
-          <div class="timeline-step completed">
-            <div class="timeline-dot"></div>
-            <div class="fw-bold text-dark small">1. Encrypted Complaint Received</div>
-            <div class="text-muted" style="font-size:0.8rem;">Received via AES-GCM-256 vault. EXIF and IP metadata
-              scrubbed.</div>
-            <div class="text-muted font-monospace" style="font-size:0.75rem;">Timestamp: 10 Aug 2026, 09:15 AM</div>
-          </div>
-
-          <div class="timeline-step completed">
-            <div class="timeline-dot"></div>
-            <div class="fw-bold text-dark small">2. AI Priority &amp; Evidence Validation</div>
-            <div class="text-muted" style="font-size:0.8rem;">Evidence files verified authentic. Urgency score
-              calculated: High (8.9/10).</div>
-            <div class="text-muted font-monospace" style="font-size:0.75rem;">Timestamp: 10 Aug 2026, 11:30 AM</div>
-          </div>
-
-          <div class="timeline-step active">
-            <div class="timeline-dot"></div>
-            <div class="fw-bold text-dark small">3. Vigilance Officer Investigation</div>
-            <div class="text-muted" style="font-size:0.8rem;">Assigned to Senior Inspector A. Verma, Anti-Corruption
-              Bureau. Official summons issued to department head.</div>
-            <div class="text-muted font-monospace text-primary" style="font-size:0.75rem;">Status: In Progress (SLA:
-              &lt; 24h remaining)</div>
-          </div>
-
-          <div class="timeline-step">
-            <div class="timeline-dot"></div>
-            <div class="fw-bold text-dark small">4. Final Legal Sanction &amp; Audit Log</div>
-            <div class="text-muted" style="font-size:0.8rem;">Execution of disciplinary or criminal proceedings and
-              publication to public audit ledger.</div>
+          <div id="modalTimelineContainer">
+            <!-- Dynamically populated by openSampleStatus() -->
           </div>
         </div>
       </div>
@@ -2585,9 +2669,66 @@
 
     // 7. Interactive Case Status Modal Trigger
     function openSampleStatus(key) {
-      if (!key) key = 'CCMS-8902-X7K9';
+      if (!key) key = 'CCMS-2026-6775';
+      key = key.trim();
       $('#activeKeyTitle').text(key);
       $('#modalKeyInput').val(key);
+
+      let stageName = "Investigation Active";
+      let badgeClass = "badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 fw-bold";
+      let step3Status = "active";
+      let step4Status = "";
+      let step2Status = "completed";
+      let step3Subtext = "Status: In Progress (SLA: < 24h remaining)";
+
+      if (key.includes("8902")) {
+        stageName = "Case Resolved";
+        badgeClass = "badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-1 fw-bold";
+        step3Status = "completed";
+        step4Status = "completed";
+        step3Subtext = "Status: Investigation Finalized (Extortion Confirmed)";
+      } else if (key.includes("9920")) {
+        stageName = "Pending Verification";
+        badgeClass = "badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-3 py-1 fw-bold";
+        step2Status = "active";
+        step3Status = "";
+        step4Status = "";
+        step3Subtext = "Status: Queueing for Officer Assignment";
+      }
+
+      $('#activeModalStageBadge').attr('class', badgeClass).text(stageName);
+
+      let timelineHtml = `
+        <div class="timeline-step completed">
+          <div class="timeline-dot"></div>
+          <div class="fw-bold text-dark small">1. Encrypted Complaint Received</div>
+          <div class="text-muted" style="font-size:0.8rem;">Received via AES-GCM-256 vault. EXIF and IP metadata scrubbed.</div>
+          <div class="text-muted font-monospace" style="font-size:0.75rem;">Timestamp: 10 Aug 2026, 09:15 AM</div>
+        </div>
+
+        <div class="timeline-step ${step2Status}">
+          <div class="timeline-dot"></div>
+          <div class="fw-bold text-dark small">2. AI Priority &amp; Evidence Validation</div>
+          <div class="text-muted" style="font-size:0.8rem;">Evidence files verified authentic. Urgency score calculated: High (8.9/10).</div>
+          <div class="text-muted font-monospace" style="font-size:0.75rem;">Timestamp: 10 Aug 2026, 11:30 AM</div>
+        </div>
+
+        <div class="timeline-step ${step3Status}">
+          <div class="timeline-dot"></div>
+          <div class="fw-bold text-dark small">3. Vigilance Officer Investigation</div>
+          <div class="text-muted" style="font-size:0.8rem;">Assigned to Senior Inspector A. Verma, Anti-Corruption Bureau. Official summons issued to department head.</div>
+          <div class="text-muted font-monospace text-primary" style="font-size:0.75rem;">${step3Subtext}</div>
+        </div>
+
+        <div class="timeline-step ${step4Status}">
+          <div class="timeline-dot"></div>
+          <div class="fw-bold text-dark small">4. Final Legal Sanction &amp; Audit Log</div>
+          <div class="text-muted" style="font-size:0.8rem;">Execution of disciplinary or criminal proceedings and publication to public audit ledger.</div>
+          ${step4Status === 'completed' ? '<div class="text-success font-monospace" style="font-size:0.75rem;">Status: Case Closed & Sanction Executed</div>' : ''}
+        </div>
+      `;
+
+      $('#modalTimelineContainer').html(timelineHtml);
       $('#statusModal').modal('show');
     }
 

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Officer Command Center | CCMS Vigilance{% endblock %}</title>
+  
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom Modern Design System -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="app-wrapper">
+  <!-- OFFICER SIDEBAR -->
+  <aside class="app-sidebar" id="officerSidebar" style="background: #070d1e; border-right: 1px solid rgba(6,182,212,0.2);">
+    <div class="app-sidebar-header">
+      <div class="d-flex align-items-center justify-content-between">
+        <a href="{{ url_for('officer_dashboard') }}" class="app-logo">
+          <img src="{{ url_for('static', filename='logo.png') }}" alt="CCMS" height="28" class="rounded">
+          <span style="color:#38bdf8;">CCMS</span>
+        </a>
+        <span class="badge bg-cyan text-dark fw-bold" style="font-size:0.65rem; letter-spacing:1px; background:#06b6d4;">OFFICER</span>
+      </div>
+      <div class="text-cyan small mt-1" style="font-size:0.65rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;">
+        <i class="fas fa-radar me-1"></i> ANTI-CORRUPTION BUREAU
+      </div>
+
+      <!-- Officer badge card -->
+      <div class="mt-3 p-2 rounded d-flex align-items-center gap-2" style="background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.25);">
+        <div class="user-avatar-circle" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); width:34px; height:34px; font-size:0.8rem;">
+          <i class="fas fa-shield-halved"></i>
+        </div>
+        <div class="overflow-hidden">
+          <div class="fw-bold text-white small text-truncate" style="max-width: 140px;">
+            {{ session.get('full_name', 'Inspector A. Verma') }}
+          </div>
+          <div class="text-warning small" style="font-size:0.7rem;">
+            <i class="fas fa-id-badge me-1"></i> {{ session.get('rank', 'Vigilance Officer') }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation items -->
+    <div class="app-sidebar-nav">
+      <div class="nav-section-title text-cyan">INVESTIGATION OPERATIONS</div>
+      <a href="{{ url_for('officer_dashboard') }}" class="sidebar-link {% if active_page == 'dashboard' %}active{% endif %}">
+        <i class="fas fa-gauge-high text-cyan"></i> <span>Command Radar</span>
+      </a>
+      <a href="{{ url_for('officer_assigned_cases') }}" class="sidebar-link {% if active_page == 'assigned_cases' %}active{% endif %}">
+        <i class="fas fa-briefcase text-primary"></i> <span>Assigned Cases</span>
+      </a>
+      <a href="{{ url_for('officer_priority_queue') }}" class="sidebar-link {% if active_page == 'priority_queue' %}active{% endif %}">
+        <i class="fas fa-list-ol text-danger"></i> <span>Priority Queue</span>
+      </a>
+      <a href="{{ url_for('officer_investigation') }}" class="sidebar-link {% if active_page == 'investigation' %}active{% endif %}">
+        <i class="fas fa-magnifying-glass text-warning"></i> <span>Investigation Desk</span>
+      </a>
+
+      <div class="nav-section-title text-cyan">FORENSICS &amp; AUDITS</div>
+      <a href="{{ url_for('officer_evidence') }}" class="sidebar-link {% if active_page == 'evidence' %}active{% endif %}">
+        <i class="fas fa-folder-tree text-violet"></i> <span>Evidence Vault</span>
+      </a>
+      <a href="{{ url_for('officer_history') }}" class="sidebar-link {% if active_page == 'history' %}active{% endif %}">
+        <i class="fas fa-clock-rotate-left text-emerald"></i> <span>Case Archives</span>
+      </a>
+      <a href="{{ url_for('officer_reports') }}" class="sidebar-link {% if active_page == 'reports' %}active{% endif %}">
+        <i class="fas fa-chart-column text-info"></i> <span>Clearance Reports</span>
+      </a>
+
+      <div class="nav-section-title text-cyan">OFFICER ACCOUNT</div>
+      <a href="{{ url_for('officer_notifications') }}" class="sidebar-link {% if active_page == 'notifications' %}active{% endif %}">
+        <i class="fas fa-bell text-warning"></i> <span>Urgent Alerts</span>
+      </a>
+      <a href="{{ url_for('officer_profile') }}" class="sidebar-link {% if active_page == 'profile' %}active{% endif %}">
+        <i class="fas fa-user-shield text-muted"></i> <span>Officer Credentials</span>
+      </a>
+      <a href="{{ url_for('logout') }}" class="sidebar-link text-danger mt-2">
+        <i class="fas fa-power-off"></i> <span>Secure Logoff</span>
+      </a>
+    </div>
+
+    <!-- Live SLA indicator -->
+    <div class="p-3 border-top border-secondary border-opacity-25" style="background: rgba(0,0,0,0.3);">
+      <div class="d-flex align-items-center justify-content-between">
+        <span class="text-white small fw-bold"><i class="fas fa-circle text-emerald me-1" style="font-size:0.5rem;"></i> Vigilance Mesh</span>
+        <span class="badge bg-danger">SLA Active</span>
+      </div>
+      <div class="text-muted mt-1" style="font-size:0.7rem;">Active Case SLA: &lt; 24h Remaining</div>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEW -->
+  <main class="app-main">
+    <header class="app-topbar" style="border-bottom: 1px solid rgba(6,182,212,0.15);">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn d-lg-none text-heading p-0 fs-4" onclick="document.getElementById('officerSidebar').classList.toggle('show')">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h5 class="fw-bold mb-0 text-heading">{% block page_heading %}Officer Investigation Command{% endblock %}</h5>
+      </div>
+
+      <div class="d-flex align-items-center gap-3">
+        <!-- Quick Action: Process next priority case -->
+        <a href="{{ url_for('officer_priority_queue') }}" class="btn btn-sm btn-cyber d-none d-md-inline-flex">
+          <i class="fas fa-bolt me-1"></i> Process Urgent Case
+        </a>
+
+        <!-- Theme Toggle -->
+        <button class="theme-toggle-btn" title="Toggle Dark/Light Mode">
+          <i class="fas fa-moon"></i>
+        </button>
+
+        <!-- Officer User profile -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="user-avatar-circle" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">
+            <i class="fas fa-shield"></i>
+          </div>
+          <div class="d-none d-md-block text-start">
+            <div class="fw-bold small text-heading">{{ session.get('full_name', 'Officer') }}</div>
+            <div class="text-info" style="font-size:0.7rem;">Vigilance Officer</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Flash message alerts -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="p-3 pb-0">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm border" role="alert">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas {% if category == 'success' %}fa-circle-check text-success{% elif category == 'danger' or category == 'error' %}fa-triangle-exclamation text-danger{% else %}fa-circle-info text-primary{% endif %} fs-5"></i>
+                <div>{{ message }}</div>
+              </div>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="app-content">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

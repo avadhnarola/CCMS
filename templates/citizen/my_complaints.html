@@ -1,0 +1,127 @@
+{% extends 'citizen/base.html' %}
+
+{% set active_page = 'my_complaints' %}
+{% block page_heading %}My Filed Complaints Dossier{% endblock %}
+
+{% block content %}
+<div class="ccms-card p-4 shadow-sm mb-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-3">
+    <div>
+      <h5 class="fw-bold text-heading mb-0"><i class="fas fa-folder-tree text-primary me-2"></i>Whistleblower Grievance
+        Archive</h5>
+      <span class="text-muted small">Comprehensive log of all corruption reports initiated by your account</span>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2">
+      <!-- Status Filter dropdown -->
+      <select id="statusFilterSelect" class="form-select form-select-sm" style="width: auto;"
+        onchange="filterComplaintsTable()">
+        <option value="all">All Statuses</option>
+        <option value="pending">Pending</option>
+        <option value="investigation">Investigating / Active</option>
+        <option value="resolved">Resolved</option>
+      </select>
+
+      <!-- Search input -->
+      <div class="input-group input-group-sm" style="width: 220px;">
+        <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-search"></i></span>
+        <input type="text" id="complaintsSearchBox" class="form-control border-start-0"
+          placeholder="Search title or ID...">
+      </div>
+
+      <a href="{{ url_for('file_complaint') }}" class="btn btn-sm btn-brand">
+        <i class="fas fa-plus"></i> File New
+      </a>
+    </div>
+  </div>
+
+  {% if complaints %}
+  <div class="table-responsive">
+    <table class="table-custom" id="userComplaintsTable">
+      <thead>
+        <tr>
+          <th>Reference ID</th>
+          <th>Title &amp; Sector</th>
+          <th>Misconduct Category</th>
+          <th>Incident Date</th>
+          <th>Severity</th>
+          <th>Status</th>
+          <th class="text-end">Case Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in complaints %}
+        <tr data-status="{{ item.complaint_status.lower() }}">
+          <td>
+            <span class="fw-bold text-primary brand-font">{{ item.complaint_id }}</span>
+          </td>
+          <td>
+            <div class="fw-semibold text-heading text-truncate" style="max-width: 240px;">{{ item.complaint_title }}
+            </div>
+            <span class="text-muted small">{{ item.sector }}</span>
+          </td>
+          <td>
+            <span class="badge bg-subtle text-muted border">{{ item.misconduct_category }}</span>
+          </td>
+          <td>
+            <span class="small text-muted">{{ item.incident_date }}</span>
+          </td>
+          <td>
+            <span class="badge-priority {{ item.severity }}">{{ item.severity }}</span>
+          </td>
+          <td>
+            <span class="badge-status {{ item.complaint_status }}">{{ item.complaint_status }}</span>
+          </td>
+          <td class="text-end">
+            <a href="{{ url_for('track_complaint') }}?id={{ item.complaint_id }}" class="btn btn-sm btn-outline-custom"
+              title="View Full Dossier">
+              <i class="fas fa-eye text-primary"></i> Dossier
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <div class="stat-icon mx-auto mb-3" style="background: rgba(37,99,235,0.1); color: var(--primary);">
+      <i class="fas fa-folder-open"></i>
+    </div>
+    <h5 class="fw-bold text-heading mb-1">No Complaints Found</h5>
+    <p class="text-muted small mb-3">You have not submitted any corruption complaints.</p>
+    <a href="{{ url_for('file_complaint') }}" class="btn btn-brand">File Your First Complaint</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function filterComplaintsTable() {
+    const status = document.getElementById('statusFilterSelect').value.toLowerCase();
+    const rows = document.querySelectorAll('#userComplaintsTable tbody tr');
+    rows.forEach(row => {
+      const rowStatus = row.getAttribute('data-status') || '';
+      if (status === 'all') {
+        row.style.display = '';
+      } else if (status === 'investigation' && (rowStatus.includes('investig') || rowStatus.includes('review') || rowStatus.includes('active'))) {
+        row.style.display = '';
+      } else if (rowStatus.includes(status)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  document.getElementById('complaintsSearchBox')?.addEventListener('keyup', function () {
+    const query = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#userComplaintsTable tbody tr');
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(query) ? '' : 'none';
+    });
+  });
+</script>
+{% endblock %}

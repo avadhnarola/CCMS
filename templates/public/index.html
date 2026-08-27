@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+
+{% block title %}CCMS | Anti-Corruption Command & Whistleblower Protection Portal{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="py-5 position-relative overflow-hidden" style="background: radial-gradient(circle at 50% 0%, rgba(37,99,235,0.08) 0%, var(--bg-primary) 75%);">
+  <div class="container py-lg-5">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill mb-3 bg-primary-subtle border border-primary-subtle">
+          <span class="badge bg-primary rounded-pill">SECURE</span>
+          <span class="small fw-bold text-primary"><i class="fas fa-lock me-1"></i> End-to-End Encrypted Whistleblower Protocol</span>
+        </div>
+
+        <h1 class="display-4 fw-black mb-3 text-heading brand-font" data-i18n="hero_title">
+          Zero-Tolerance Anti-Corruption Command System
+        </h1>
+
+        <p class="lead text-muted mb-4" data-i18n="hero_sub" style="font-size: 1.15rem; line-height: 1.8;">
+          Report corruption securely with military-grade AES-256 encryption. Track investigation progress in real time with complete whistleblower identity protection and legal immunity.
+        </p>
+
+        <div class="d-flex flex-wrap gap-3 mb-4">
+          <a href="{{ url_for('file_complaint') }}" class="btn btn-brand btn-lg px-4 py-3">
+            <i class="fas fa-shield-halved me-1"></i> <span data-i18n="file_btn">File Encrypted Complaint</span>
+          </a>
+          <a href="{{ url_for('track_complaint') }}" class="btn btn-outline-custom btn-lg px-4 py-3">
+            <i class="fas fa-route me-1 text-cyan"></i> <span data-i18n="track_btn">Track Complaint Status</span>
+          </a>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="d-flex flex-wrap align-items-center gap-4 text-muted small pt-2">
+          <div class="d-flex align-items-center gap-2">
+            <i class="fas fa-check-double text-emerald fs-5"></i>
+            <span>Central Vigilance Commission Standard</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <i class="fas fa-user-secret text-info fs-5"></i>
+            <span>EXIF &amp; IP Scrubbed Anonymity</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual Card / Quick Tracker Widget -->
+      <div class="col-lg-5">
+        <div class="ccms-card p-4 glass-panel shadow-lg border-primary border-opacity-25 position-relative">
+          <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
+            <div class="d-flex align-items-center gap-2">
+              <div class="user-avatar-circle" style="background:var(--gradient-cyber);">
+                <i class="fas fa-radar"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-0 text-heading">Live Case Tracker</h6>
+                <span class="text-muted" style="font-size:0.75rem;">Instant Verification Engine</span>
+              </div>
+            </div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="fas fa-circle me-1" style="font-size:0.5rem;"></i> Active</span>
+          </div>
+
+          <form action="{{ url_for('track_complaint') }}" method="GET" class="mb-3">
+            <label class="form-label small fw-bold text-heading">Enter Complaint Reference ID</label>
+            <div class="input-group mb-2">
+              <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-hashtag"></i></span>
+              <input type="text" name="id" class="form-control border-start-0" placeholder="e.g. CCMS-2026-6775" required>
+            </div>
+            <button type="submit" class="btn btn-brand w-100 justify-content-center py-2.5">
+              <i class="fas fa-magnifying-glass me-1"></i> Track Investigation Live
+            </button>
+          </form>
+
+          <div class="p-3 rounded bg-subtle border">
+            <div class="d-flex align-items-center justify-content-between text-muted small mb-1">
+              <span>Security Protocol</span>
+              <span class="fw-bold text-heading">SHA-256 Proof</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between text-muted small mb-1">
+              <span>Avg. Vigilance Response</span>
+              <span class="fw-bold text-emerald">&lt; 24 Hours</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between text-muted small">
+              <span>Whistleblower Identity</span>
+              <span class="fw-bold text-primary">100% Redacted</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE STATS METRICS -->
+<section class="py-4 border-top border-bottom" style="background: var(--bg-surface);">
+  <div class="container">
+    <div class="row g-3">
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(37,99,235,0.1); color: var(--primary);">
+            <i class="fas fa-folder-tree"></i>
+          </div>
+          <div>
+            <div class="stat-val text-primary">{{ stats.total_complaints }}</div>
+            <div class="stat-label" data-i18n="stats_total">Complaints Filed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(16,185,129,0.1); color: var(--accent-emerald);">
+            <i class="fas fa-circle-check"></i>
+          </div>
+          <div>
+            <div class="stat-val text-emerald" style="color:var(--accent-emerald);">{{ stats.resolved_complaints }}</div>
+            <div class="stat-label" data-i18n="stats_resolved">Sanctioned &amp; Resolved</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(6,182,212,0.1); color: var(--accent-cyan);">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          <div>
+            <div class="stat-val" style="color:var(--accent-cyan);">{{ stats.total_officers }}</div>
+            <div class="stat-label" data-i18n="stats_officers">Vigilance Officers</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(124,58,237,0.1); color: var(--accent-violet);">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div>
+            <div class="stat-val" style="color:var(--accent-violet);">{{ stats.resolution_rate }}%</div>
+            <div class="stat-label" data-i18n="stats_rate">Resolution Rate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CORRUPTION CATEGORIES GRID -->
+<section class="py-5">
+  <div class="container py-lg-4">
+    <div class="text-center mb-5">
+      <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1.5 rounded-pill mb-2 fw-bold">REPORTABLE MISCONDUCT</span>
+      <h2 class="fw-bold brand-font text-heading">Public Sector Misconduct Categories</h2>
+      <p class="text-muted mx-auto" style="max-width: 650px;">
+        CCMS covers all classifications of administrative malpractice, illicit bribes, procurement fraud, and civil rights infringements.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      {% for cat in categories %}
+        <div class="col-md-6 col-lg-4">
+          <div class="ccms-card ccms-card-interactive h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="stat-icon" style="background: var(--bg-subtle); color: var(--primary);">
+                  <i class="fas {{ cat.icon }}"></i>
+                </div>
+                <span class="badge bg-subtle text-muted border">{{ cat.dept }}</span>
+              </div>
+              <h5 class="fw-bold text-heading mb-2">{{ cat.name }}</h5>
+              <p class="text-muted small mb-3">{{ cat.description }}</p>
+            </div>
+            <a href="{{ url_for('file_complaint') }}?category={{ cat.name }}" class="btn btn-sm btn-outline-custom w-100 text-center">
+              Report in this Sector <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 4 PILLARS OF WHISTLEBLOWER SECURITY -->
+<section class="py-5 border-top" style="background: var(--bg-surface);">
+  <div class="container py-lg-4">
+    <div class="text-center mb-5">
+      <span class="badge bg-emerald-subtle text-success border border-success-subtle px-3 py-1.5 rounded-pill mb-2 fw-bold">IRONCLAD INTEGRITY</span>
+      <h2 class="fw-bold brand-font text-heading">Military-Grade Whistleblower Protection</h2>
+      <p class="text-muted mx-auto" style="max-width: 650px;">
+        Designed from the ground up to prevent retaliation and guarantee complete anonymity for every reporting citizen.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="ccms-card text-center p-4 h-100">
+          <div class="stat-icon mx-auto mb-3" style="background: rgba(37,99,235,0.1); color: var(--primary);">
+            <i class="fas fa-lock"></i>
+          </div>
+          <h5 class="fw-bold text-heading mb-2">AES-256 GCM Vault</h5>
+          <p class="text-muted small mb-0">Every statement and uploaded evidence file is encrypted using symmetric 256-bit Galois/Counter Mode.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="ccms-card text-center p-4 h-100">
+          <div class="stat-icon mx-auto mb-3" style="background: rgba(16,185,129,0.1); color: var(--accent-emerald);">
+            <i class="fas fa-user-secret"></i>
+          </div>
+          <h5 class="fw-bold text-heading mb-2">Metadata Scrubbing</h5>
+          <p class="text-muted small mb-0">EXIF timestamps, geolocation coordinates, and submitter IP addresses are automatically purged upon intake.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="ccms-card text-center p-4 h-100">
+          <div class="stat-icon mx-auto mb-3" style="background: rgba(245,158,11,0.1); color: var(--accent-amber);">
+            <i class="fas fa-diagram-project"></i>
+          </div>
+          <h5 class="fw-bold text-heading mb-2">Greedy Auto-Assign</h5>
+          <p class="text-muted small mb-0">Mathematical workload distribution prevents departmental cover-ups and accelerates swift case assignment.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="ccms-card text-center p-4 h-100">
+          <div class="stat-icon mx-auto mb-3" style="background: rgba(124,58,237,0.1); color: var(--accent-violet);">
+            <i class="fas fa-scale-balanced"></i>
+          </div>
+          <h5 class="fw-bold text-heading mb-2">Statutory Protection</h5>
+          <p class="text-muted small mb-0">Backed by the Whistleblowers Protection Act. Confidentiality breach is punishable by criminal indictment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECENT RESOLVED CASES TICKER -->
+<section class="py-5">
+  <div class="container py-lg-4">
+    <div class="row align-items-center g-4 mb-4">
+      <div class="col-md-8">
+        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1.5 rounded-pill mb-2 fw-bold">PUBLIC AUDIT LEDGER</span>
+        <h2 class="fw-bold brand-font text-heading mb-0">Recently Sanctioned Cases</h2>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <a href="{{ url_for('track_complaint') }}" class="btn btn-outline-custom">
+          Lookup Your Case Reference <i class="fas fa-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      {% for item in recent_cases %}
+        <div class="col-md-6">
+          <div class="ccms-card p-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+              <div class="user-avatar-circle" style="background: rgba(16,185,129,0.15); color: var(--accent-emerald);">
+                <i class="fas fa-gavel"></i>
+              </div>
+              <div>
+                <div class="fw-bold text-heading">{{ item.complaint_title }}</div>
+                <div class="text-muted small">
+                  <span>{{ item.sector }}</span> &bull; <span>{{ item.complaint_id }}</span>
+                </div>
+              </div>
+            </div>
+            <span class="badge-status {{ item.complaint_status }}">{{ item.complaint_status }}</span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- EMERGENCY HELPLINE & CONTACT FORM -->
+<section class="py-5 border-top" style="background: var(--bg-surface);">
+  <div class="container py-lg-4">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1.5 rounded-pill mb-2 fw-bold">DIRECT VIGILANCE DESK</span>
+        <h2 class="fw-bold brand-font text-heading mb-3">Reach Our Central Vigilance Directorate</h2>
+        <p class="text-muted mb-4">
+          Need urgent protection or assistance regarding active extortion or harassment? Submit an encrypted inquiry to our senior vigilance inspectors immediately.
+        </p>
+
+        <div class="d-flex flex-column gap-3">
+          <div class="d-flex align-items-center gap-3 p-3 rounded bg-subtle border">
+            <div class="user-avatar-circle" style="background:var(--gradient-brand);"><i class="fas fa-phone-volume"></i></div>
+            <div>
+              <div class="fw-bold text-heading">1800-11-CCMS (Toll-Free 24/7)</div>
+              <div class="text-muted small">Priority Emergency Whistleblower Line</div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-3 p-3 rounded bg-subtle border">
+            <div class="user-avatar-circle" style="background:var(--gradient-cyber);"><i class="fas fa-envelope-open-text"></i></div>
+            <div>
+              <div class="fw-bold text-heading">vigilance.director@ccms.gov.in</div>
+              <div class="text-muted small">Encrypted PGP Key Available</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="ccms-card p-4 shadow-lg border-primary border-opacity-25">
+          <h4 class="fw-bold text-heading mb-3"><i class="fas fa-paper-plane text-primary me-2"></i>Send Direct Message</h4>
+          <form action="{{ url_for('contact') }}" method="POST">
+            <div class="mb-3">
+              <label class="form-label">Your Name / Pseudonym</label>
+              <input type="text" name="name" class="form-control" placeholder="e.g. Citizen Whistleblower" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Contact Email or Secure Channel</label>
+              <input type="email" name="email" class="form-control" placeholder="e.g. secure.citizen@proton.me" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Subject</label>
+              <input type="text" name="subject" class="form-control" placeholder="Inquiry or Urgent Assistance" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Message Details</label>
+              <textarea name="message" class="form-control" rows="4" placeholder="Type your message with relevant department or case references..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-brand w-100 justify-content-center py-2.5">
+              <i class="fas fa-lock me-1"></i> Send Encrypted Dispatch
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends 'officer/base.html' %}
+
+{% set active_page = 'investigation' %}
+{% block page_heading %}Vigilance Investigation Workbench{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+  {% if complaint %}
+  <!-- Case Header Banner -->
+  <div class="ccms-card p-4 mb-4 shadow-sm border-cyan border-opacity-25">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <span class="badge-priority {{ complaint.severity }}">{{ complaint.severity }} Urgency</span>
+          <span class="badge-status {{ complaint.complaint_status }}">{{ complaint.complaint_status }}</span>
+          <span class="badge bg-subtle text-muted border">{{ complaint.sector }}</span>
+        </div>
+        <h3 class="fw-bold text-heading brand-font mb-1">{{ complaint.complaint_id }} - {{ complaint.complaint_title }}
+        </h3>
+        <div class="text-muted small">
+          <span>Misconduct: <strong>{{ complaint.misconduct_category }}</strong></span> &bull;
+          <span>Incident Date: <strong>{{ complaint.incident_date }}</strong></span> &bull;
+          <span>Location: <strong>{{ complaint.location }}</strong></span>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <button onclick="window.print()" class="btn btn-sm btn-outline-custom">
+          <i class="fas fa-print me-1"></i> Print Case Slip
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left Column: Case Details & Evidence -->
+    <div class="col-lg-7">
+      <!-- Narrative Statement -->
+      <div class="ccms-card p-4 mb-4 shadow-sm">
+        <h5 class="fw-bold text-heading mb-3"><i class="fas fa-file-lines text-cyan me-2"></i>Whistleblower Statement
+        </h5>
+        <div class="p-3 rounded bg-subtle border text-body" style="white-space: pre-line; line-height: 1.7;">
+          {{ complaint.description }}
+        </div>
+        <div class="mt-3 text-muted small d-flex align-items-center gap-2">
+          <i class="fas fa-user-secret text-info"></i>
+          <span>Whistleblower Identity: <strong>{{ 'Confidential Anonymous Whistleblower' if complaint.anonymous_mode
+              else 'Verified Citizen' }}</strong></span>
+        </div>
+      </div>
+
+      <!-- Evidence Files -->
+      <div class="ccms-card p-4 shadow-sm mb-4">
+        <h5 class="fw-bold text-heading mb-3"><i class="fas fa-vault text-violet me-2"></i>Forensic Evidence Files</h5>
+        {% if complaint.evidence_file %}
+        <div class="row g-2">
+          {% for file in complaint.evidence_file.split(',') %}
+          {% if file.strip() %}
+          <div class="col-md-6">
+            <div class="p-3 rounded bg-subtle border d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center gap-2 overflow-hidden">
+                <i class="fas fa-file-shield text-primary fs-4"></i>
+                <div class="text-truncate small fw-semibold text-heading">{{ file.strip() }}</div>
+              </div>
+              <a href="{{ url_for('uploaded_file', filename=file.strip()) }}" target="_blank"
+                class="btn btn-sm btn-outline-custom">
+                <i class="fas fa-download"></i> View
+              </a>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted small mb-0">No digital evidence files attached to this complaint intake.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Right Column: Officer Actions & Notes -->
+    <div class="col-lg-5">
+      <!-- Update Status Form -->
+      <div class="ccms-card p-4 mb-4 shadow-sm border-primary border-opacity-25">
+        <h5 class="fw-bold text-heading mb-3"><i class="fas fa-sliders text-primary me-2"></i>Update Case Lifecycle</h5>
+        <form action="{{ url_for('officer_investigation', case_id=complaint.complaint_id) }}" method="POST">
+          <input type="hidden" name="action" value="update_status">
+
+          <div class="mb-3">
+            <label class="form-label">Investigation Status</label>
+            <select name="status" class="form-select" required>
+              <option value="Pending" {% if complaint.complaint_status=='Pending' %}selected{% endif %}>Pending
+                Verification</option>
+              <option value="Under Review" {% if complaint.complaint_status=='Under Review' %}selected{% endif %}>Under
+                Review</option>
+              <option value="Investigation Active" {% if complaint.complaint_status=='Investigation Active' %}selected{%
+                endif %}>Investigation Active (Summons Issued)</option>
+              <option value="Resolved" {% if complaint.complaint_status=='Resolved' %}selected{% endif %}>Resolved &amp;
+                Disciplinary Sanction Executed</option>
+              <option value="Closed" {% if complaint.complaint_status=='Closed' %}selected{% endif %}>Closed / Archived
+              </option>
+              <option value="Rejected" {% if complaint.complaint_status=='Rejected' %}selected{% endif %}>Rejected /
+                Unsubstantiated</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Investigation Findings &amp; Officer Log Notes</label>
+            <textarea name="notes" class="form-control" rows="5"
+              placeholder="Record interrogation summaries, summons receipts, audit cross-verifications, or disciplinary verdict...">{{ complaint.investigation_notes or '' }}</textarea>
+          </div>
+
+          <button type="submit" class="btn btn-cyber w-100 justify-content-center py-2.5">
+            <i class="fas fa-floppy-disk me-1"></i> Save Investigation Findings
+          </button>
+        </form>
+      </div>
+
+      <!-- Case Metadata Card -->
+      <div class="ccms-card p-4 shadow-sm">
+        <h6 class="fw-bold text-heading mb-3"><i class="fas fa-circle-info text-cyan me-2"></i>Audit Specifications</h6>
+        <div class="d-flex flex-column gap-2 small">
+          <div class="d-flex justify-content-between pb-1 border-bottom">
+            <span class="text-muted">Assigned Officer:</span>
+            <span class="fw-bold text-heading">{{ complaint.assigned_officer or session.get('full_name', 'Inspector A.
+              Verma') }}</span>
+          </div>
+          <div class="d-flex justify-content-between pb-1 border-bottom">
+            <span class="text-muted">Intake Timestamp:</span>
+            <span class="fw-bold text-heading">{{ complaint.created_at or complaint.incident_date }}</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="text-muted">Security Protocol:</span>
+            <span class="fw-bold text-emerald">AES-256-GCM Proof</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="ccms-card p-5 text-center shadow-sm">
+    <div class="stat-icon mx-auto mb-3" style="background: rgba(6,182,212,0.1); color: var(--accent-cyan);">
+      <i class="fas fa-magnifying-glass"></i>
+    </div>
+    <h4 class="fw-bold text-heading mb-2">Select a Case to Investigate</h4>
+    <p class="text-muted small mx-auto mb-4" style="max-width: 480px;">
+      Choose any assigned corruption case from your roster or priority queue to access the investigation workbench.
+    </p>
+    <a href="{{ url_for('officer_assigned_cases') }}" class="btn btn-cyber">View Assigned Cases</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

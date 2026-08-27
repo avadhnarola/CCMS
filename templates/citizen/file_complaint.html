@@ -1,0 +1,137 @@
+{% extends 'citizen/base.html' %}
+
+{% set active_page = 'file_complaint' %}
+{% block page_heading %}File Encrypted Corruption Complaint{% endblock %}
+
+{% block content %}
+<div class="container py-2" style="max-width: 900px;">
+  <!-- Form Container -->
+  <div class="ccms-card p-4 p-md-5 shadow-lg border-primary border-opacity-25">
+    <!-- Header -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-4 border-bottom gap-3">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-0.5 rounded-pill small fw-bold">
+            <i class="fas fa-lock me-1"></i> AES-256 VAULT INTAKE
+          </span>
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-0.5 rounded-pill small fw-bold">
+            EXIF &amp; IP REDACTED
+          </span>
+        </div>
+        <h3 class="fw-bold text-heading brand-font mb-0">Corruption Intake Dossier</h3>
+      </div>
+      <div class="text-md-end">
+        <div class="text-muted small">Auto-Generated Tracking Reference:</div>
+        <div class="fw-bold text-primary brand-font fs-5">{{ generated_id }}</div>
+      </div>
+    </div>
+
+    <!-- Complaint Form -->
+    <form action="{{ url_for('file_complaint') }}" method="POST" enctype="multipart/form-data" id="complaintForm">
+      <input type="hidden" name="complaint_id" value="{{ generated_id }}">
+
+      <!-- Section 1: Complaint Core Identification -->
+      <h5 class="fw-bold text-heading mb-3"><i class="fas fa-file-signature text-primary me-2"></i>1. Incident Identification</h5>
+      
+      <div class="mb-3">
+        <label class="form-label">Complaint Title / Incident Summary <span class="text-danger">*</span></label>
+        <input type="text" name="title" class="form-control" placeholder="e.g. Demand of 1000$ Bribe for Title Deed Registration at District Office" required>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label">Misconduct Category <span class="text-danger">*</span></label>
+          <select name="category" class="form-select" required>
+            <option value="" selected disabled>Select Misconduct Category...</option>
+            {% for cat in categories %}
+              <option value="{{ cat.name }}" {% if selected_category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Government Department / Sector <span class="text-danger">*</span></label>
+          <select name="department" class="form-select" required>
+            <option value="" selected disabled>Select Department...</option>
+            {% for dept in departments %}
+              <option value="{{ dept.name }}">{{ dept.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Section 2: Date, Time & Geolocation -->
+      <h5 class="fw-bold text-heading mb-3"><i class="fas fa-location-crosshairs text-emerald me-2"></i>2. Time &amp; Location</h5>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <label class="form-label">Incident Date <span class="text-danger">*</span></label>
+          <input type="date" name="date" class="form-control" value="{{ current_date }}" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Approximate Time</label>
+          <input type="time" name="time" class="form-control" value="10:00">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Estimated Urgency / Severity</label>
+          <select name="priority" class="form-select">
+            <option value="Low">Low - Administrative Delay</option>
+            <option value="Medium" selected>Medium - Irregularity</option>
+            <option value="High">High - Direct Bribery / Extortion</option>
+            <option value="Critical">Critical - Threat / Massive Fraud</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Specific Location / Office / Branch Address <span class="text-danger">*</span></label>
+          <input type="text" name="location" class="form-control" placeholder="e.g. Zonal Revenue Office, Counter 4, City Municipal Center" required>
+        </div>
+      </div>
+
+      <!-- Section 3: Whistleblower Statement -->
+      <h5 class="fw-bold text-heading mb-3"><i class="fas fa-align-left text-cyan me-2"></i>3. Detailed Whistleblower Statement</h5>
+      
+      <div class="mb-4">
+        <label class="form-label">Full Narrative Description <span class="text-danger">*</span></label>
+        <textarea name="description" class="form-control" rows="5" placeholder="Describe the incident with complete clarity: official names or designations involved, exact demands made, payment methods, witnesses present, and chronological sequence of events..." required></textarea>
+        <div class="form-text text-muted small">Do not include your own personal name inside the narrative if you desire 100% anonymous processing.</div>
+      </div>
+
+      <!-- Section 4: Evidence Files Upload (Dropzone) -->
+      <h5 class="fw-bold text-heading mb-3"><i class="fas fa-vault text-violet me-2"></i>4. Encrypted Evidence Upload</h5>
+      
+      <div class="mb-4">
+        <div class="file-dropzone" id="fileDropzone" onclick="document.getElementById('evidenceFileInput').click()">
+          <i class="fas fa-cloud-arrow-up"></i>
+          <h6 class="fw-bold text-heading mb-1">Drag &amp; Drop Evidence Files Here</h6>
+          <p class="text-muted small mb-2">Audio recordings, video clips, payment receipts, forged documents, photos, PDFs</p>
+          <button type="button" class="btn btn-sm btn-outline-custom">Browse Local Files</button>
+          <input type="file" name="evidence_files" id="evidenceFileInput" class="d-none" multiple accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.txt,.zip">
+        </div>
+
+        <!-- File list container -->
+        <div id="fileListPreview" class="mt-3"></div>
+      </div>
+
+      <!-- Section 5: Anonymity & Submission -->
+      <div class="p-3 rounded bg-subtle border mb-4">
+        <div class="form-check form-switch d-flex align-items-center justify-content-between p-0">
+          <div>
+            <label class="form-check-label fw-bold text-heading" for="anonymousSwitch">
+              <i class="fas fa-user-secret text-primary me-1"></i> Submit in Anonymous Mode
+            </label>
+            <div class="text-muted small">When enabled, your name and contact details are withheld even from the investigating vigilance officers.</div>
+          </div>
+          <input class="form-check-input ms-auto" type="checkbox" name="anonymous" id="anonymousSwitch" value="1" checked style="width: 2.5em; height: 1.3em;">
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-2">
+        <a href="{{ url_for('citizen_dashboard') }}" class="btn btn-outline-custom">Cancel</a>
+        <button type="submit" class="btn btn-brand btn-lg px-4">
+          <i class="fas fa-lock me-1"></i> Submit Encrypted Complaint
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

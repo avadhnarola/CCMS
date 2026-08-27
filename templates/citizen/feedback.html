@@ -1,0 +1,92 @@
+{% extends 'citizen/base.html' %}
+
+{% set active_page = 'feedback' %}
+{% block page_heading %}Investigation Satisfaction Feedback{% endblock %}
+
+{% block content %}
+<div class="container py-2" style="max-width: 760px;">
+  <div class="ccms-card p-4 p-md-5 shadow-lg border-primary border-opacity-25">
+    <div class="text-center mb-4">
+      <div class="stat-icon mx-auto mb-3" style="background: rgba(245,158,11,0.1); color: var(--accent-amber); width:60px; height:60px; font-size:1.6rem;">
+        <i class="fas fa-star"></i>
+      </div>
+      <h3 class="fw-bold text-heading brand-font mb-1">Whistleblower Feedback Review</h3>
+      <p class="text-muted small">Help us evaluate the responsiveness, integrity, and investigative speed of Anti-Corruption Bureau vigilance officers.</p>
+    </div>
+
+    <form action="{{ url_for('citizen_feedback') }}" method="POST">
+      <!-- Select Complaint -->
+      <div class="mb-4">
+        <label class="form-label">Select Case Reference <span class="text-danger">*</span></label>
+        <select name="complaint_id" class="form-select" required>
+          <option value="" selected disabled>Choose your complaint...</option>
+          {% for item in user_complaints %}
+            <option value="{{ item.complaint_id }}" {% if selected_id == item.complaint_id %}selected{% endif %}>
+              {{ item.complaint_id }} - {{ item.complaint_title }} (Status: {{ item.complaint_status }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Rating (1 to 5 Stars) -->
+      <div class="mb-4 text-center">
+        <label class="form-label d-block mb-2">Overall Vigilance Performance Rating</label>
+        <div class="d-flex justify-content-center gap-3 fs-3" id="starRatingGroup">
+          {% for i in range(1, 6) %}
+            <label class="cursor-pointer" style="cursor: pointer;">
+              <input type="radio" name="rating" value="{{ i }}" class="d-none" {% if i == 5 %}checked{% endif %}>
+              <i class="fas fa-star text-warning" data-val="{{ i }}"></i>
+            </label>
+          {% endfor %}
+        </div>
+        <div class="small text-muted mt-1" id="ratingDesc">Excellent (5 / 5)</div>
+      </div>
+
+      <!-- Feedback Remarks -->
+      <div class="mb-4">
+        <label class="form-label">Your Investigation Feedback / Testimonial <span class="text-danger">*</span></label>
+        <textarea name="feedback" class="form-control" rows="5" placeholder="Share your experience regarding officer responsiveness, evidence handling, confidentiality protection, or suggestions for improving the vigilance command system..." required></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-brand w-100 justify-content-center py-2.5">
+        <i class="fas fa-paper-plane me-1"></i> Submit Confidential Rating
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const stars = document.querySelectorAll('#starRatingGroup i');
+const radios = document.querySelectorAll('#starRatingGroup input');
+const desc = document.getElementById('ratingDesc');
+
+const descs = {
+  1: "Poor (1 / 5)",
+  2: "Fair (2 / 5)",
+  3: "Good (3 / 5)",
+  4: "Very Good (4 / 5)",
+  5: "Excellent (5 / 5)"
+};
+
+stars.forEach(star => {
+  star.addEventListener('click', function() {
+    const val = parseInt(this.getAttribute('data-val'));
+    radios[val - 1].checked = true;
+    updateStars(val);
+  });
+});
+
+function updateStars(val) {
+  stars.forEach((s, idx) => {
+    if (idx < val) {
+      s.className = 'fas fa-star text-warning';
+    } else {
+      s.className = 'far fa-star text-muted';
+    }
+  });
+  desc.textContent = descs[val] || '';
+}
+</script>
+{% endblock %}

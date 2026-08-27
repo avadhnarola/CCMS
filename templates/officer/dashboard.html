@@ -1,0 +1,158 @@
+{% extends 'officer/base.html' %}
+
+{% set active_page = 'dashboard' %}
+{% block page_heading %}Officer Investigation Command Radar{% endblock %}
+
+{% block content %}
+<!-- OFFICER WELCOME & SLA RADAR -->
+<div class="ccms-card p-4 mb-4 glass-panel border-cyan border-opacity-25"
+  style="background: linear-gradient(135deg, rgba(6,182,212,0.08) 0%, rgba(37,99,235,0.05) 100%);">
+  <div class="row align-items-center g-3">
+    <div class="col-md-8">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="badge bg-cyan text-dark fw-bold px-2.5 py-1 rounded-pill"
+          style="font-size:0.7rem; background:#06b6d4;">
+          <i class="fas fa-radar me-1"></i> ACTIVE VIGILANCE DISPATCH
+        </span>
+        <span
+          class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1 rounded-pill small fw-bold">
+          SLA Priority: Active
+        </span>
+      </div>
+      <h3 class="fw-bold text-heading brand-font mb-1">{{ session.get('full_name', 'Inspector A. Verma') }}</h3>
+      <p class="text-muted small mb-0">
+        Anti-Corruption Bureau Desk &bull; Assigned Sector: <strong>{{ session.get('department', 'Land Registration &
+          Revenue') }}</strong> &bull; Badge: <strong>{{ session.get('badge_id', 'ACB-IND-4402') }}</strong>
+      </p>
+    </div>
+    <div class="col-md-4 text-md-end">
+      <a href="{{ url_for('officer_priority_queue') }}" class="btn btn-cyber">
+        <i class="fas fa-bolt me-1"></i> Process Top Urgent Case
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- STATS COUNTERS -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(6,182,212,0.1); color: var(--accent-cyan);">
+        <i class="fas fa-briefcase"></i>
+      </div>
+      <div>
+        <div class="stat-val" style="color:var(--accent-cyan);">{{ stats.total_assigned }}</div>
+        <div class="stat-label">Assigned Cases</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(244,63,94,0.1); color: var(--accent-rose);">
+        <i class="fas fa-triangle-exclamation"></i>
+      </div>
+      <div>
+        <div class="stat-val text-danger">{{ stats.critical_cases }}</div>
+        <div class="stat-label">Critical / High Urgency</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(245,158,11,0.1); color: var(--accent-amber);">
+        <i class="fas fa-vault"></i>
+      </div>
+      <div>
+        <div class="stat-val" style="color:var(--accent-amber);">{{ stats.pending_evidence }}</div>
+        <div class="stat-label">Pending Reviews</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(16,185,129,0.1); color: var(--accent-emerald);">
+        <i class="fas fa-circle-check"></i>
+      </div>
+      <div>
+        <div class="stat-val text-emerald" style="color:var(--accent-emerald);">{{ stats.resolved_cases }}</div>
+        <div class="stat-label">Resolved &amp; Closed</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIVE INVESTIGATIONS TABLE -->
+<div class="ccms-card p-4 mb-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-3">
+    <div>
+      <h5 class="fw-bold text-heading mb-0"><i class="fas fa-magnifying-glass text-cyan me-2"></i>Active Case
+        Investigations</h5>
+      <span class="text-muted small">Assigned corruption cases awaiting evidence verification or final resolution</span>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a href="{{ url_for('officer_assigned_cases') }}" class="btn btn-sm btn-outline-custom">View Full Roster</a>
+    </div>
+  </div>
+
+  {% if cases %}
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>Case ID</th>
+          <th>Summary / Allegation</th>
+          <th>Category &amp; Sector</th>
+          <th>Incident Date</th>
+          <th>Severity</th>
+          <th>Status</th>
+          <th class="text-end">Investigation Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in cases %}
+        <tr>
+          <td>
+            <span class="fw-bold text-cyan brand-font">{{ c.complaint_id }}</span>
+          </td>
+          <td>
+            <div class="fw-semibold text-heading text-truncate" style="max-width: 250px;">{{ c.complaint_title }}</div>
+            <span class="text-muted small">{{ c.location }}</span>
+          </td>
+          <td>
+            <span class="badge bg-subtle text-muted border">{{ c.misconduct_category }}</span>
+          </td>
+          <td>
+            <span class="small text-muted">{{ c.incident_date }}</span>
+          </td>
+          <td>
+            <span class="badge-priority {{ c.severity }}">{{ c.severity }}</span>
+          </td>
+          <td>
+            <span class="badge-status {{ c.complaint_status }}">{{ c.complaint_status }}</span>
+          </td>
+          <td class="text-end">
+            <a href="{{ url_for('officer_investigation', case_id=c.complaint_id) }}" class="btn btn-sm btn-brand"
+              style="background:var(--gradient-cyber);">
+              <i class="fas fa-microscope me-1"></i> Investigate
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <div class="stat-icon mx-auto mb-3" style="background: rgba(6,182,212,0.1); color: var(--accent-cyan);">
+      <i class="fas fa-folder-open"></i>
+    </div>
+    <h5 class="fw-bold text-heading mb-1">No Active Cases Assigned</h5>
+    <p class="text-muted small mb-0">Check the unassigned complaints queue or request case dispatches from Super Admin.
+    </p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'admin/base.html' %}
+
+{% set active_page = 'assignment' %}
+{% block page_heading %}Greedy Case Auto-Assignment Engine{% endblock %}
+
+{% block content %}
+<!-- GREEDY ENGINE BANNER -->
+<div class="ccms-card p-4 mb-4 glass-panel border-emerald border-opacity-25" style="background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(37,99,235,0.05) 100%);">
+  <div class="row align-items-center g-3">
+    <div class="col-md-8">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="badge bg-emerald-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill small fw-bold">
+          <i class="fas fa-brain me-1"></i> OPTIMAL GREEDY ALGORITHM
+        </span>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1 rounded-pill small fw-bold">
+          Zero Bias &bull; Minimum Workload Dispatch
+        </span>
+      </div>
+      <h3 class="fw-bold text-heading brand-font mb-1">Automated Workload-Balanced Case Dispatch</h3>
+      <p class="text-muted small mb-0">
+        The greedy optimizer inspects each unassigned corruption complaint, identifies vigilance officers matching the target department, and assigns the case to the officer holding the lowest active caseload.
+      </p>
+    </div>
+    <div class="col-md-4 text-md-end">
+      <form action="{{ url_for('admin_greedy_auto_assign') }}" method="POST">
+        <button type="submit" class="btn btn-brand btn-lg" style="background:var(--gradient-success);">
+          <i class="fas fa-bolt me-1"></i> Run Greedy Auto-Assign (All)
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <!-- Left Column: Unassigned Complaints List -->
+  <div class="col-lg-7">
+    <div class="ccms-card p-4 shadow-sm h-100">
+      <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
+        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-inbox text-primary me-2"></i>Unassigned Pending Cases</h5>
+        <span class="badge bg-warning-subtle text-warning border">{{ unassigned_complaints|length }} Pending</span>
+      </div>
+
+      {% if unassigned_complaints %}
+        <div class="d-flex flex-column gap-3">
+          {% for c in unassigned_complaints %}
+            <div class="p-3 rounded bg-subtle border d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+              <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <span class="fw-bold text-primary brand-font">{{ c.complaint_id }}</span>
+                  <span class="badge-priority {{ c.severity }}">{{ c.severity }}</span>
+                  <span class="badge bg-subtle text-muted border">{{ c.sector }}</span>
+                </div>
+                <div class="fw-semibold text-heading">{{ c.complaint_title }}</div>
+                <div class="text-muted small">{{ c.misconduct_category }} &bull; {{ c.location }}</div>
+              </div>
+              <form action="{{ url_for('admin_assign_single') }}" method="POST">
+                <input type="hidden" name="complaint_id" value="{{ c.complaint_id }}">
+                <button type="submit" class="btn btn-sm btn-outline-custom text-nowrap">
+                  <i class="fas fa-wand-magic-sparkles me-1"></i> Auto-Route
+                </button>
+              </form>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-5">
+          <div class="stat-icon mx-auto mb-3" style="background: rgba(16,185,129,0.1); color: var(--accent-emerald);">
+            <i class="fas fa-circle-check"></i>
+          </div>
+          <h6 class="fw-bold text-heading mb-1">All Cases are Assigned!</h6>
+          <p class="text-muted small mb-0">Every registered complaint has been assigned to a vigilance officer.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Right Column: Officer Workload Matrix -->
+  <div class="col-lg-5">
+    <div class="ccms-card p-4 shadow-sm h-100">
+      <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
+        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-scale-balanced text-emerald me-2"></i>Officer Workload Matrix</h5>
+      </div>
+
+      <div class="d-flex flex-column gap-3">
+        {% for off in officers %}
+          <div class="p-3 rounded bg-subtle border">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="fw-bold text-heading small">{{ off.name }}</span>
+              <span class="badge bg-primary-subtle text-primary border">{{ off.active_cases }} Active</span>
+            </div>
+            <div class="text-muted small mb-2">{{ off.department }} &bull; {{ off.rank }}</div>
+            <div class="progress" style="height: 6px;">
+              {% set pct = (off.active_cases / 5 * 100)|int if off.active_cases < 5 else 100 %}
+              <div class="progress-bar {% if off.active_cases >= 3 %}bg-warning{% elif off.active_cases >= 5 %}bg-danger{% else %}bg-success{% endif %}" style="width: {{ pct }}%;"></div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Citizen Whistleblower Registration | CCMS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="ccms-card p-4 p-md-5 shadow-lg border-primary border-opacity-25">
+        <!-- Logo & Header -->
+        <div class="text-center mb-4">
+          <a href="{{ url_for('home') }}" class="d-inline-flex align-items-center gap-2 mb-2 text-decoration-none">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="CCMS Logo" height="40" class="rounded">
+            <h2 class="brand-font fw-bold text-primary mb-0">CCMS</h2>
+          </a>
+          <div class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill mb-2 fw-bold" style="font-size:0.7rem; letter-spacing:1px;">
+            <i class="fas fa-shield-halved me-1"></i> CITIZEN ENCRYPTION ENROLLMENT
+          </div>
+          <h4 class="fw-bold text-heading mb-1">Create Whistleblower Account</h4>
+          <p class="text-muted small">Your credentials are encrypted using cryptographic hashing before saving to MySQL.</p>
+        </div>
+
+        <!-- Registration Form -->
+        <form action="{{ url_for('citizen_register') }}" method="POST" id="registerForm">
+          <div class="mb-3">
+            <label class="form-label">Full Legal Name <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-user-tag"></i></span>
+              <input type="text" name="fullname" class="form-control border-start-0" placeholder="e.g. Rajesh Kumar" required>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Email Address <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
+                <input type="email" name="email" class="form-control border-start-0" placeholder="e.g. rajesh@example.com" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-phone"></i></span>
+                <input type="tel" name="phone" class="form-control border-start-0" placeholder="e.g. 9876543210" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Address / Jurisdiction City</label>
+            <div class="input-group">
+              <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-location-dot"></i></span>
+              <input type="text" name="address" class="form-control border-start-0" placeholder="e.g. Surat, Gujarat">
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Password <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-key"></i></span>
+                <input type="password" id="regPassword" name="password" class="form-control border-start-0" placeholder="Min. 8 characters" required onkeyup="checkPasswordStrength(this.value)">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-lock"></i></span>
+                <input type="password" id="regConfirmPassword" name="confirm_password" class="form-control border-start-0" placeholder="Re-type password" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Password Strength Indicator -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small text-muted" style="font-size:0.75rem;">Password Complexity:</span>
+              <span class="small fw-bold" id="strengthText" style="font-size:0.75rem;">None</span>
+            </div>
+            <div class="progress" style="height: 4px;">
+              <div class="progress-bar bg-danger" id="strengthBar" role="progressbar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="termsCheck" required>
+            <label class="form-check-label small text-muted" for="termsCheck">
+              I agree to the <a href="{{ url_for('help_faq') }}" class="text-primary text-decoration-none">Whistleblower Protection Charter</a> and affirm all submitted statements are true to my knowledge.
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-brand w-100 justify-content-center py-2.5 mb-3">
+            <i class="fas fa-user-shield me-1"></i> Enroll Encrypted Account
+          </button>
+
+          <div class="text-center text-muted small">
+            Already registered?
+            <a href="{{ url_for('citizen_login') }}" class="text-primary fw-bold text-decoration-none">Log In Here</a>
+          </div>
+        </form>
+
+        <div class="mt-4 pt-3 border-top text-center text-muted small">
+          <i class="fas fa-shield-halved text-success me-1"></i> Verified CVC Whistleblower Protection Standards
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function checkPasswordStrength(password) {
+  let score = 0;
+  if (!password) {
+    document.getElementById('strengthBar').style.width = '0%';
+    document.getElementById('strengthText').textContent = 'None';
+    return;
+  }
+  if (password.length >= 6) score += 25;
+  if (password.length >= 8) score += 25;
+  if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score += 25;
+  if (/[0-9]/.test(password) || /[^A-Za-z0-9]/.test(password)) score += 25;
+
+  const bar = document.getElementById('strengthBar');
+  const text = document.getElementById('strengthText');
+  bar.style.width = score + '%';
+
+  if (score <= 25) {
+    bar.className = 'progress-bar bg-danger';
+    text.textContent = 'Weak';
+    text.className = 'small fw-bold text-danger';
+  } else if (score <= 50) {
+    bar.className = 'progress-bar bg-warning';
+    text.textContent = 'Moderate';
+    text.className = 'small fw-bold text-warning';
+  } else if (score <= 75) {
+    bar.className = 'progress-bar bg-info';
+    text.textContent = 'Good';
+    text.className = 'small fw-bold text-info';
+  } else {
+    bar.className = 'progress-bar bg-success';
+    text.textContent = 'Strong';
+    text.className = 'small fw-bold text-success';
+  }
+}
+</script>
+{% endblock %}

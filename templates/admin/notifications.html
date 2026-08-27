@@ -1,0 +1,80 @@
+{% extends 'admin/base.html' %}
+
+{% set active_page = 'notifications' %}
+{% block page_heading %}System Broadcast &amp; Alerts Dispatcher{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+  <!-- Left Column: Send Announcement Form -->
+  <div class="col-lg-5">
+    <div class="ccms-card p-4 shadow-sm h-100">
+      <h5 class="fw-bold text-heading mb-3"><i class="fas fa-bullhorn text-danger me-2"></i>Send Platform Announcement</h5>
+      <form action="{{ url_for('admin_notifications') }}" method="POST">
+        <div class="mb-3">
+          <label class="form-label">Target Audience Role</label>
+          <select name="recipient_role" class="form-select" required>
+            <option value="all" selected>All Users (Citizens &amp; Officers)</option>
+            <option value="citizen">Citizens Only</option>
+            <option value="officer">Vigilance Officers Only</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Broadcast Title</label>
+          <input type="text" name="title" class="form-control" placeholder="e.g. System Maintenance or High Alert Bulletin" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Alert Severity / Style</label>
+          <select name="badge_type" class="form-select">
+            <option value="info" selected>Information (Blue)</option>
+            <option value="warning">Urgent / Warning (Amber)</option>
+            <option value="success">Resolution / Success (Green)</option>
+            <option value="danger">Critical Alert (Red)</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Announcement Content</label>
+          <textarea name="message" class="form-control" rows="4" placeholder="Detail the announcement message to display in portal notification centers..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-brand w-100 justify-content-center py-2.5">
+          <i class="fas fa-paper-plane me-1"></i> Broadcast Announcement
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right Column: Broadcast History -->
+  <div class="col-lg-7">
+    <div class="ccms-card p-4 shadow-sm h-100">
+      <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
+        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-history text-primary me-2"></i>Active Broadcasts</h5>
+        <span class="badge bg-primary-subtle text-primary border">{{ notifications|length }} Dispatched</span>
+      </div>
+
+      {% if notifications %}
+        <div class="d-flex flex-column gap-3">
+          {% for notif in notifications %}
+            <div class="p-3 rounded bg-subtle border d-flex align-items-start gap-3">
+              <div class="stat-icon" style="width:38px; height:38px; font-size:1rem; background:rgba(37,99,235,0.1); color:var(--primary);">
+                <i class="fas fa-bullhorn"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                  <h6 class="fw-bold text-heading mb-0">{{ notif.title }}</h6>
+                  <span class="badge bg-subtle text-muted border text-uppercase" style="font-size:0.65rem;">Target: {{ notif.recipient_role }}</span>
+                </div>
+                <p class="text-muted small mb-0">{{ notif.message }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted small py-4 text-center">No broadcasts sent yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

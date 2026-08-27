@@ -1,0 +1,85 @@
+{% extends 'citizen/base.html' %}
+
+{% set active_page = 'evidence' %}
+{% block page_heading %}Encrypted Evidence Vault{% endblock %}
+
+{% block content %}
+<div class="ccms-card p-4 mb-4 glass-panel border-primary border-opacity-25" style="background: linear-gradient(135deg, rgba(124,58,237,0.08) 0%, rgba(37,99,235,0.05) 100%);">
+  <div class="row align-items-center g-3">
+    <div class="col-md-8">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="badge bg-violet-subtle text-violet border border-violet-subtle px-2.5 py-1 rounded-pill small fw-bold" style="background:rgba(124,58,237,0.1); color:#7c3aed;">
+          <i class="fas fa-vault me-1"></i> AES-256 ZERO-KNOWLEDGE VAULT
+        </span>
+      </div>
+      <h3 class="fw-bold text-heading brand-font mb-1">Whistleblower Evidence Repository</h3>
+      <p class="text-muted small mb-0">
+        All forensic evidence (voice wire recordings, stamped invoices, extortion messages, and photos) are stored with SHA-256 cryptographic chain of custody.
+      </p>
+    </div>
+    <div class="col-md-4 text-md-end">
+      <a href="{{ url_for('file_complaint') }}" class="btn btn-brand">
+        <i class="fas fa-cloud-arrow-up me-1"></i> Attach More Evidence
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- EVIDENCE FILES GRID -->
+<div class="ccms-card p-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-4 border-bottom gap-3">
+    <div>
+      <h5 class="fw-bold text-heading mb-0"><i class="fas fa-folder-tree text-violet me-2"></i>Vault Files Directory</h5>
+      <span class="text-muted small">Showing files securely bound to your registered complaints</span>
+    </div>
+  </div>
+
+  {% if evidence_items %}
+    <div class="row g-3">
+      {% for item in evidence_items %}
+        <div class="col-md-6 col-lg-4">
+          <div class="ccms-card p-3 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="stat-icon" style="background: var(--bg-subtle);">
+                  {% if 'jpg' in item.filename.lower() or 'png' in item.filename.lower() or 'jpeg' in item.filename.lower() %}
+                    <i class="fas fa-file-image text-primary"></i>
+                  {% elif 'mp3' in item.filename.lower() or 'wav' in item.filename.lower() or 'm4a' in item.filename.lower() %}
+                    <i class="fas fa-file-audio text-warning"></i>
+                  {% elif 'mp4' in item.filename.lower() or 'mov' in item.filename.lower() %}
+                    <i class="fas fa-file-video text-danger"></i>
+                  {% else %}
+                    <i class="fas fa-file-pdf text-danger"></i>
+                  {% endif %}
+                </div>
+                <span class="badge bg-primary-subtle text-primary border">{{ item.complaint_id }}</span>
+              </div>
+
+              <h6 class="fw-bold text-heading text-truncate mb-1" title="{{ item.filename }}">{{ item.filename }}</h6>
+              <div class="text-muted small mb-3">Linked Date: {{ item.date }}</div>
+            </div>
+
+            <div class="pt-2 border-top d-flex align-items-center justify-content-between">
+              <span class="text-emerald small"><i class="fas fa-shield-check me-1"></i> Verified Authentic</span>
+              <a href="{{ url_for('uploaded_file', filename=item.filename) }}" target="_blank" class="btn btn-sm btn-outline-custom">
+                <i class="fas fa-download me-1"></i> Download
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center py-5">
+      <div class="stat-icon mx-auto mb-3" style="background: rgba(124,58,237,0.1); color: var(--accent-violet);">
+        <i class="fas fa-vault"></i>
+      </div>
+      <h5 class="fw-bold text-heading mb-1">No Evidence Files Attached Yet</h5>
+      <p class="text-muted small mx-auto mb-3" style="max-width: 420px;">
+        When filing complaints, you can attach photos, documents, invoices, and recordings. They will securely appear here.
+      </p>
+      <a href="{{ url_for('file_complaint') }}" class="btn btn-brand">File Complaint with Evidence</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
