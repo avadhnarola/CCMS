@@ -9,9 +9,58 @@ from flask import (
 from werkzeug.utils import secure_filename
 
 import db
+import dsa
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "ccms-secret-key-vigilance-2026-secure")
+
+# In-memory DSA Data Stores (Linked List, Stack, Queue)
+complaints_linked_list = dsa.SinglyLinkedList()
+activity_stack = dsa.LinkedStack()
+dispatch_queue = dsa.LinkedQueue()
+
+def init_dsa_stores():
+    """Seed in-memory DSA structures with recent records from database."""
+    try:
+        recent_cases = db.query_db("SELECT complaint_id, complaint_title, sector, severity, complaint_status, created_at FROM complaints ORDER BY created_at DESC LIMIT 5")
+        if recent_cases:
+            complaints_linked_list.clear()
+            for c in recent_cases:
+                complaints_linked_list.insert_at_tail({
+                    "id": c["complaint_id"],
+                    "title": c["complaint_title"],
+                    "sector": c["sector"],
+                    "severity": c["severity"],
+                    "status": c["complaint_status"],
+                    "timestamp": str(c["created_at"])
+                })
+        
+        recent_logs = db.query_db("SELECT actor, action, details, timestamp FROM activity_logs ORDER BY timestamp DESC LIMIT 4")
+        if recent_logs:
+            for l in reversed(recent_logs):
+                activity_stack.push({
+                    "actor": l["actor"],
+                    "action": l["action"],
+                    "details": l["details"],
+                    "time": str(l["timestamp"])
+                })
+
+        pending = db.query_db("SELECT complaint_id, complaint_title, sector, severity FROM complaints WHERE complaint_status = 'Pending' LIMIT 4")
+        if pending:
+            for p in pending:
+                dispatch_queue.enqueue({
+                    "id": p["complaint_id"],
+                    "title": p["complaint_title"],
+                    "sector": p["sector"],
+                    "severity": p["severity"]
+                })
+    except Exception as e:
+        print("DSA Init note:", e)
+
+try:
+    init_dsa_stores()
+except Exception as e:
+    print("DSA Init error:", e)
 
 # Configuration
 UPLOAD_FOLDER = os.path.join(app.root_path, "Evidenceuploads")
@@ -221,10 +270,37 @@ def citizen_register():
             return render_template("auth/register.html")
 
         hashed_pwd = db.hash_user_password(password)
-        new_id = db.execute_db(
-            "INSERT INTO users (full_name, email, mobile_number, address, password, email_verified, role) VALUES (%s, %s, %s, %s, %s, 1, 'citizen')",
-            (fullname, email, phone, address, hashed_pwd)
-        )
+        try:
+            new_id = db.execute_db(
+                "INSERT INTO users (full_name, email, mobile_number, address, password, email_verified, role) VALUES (%s, %s, %s, %s, %s, 1, 'citizen')",
+                (fullname, email, phone, address, hashed_pwd)
+            )
+        except Exception as insert_err:
+            print("Auto-migrating users table:", insert_err)
+            try:
+                db.execute_db("ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'citizen'")
+            except Exception:
+                pass
+            try:
+                db.execute_db("ALTER TABLE users ADD COLUMN address VARCHAR(255) NULL")
+            except Exception:
+                pass
+            try:
+                db.execute_db("ALTER TABLE users ADD COLUMN email_verified TINYINT(1) DEFAULT 1")
+            except Exception:
+                pass
+
+            try:
+                new_id = db.execute_db(
+                    "INSERT INTO users (full_name, email, mobile_number, address, password, email_verified, role) VALUES (%s, %s, %s, %s, %s, 1, 'citizen')",
+                    (fullname, email, phone, address, hashed_pwd)
+                )
+            except Exception:
+                # Fallback for standard minimal users table
+                new_id = db.execute_db(
+                    "INSERT INTO users (full_name, email, mobile_number, password) VALUES (%s, %s, %s, %s)",
+                    (fullname, email, phone, hashed_pwd)
+                )
 
         session.clear()
         session["user_id"] = new_id
@@ -1034,6 +1110,198 @@ def admin_settings():
     rows = db.query_db("SELECT * FROM system_settings")
     settings = {r["setting_key"]: r["setting_value"] for r in rows}
     return render_template("admin/settings.html", settings=settings)
+
+
+# -------------------------------------------------------------
+# DSA INTELLIGENCE LAB & DEMONSTRATION ROUTES
+# -------------------------------------------------------------
+@app.route("/admin/dsa-lab")
+@role_required("admin")
+def admin_dsa_lab():
+    if complaints_linked_list.is_empty():
+        init_dsa_stores()
+
+    ll_nodes = complaints_linked_list.to_list()
+    stack_items = activity_stack.to_list()
+    queue_items = dispatch_queue.to_list()
+
+    sample_benchmarks = {
+        "binary_search": dsa.EfficiencyEngine.run_benchmark("binary_search", 100),
+        "factorial": dsa.EfficiencyEngine.run_benchmark("factorial", 8),
+        "fibonacci": dsa.EfficiencyEngine.run_benchmark("fibonacci", 15),
+        "linked_list_length": dsa.EfficiencyEngine.run_benchmark("linked_list_length", 50)
+    }
+
+    return render_template(
+        "admin/dsa_lab.html",
+        ll_nodes=ll_nodes,
+        ll_size=complaints_linked_list.get_size(),
+        stack_items=stack_items,
+        stack_size=activity_stack.size(),
+        queue_items=queue_items,
+        queue_size=dispatch_queue.size(),
+        sample_benchmarks=sample_benchmarks
+    )
+
+
+# --- DSA AJAX API Endpoints ---
+
+@app.route("/api/dsa/linked-list/insert", methods=["POST"])
+@role_required("admin")
+def api_ll_insert():
+    data = request.get_json() or {}
+    position = data.get("position", "tail")
+    complaint_id = data.get("id") or f"CCMS-2026-{random.randint(1000, 9999)}"
+    title = data.get("title", "Embezzlement & Procurement Breach")
+    sector = data.get("sector", "Public Works")
+    severity = data.get("severity", "High")
+    
+    node_data = {
+        "id": complaint_id,
+        "title": title,
+        "sector": sector,
+        "severity": severity,
+        "status": "Pending",
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    }
+
+    if position == "head":
+        complaints_linked_list.insert_at_head(node_data)
+    else:
+        complaints_linked_list.insert_at_tail(node_data)
+
+    return jsonify({
+        "success": True,
+        "message": f"Node successfully inserted at {position.upper()}.",
+        "size": complaints_linked_list.get_size(),
+        "nodes": complaints_linked_list.to_list()
+    })
+
+
+@app.route("/api/dsa/linked-list/delete", methods=["POST"])
+@role_required("admin")
+def api_ll_delete():
+    data = request.get_json() or {}
+    key = data.get("key")
+    index = data.get("index")
+
+    if index is not None and str(index).isdigit():
+        deleted = complaints_linked_list.delete_at_index(int(index))
+        success = deleted is not None
+    elif key:
+        success = complaints_linked_list.delete_by_value(key)
+    else:
+        deleted = complaints_linked_list.delete_at_index(0)
+        success = deleted is not None
+
+    return jsonify({
+        "success": success,
+        "message": "Node removed successfully." if success else "Target node not found.",
+        "size": complaints_linked_list.get_size(),
+        "nodes": complaints_linked_list.to_list()
+    })
+
+
+@app.route("/api/dsa/linked-list/search", methods=["POST"])
+@role_required("admin")
+def api_ll_search():
+    data = request.get_json() or {}
+    query = data.get("query", "").strip()
+    result = complaints_linked_list.search(query)
+    
+    if result:
+        idx, node_data = result
+        return jsonify({"found": True, "index": idx, "data": node_data})
+    return jsonify({"found": False, "message": f"No node matching '{query}' found."})
+
+
+@app.route("/api/dsa/stack/push", methods=["POST"])
+@role_required("admin")
+def api_stack_push():
+    data = request.get_json() or {}
+    action = data.get("action", "Evidence Document Verified")
+    actor = data.get("actor", session.get("full_name", "Super Admin"))
+    details = data.get("details", f"Cryptographic integrity validated for case #{random.randint(1000, 9999)}")
+    
+    item = {
+        "actor": actor,
+        "action": action,
+        "details": details,
+        "time": datetime.datetime.now().strftime("%H:%M:%S")
+    }
+    activity_stack.push(item)
+    return jsonify({"success": True, "size": activity_stack.size(), "items": activity_stack.to_list()})
+
+
+@app.route("/api/dsa/stack/pop", methods=["POST"])
+@role_required("admin")
+def api_stack_pop():
+    try:
+        popped = activity_stack.pop()
+        return jsonify({"success": True, "popped": popped, "size": activity_stack.size(), "items": activity_stack.to_list()})
+    except dsa.StackUnderflowError as e:
+        return jsonify({"success": False, "error": str(e), "size": 0, "items": []}), 400
+
+
+@app.route("/api/dsa/queue/enqueue", methods=["POST"])
+@role_required("admin")
+def api_queue_enqueue():
+    data = request.get_json() or {}
+    cid = data.get("id") or f"CCMS-2026-{random.randint(1000, 9999)}"
+    title = data.get("title", "High-Value Kickback Detection")
+    sector = data.get("sector", "Revenue & Taxation")
+    severity = data.get("severity", "Critical")
+
+    item = {"id": cid, "title": title, "sector": sector, "severity": severity}
+    dispatch_queue.enqueue(item)
+    return jsonify({"success": True, "size": dispatch_queue.size(), "items": dispatch_queue.to_list()})
+
+
+@app.route("/api/dsa/queue/dequeue", methods=["POST"])
+@role_required("admin")
+def api_queue_dequeue():
+    try:
+        dequeued = dispatch_queue.dequeue()
+        return jsonify({"success": True, "dequeued": dequeued, "size": dispatch_queue.size(), "items": dispatch_queue.to_list()})
+    except dsa.QueueUnderflowError as e:
+        return jsonify({"success": False, "error": str(e), "size": 0, "items": []}), 400
+
+
+@app.route("/api/dsa/expression/process", methods=["POST"])
+@role_required("admin")
+def api_expression_process():
+    data = request.get_json() or {}
+    expression = data.get("expression", "( 5000 * 2 ) + ( 15 * 100 ) - 500").strip()
+    
+    try:
+        postfix_tokens, infix_trace = dsa.ExpressionHandler.infix_to_postfix(expression)
+        postfix_str = " ".join(postfix_tokens)
+        result, eval_trace = dsa.ExpressionHandler.evaluate_postfix(postfix_tokens)
+        
+        return jsonify({
+            "success": True,
+            "infix": expression,
+            "postfix": postfix_str,
+            "result": result,
+            "infix_trace": infix_trace,
+            "eval_trace": eval_trace
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 400
+
+
+@app.route("/api/dsa/benchmark/run", methods=["POST"])
+@role_required("admin")
+def api_benchmark_run():
+    data = request.get_json() or {}
+    algo = data.get("algorithm", "binary_search")
+    n = int(data.get("input_n", 100))
+
+    try:
+        benchmark_data = dsa.EfficiencyEngine.run_benchmark(algo, n)
+        return jsonify({"success": True, "data": benchmark_data})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 400
 
 
 # -------------------------------------------------------------

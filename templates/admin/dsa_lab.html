@@ -1,0 +1,855 @@
+{% extends 'admin/base.html' %}
+
+{% set active_page = 'dsa_lab' %}
+{% block title %}DSA Intelligence &amp; Algorithm Laboratory | CCMS Master Control{% endblock %}
+{% block page_heading %}DSA Intelligence &amp; Algorithm Laboratory{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* DSA Lab Custom Styles */
+  .dsa-pill-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+  
+  /* Linked List Node Visuals */
+  .ll-track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 16px 8px;
+    min-height: 120px;
+  }
+  .ll-node-box {
+    background: var(--bg-surface, #ffffff);
+    border: 2px solid #2563eb;
+    border-radius: 12px;
+    padding: 12px 16px;
+    min-width: 220px;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.12);
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .ll-node-box.highlight {
+    border-color: #10b981;
+    box-shadow: 0 0 20px rgba(16,185,129,0.4);
+    transform: scale(1.05);
+  }
+  .ll-arrow {
+    color: #2563eb;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+  }
+  .ll-null-box {
+    background: rgba(244,63,94,0.1);
+    border: 2px dashed #f43f5e;
+    color: #f43f5e;
+    font-weight: 800;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-family: monospace;
+    font-size: 0.9rem;
+  }
+
+  /* Stack Visuals */
+  .stack-container {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+    min-height: 240px;
+    border: 2px dashed rgba(124,58,237,0.3);
+    border-radius: 12px;
+    padding: 12px;
+    background: rgba(124,58,237,0.03);
+  }
+  .stack-item {
+    background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(37,99,235,0.1) 100%);
+    border: 1px solid rgba(124,58,237,0.4);
+    border-radius: 8px;
+    padding: 10px 14px;
+    transition: all 0.3s ease;
+    animation: fadeInSlide 0.3s ease-out;
+  }
+  .stack-item.top-item {
+    border-color: #a855f7;
+    background: linear-gradient(135deg, rgba(168,85,247,0.25) 0%, rgba(124,58,237,0.15) 100%);
+    box-shadow: 0 2px 8px rgba(168,85,247,0.2);
+  }
+
+  /* Queue Visuals */
+  .queue-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    min-height: 100px;
+    border: 2px dashed rgba(6,182,212,0.3);
+    border-radius: 12px;
+    padding: 12px;
+    background: rgba(6,182,212,0.03);
+  }
+  .queue-item {
+    background: linear-gradient(135deg, rgba(6,182,212,0.15) 0%, rgba(16,185,129,0.1) 100%);
+    border: 1px solid rgba(6,182,212,0.4);
+    border-radius: 8px;
+    padding: 8px 14px;
+    min-width: 170px;
+    animation: fadeInSlide 0.3s ease-out;
+  }
+
+  @keyframes fadeInSlide {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .table-trace th, .table-trace td {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HEADER BANNER -->
+<div class="ccms-card p-4 mb-4 glass-panel border-primary border-opacity-25" style="background: linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(124,58,237,0.08) 100%);">
+  <div class="row align-items-center g-3">
+    <div class="col-lg-8">
+      <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+        <span class="badge bg-primary text-white dsa-pill-badge"><i class="fas fa-brain me-1"></i> Core DSA Engine</span>
+        <span class="badge bg-violet-subtle text-violet border border-violet-subtle dsa-pill-badge">Pure Python Impl</span>
+        <span class="badge bg-emerald-subtle text-emerald border border-emerald-subtle dsa-pill-badge">Live Interactive Simulator</span>
+      </div>
+      <h3 class="fw-bold text-heading brand-font mb-1">Data Structures &amp; Algorithms Laboratory</h3>
+      <p class="text-muted small mb-0">
+        Hands-on interactive demonstration of <strong>Linked Lists</strong> for data storage, <strong>Linked-Based Stack &amp; Queue</strong>, <strong>Stack Infix-to-Postfix Expression Handling</strong>, and <strong>Iterative vs. Recursive Efficiency Benchmarking</strong>.
+      </p>
+    </div>
+    <div class="col-lg-4 text-lg-end">
+      <div class="d-flex justify-content-lg-end gap-2">
+        <button class="btn btn-outline-custom btn-sm" onclick="location.reload();">
+          <i class="fas fa-rotate me-1"></i> Reset View
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 1. SINGLY LINKED LIST DATA STORAGE -->
+<!-- ========================================================================= -->
+<div class="ccms-card p-4 mb-4 shadow-sm">
+  <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-2">
+    <div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-primary px-2 py-1 rounded-pill small">DSA Pillar #1</span>
+        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-link text-primary me-2"></i>Singly Linked List Data Storage</h5>
+      </div>
+      <p class="text-muted small mb-0 mt-1">
+        Dynamic memory allocation with sequential node pointers (<code>Node.data</code> and <code>Node.next</code>).
+      </p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-primary-subtle text-primary border" id="llSizeBadge">Size: {{ ll_size }} Nodes</span>
+    </div>
+  </div>
+
+  <!-- Interactive Controls Bar -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="input-group input-group-sm">
+        <input type="text" id="llCaseId" class="form-control" placeholder="Case ID (Auto-gen)" value="CCMS-2026-{{ range(1000, 9999)|random }}">
+        <button class="btn btn-primary" onclick="insertLLNode('head')">
+          <i class="fas fa-arrow-left me-1"></i> Add Head O(1)
+        </button>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="input-group input-group-sm">
+        <input type="text" id="llCaseTitle" class="form-control" placeholder="Complaint Title" value="Public Works Kickback">
+        <button class="btn btn-brand" onclick="insertLLNode('tail')">
+          Add Tail O(N) <i class="fas fa-arrow-right ms-1"></i>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="input-group input-group-sm">
+        <input type="text" id="llSearchKey" class="form-control" placeholder="Search Case ID / Title">
+        <button class="btn btn-outline-custom" onclick="searchLLNode()">
+          <i class="fas fa-search me-1"></i> Search O(N)
+        </button>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="input-group input-group-sm">
+        <input type="text" id="llDeleteKey" class="form-control" placeholder="ID or Index (0, 1...)">
+        <button class="btn btn-outline-danger" onclick="deleteLLNode()">
+          <i class="fas fa-trash-can me-1"></i> Delete O(N)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Linked List Visual Track -->
+  <div class="p-3 rounded bg-subtle border">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+      <div class="small fw-bold text-muted font-monospace"><i class="fas fa-arrows-split-up-and-left text-primary me-1"></i> HEAD POINTER &bull; MEMORY TRACE</div>
+      <div class="small text-muted">Traversal Direction: <strong>Head &rarr; Next &rarr; Tail &rarr; NULL</strong></div>
+    </div>
+
+    <div class="ll-track" id="llVisualTrack">
+      {% for node in ll_nodes %}
+        <div class="ll-node-box" id="ll-node-{{ loop.index0 }}">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="badge bg-primary text-white" style="font-size:0.65rem;">Node #{{ node.index }}</span>
+            <span class="badge-priority {{ node.data.severity if node.data.severity else 'Medium' }}" style="font-size:0.65rem;">{{ node.data.severity if node.data.severity else 'Medium' }}</span>
+          </div>
+          <div class="fw-bold text-heading text-truncate small">{{ node.data.id if node.data.id else 'Case Node' }}</div>
+          <div class="text-muted small text-truncate" style="font-size:0.75rem;">{{ node.data.title if node.data.title else 'Complaint Record' }}</div>
+          <div class="text-primary mt-1 font-monospace" style="font-size:0.7rem;">
+            <span>next &rarr; </span><strong>{{ 'Node #' ~ (node.index + 1) if node.has_next else 'NULL (0x0)' }}</strong>
+          </div>
+        </div>
+        {% if node.has_next %}
+          <div class="ll-arrow"><i class="fas fa-arrow-right"></i></div>
+        {% endif %}
+      {% else %}
+        <div class="text-muted small p-3">Linked list is empty. Add nodes using the buttons above.</div>
+      {% endfor %}
+      <div class="ll-arrow"><i class="fas fa-arrow-right"></i></div>
+      <div class="ll-null-box">NULL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 2. LINKED-BASED STACK & QUEUE -->
+<!-- ========================================================================= -->
+<div class="row g-4 mb-4">
+  <!-- 2.1 LinkedStack (LIFO) -->
+  <div class="col-lg-6">
+    <div class="ccms-card p-4 shadow-sm h-100">
+      <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
+        <div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-violet text-white px-2 py-1 rounded-pill small">DSA Pillar #2A</span>
+            <h5 class="fw-bold text-heading mb-0"><i class="fas fa-layer-group text-violet me-2"></i>LinkedStack (LIFO)</h5>
+          </div>
+          <div class="text-muted small mt-1">Node-based Stack &bull; Top pointer &bull; O(1) Push / Pop / Peek</div>
+        </div>
+        <span class="badge bg-violet-subtle text-violet border" id="stackSizeBadge">Size: {{ stack_size }}</span>
+      </div>
+
+      <div class="d-flex gap-2 mb-3">
+        <input type="text" id="stackItemText" class="form-control form-control-sm" placeholder="Activity Event / Case Audit Action" value="Evidence Checksum Verified">
+        <button class="btn btn-sm text-white" style="background:#7c3aed;" onclick="pushStackItem()">
+          <i class="fas fa-arrow-down-to-bracket me-1"></i> Push O(1)
+        </button>
+        <button class="btn btn-sm btn-outline-danger" onclick="popStackItem()">
+          <i class="fas fa-arrow-up-from-bracket me-1"></i> Pop O(1)
+        </button>
+      </div>
+
+      <div class="stack-container" id="stackVisualContainer">
+        {% for item in stack_items %}
+          <div class="stack-item {% if loop.first %}top-item{% endif %}">
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="fw-bold small text-heading">{{ item.action }}</span>
+              <span class="badge bg-subtle text-muted border font-monospace" style="font-size:0.65rem;">{{ item.time if item.time else 'Now' }}</span>
+            </div>
+            <div class="text-muted small text-truncate" style="font-size:0.75rem;">{{ item.details }}</div>
+            {% if loop.first %}
+              <div class="text-violet fw-bold mt-1 font-monospace" style="font-size:0.68rem;"><i class="fas fa-arrow-down me-1"></i> TOP POINTER</div>
+            {% endif %}
+          </div>
+        {% else %}
+          <div class="text-center text-muted small py-4">Stack is currently empty.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.2 LinkedQueue (FIFO) -->
+  <div class="col-lg-6">
+    <div class="ccms-card p-4 shadow-sm h-100">
+      <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
+        <div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-cyan text-white px-2 py-1 rounded-pill small">DSA Pillar #2B</span>
+            <h5 class="fw-bold text-heading mb-0"><i class="fas fa-arrows-left-right-to-line text-cyan me-2"></i>LinkedQueue (FIFO)</h5>
+          </div>
+          <div class="text-muted small mt-1">Node-based Queue &bull; Front/Rear pointers &bull; O(1) Enqueue / Dequeue</div>
+        </div>
+        <span class="badge bg-cyan-subtle text-cyan border" id="queueSizeBadge">Size: {{ queue_size }}</span>
+      </div>
+
+      <div class="d-flex gap-2 mb-3">
+        <input type="text" id="queueCaseTitle" class="form-control form-control-sm" placeholder="Investigation Dispatch Task" value="High-Value Kickback Detection">
+        <button class="btn btn-sm btn-info text-white" onclick="enqueueQueueItem()">
+          <i class="fas fa-plus me-1"></i> Enqueue Rear
+        </button>
+        <button class="btn btn-sm btn-outline-danger" onclick="dequeueQueueItem()">
+          <i class="fas fa-minus me-1"></i> Dequeue Front
+        </button>
+      </div>
+
+      <div class="queue-container" id="queueVisualContainer">
+        {% for item in queue_items %}
+          <div class="queue-item">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="badge-priority {{ item.severity if item.severity else 'Medium' }}" style="font-size:0.65rem;">{{ item.severity if item.severity else 'Medium' }}</span>
+              {% if loop.first %}<span class="badge bg-success" style="font-size:0.6rem;">FRONT</span>{% endif %}
+              {% if loop.last %}<span class="badge bg-primary" style="font-size:0.6rem;">REAR</span>{% endif %}
+            </div>
+            <div class="fw-bold text-heading small text-truncate">{{ item.id }}</div>
+            <div class="text-muted small text-truncate" style="font-size:0.72rem;">{{ item.title }}</div>
+          </div>
+        {% else %}
+          <div class="text-center text-muted small py-4 w-100">Queue is currently empty.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 3. STACK EXPRESSION HANDLING (INFIX TO POSTFIX & EVALUATION) -->
+<!-- ========================================================================= -->
+<div class="ccms-card p-4 mb-4 shadow-sm">
+  <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-2">
+    <div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-amber text-dark px-2 py-1 rounded-pill small">DSA Pillar #3</span>
+        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-square-root-variable text-amber me-2"></i>Stack-Based Expression Handling (Infix &rarr; Postfix)</h5>
+      </div>
+      <p class="text-muted small mb-0 mt-1">
+        Applying LinkedStack to convert arithmetic &amp; penalty formulas to Postfix (RPN) and evaluate results step-by-step.
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3 align-items-end">
+    <div class="col-lg-6">
+      <label class="form-label small fw-bold text-heading">Formula / Arithmetic Infix Expression</label>
+      <input type="text" id="exprInput" class="form-control font-monospace" value="( 5000 * 2 ) + ( 15 * 100 ) - 500">
+    </div>
+    <div class="col-lg-4">
+      <label class="form-label small fw-bold text-heading">Preset CCMS Legal Formulas</label>
+      <select class="form-select form-select-sm" onchange="document.getElementById('exprInput').value = this.value">
+        <option value="( 5000 * 2 ) + ( 15 * 100 ) - 500">Corruption Penalty: (Bribe * 2) + (Severity * 100) - Rebate</option>
+        <option value="( 24 * 3 ) + ( 10 ^ 2 ) / 5">SLA Escalation Penalty: (Hours * 3) + (Risk^2) / 5</option>
+        <option value="( 100 + 50 ) * ( 4 - 2 ) ^ 3">Multi-Tier Fraud Index: (A + B) * (C - D) ^ 3</option>
+        <option value="12 * 8 + ( 45 / 9 ) - 2 ^ 4">Compound Operator Precedence: 12*8 + (45/9) - 2^4</option>
+      </select>
+    </div>
+    <div class="col-lg-2">
+      <button class="btn btn-brand w-100" style="background:var(--gradient-cyber);" onclick="processExpression()">
+        <i class="fas fa-bolt me-1"></i> Evaluate Stack
+      </button>
+    </div>
+  </div>
+
+  <!-- Expression Output Matrix -->
+  <div class="row g-3" id="exprResultsArea">
+    <div class="col-md-4">
+      <div class="p-3 rounded bg-subtle border h-100">
+        <div class="text-muted small fw-bold mb-1">INFIX INPUT</div>
+        <div class="font-monospace text-heading fw-bold" id="resInfix">( 5000 * 2 ) + ( 15 * 100 ) - 500</div>
+      </div>
+    </div>
+    <div class="col-md-5">
+      <div class="p-3 rounded bg-subtle border h-100">
+        <div class="text-muted small fw-bold mb-1">POSTFIX NOTATION (RPN)</div>
+        <div class="font-monospace text-primary fw-bold" id="resPostfix">5000 2 * 15 100 * + 500 -</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="p-3 rounded bg-subtle border border-emerald h-100" style="background:rgba(16,185,129,0.06);">
+        <div class="text-emerald small fw-bold mb-1">FINAL CALCULATED RESULT</div>
+        <div class="font-monospace text-emerald fw-bold fs-4" id="resFinal">11000</div>
+      </div>
+    </div>
+
+    <!-- Step Trace Tables Accordion -->
+    <div class="col-12 mt-3">
+      <div class="accordion" id="exprAccordion">
+        <div class="accordion-item bg-subtle border">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed bg-transparent text-heading small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#traceCollapse">
+              <i class="fas fa-list-ol text-primary me-2"></i> View Stack Step-by-Step Transition Trace (Conversion &amp; Evaluation)
+            </button>
+          </h2>
+          <div id="traceCollapse" class="accordion-collapse collapse" data-bs-parent="#exprAccordion">
+            <div class="accordion-body">
+              <div class="row g-3">
+                <div class="col-lg-6">
+                  <h6 class="fw-bold text-heading small mb-2"><i class="fas fa-layer-group text-primary me-1"></i> Infix &rarr; Postfix Stack Trace</h6>
+                  <div class="table-responsive" style="max-height: 250px; overflow-y:auto;">
+                    <table class="table table-sm table-trace table-bordered mb-0">
+                      <thead>
+                        <tr class="table-light">
+                          <th>Token</th>
+                          <th>Stack State</th>
+                          <th>Output Buffer</th>
+                        </tr>
+                      </thead>
+                      <tbody id="infixTraceTbody">
+                        <tr><td colspan="3" class="text-center text-muted">Click 'Evaluate Stack' to generate trace.</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="col-lg-6">
+                  <h6 class="fw-bold text-heading small mb-2"><i class="fas fa-calculator text-emerald me-1"></i> Postfix Evaluation Stack Trace</h6>
+                  <div class="table-responsive" style="max-height: 250px; overflow-y:auto;">
+                    <table class="table table-sm table-trace table-bordered mb-0">
+                      <thead>
+                        <tr class="table-light">
+                          <th>Token</th>
+                          <th>Action Description</th>
+                          <th>Operand Stack</th>
+                        </tr>
+                      </thead>
+                      <tbody id="evalTraceTbody">
+                        <tr><td colspan="3" class="text-center text-muted">Click 'Evaluate Stack' to generate trace.</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 4. BASIC EFFICIENCY CONCEPTS: ITERATIVE VS RECURSIVE BENCHMARK -->
+<!-- ========================================================================= -->
+<div class="ccms-card p-4 mb-4 shadow-sm">
+  <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-2">
+    <div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-danger text-white px-2 py-1 rounded-pill small">DSA Pillar #4</span>
+        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-gauge-high text-danger me-2"></i>Efficiency Concepts: Iterative vs. Recursive Benchmarking</h5>
+      </div>
+      <p class="text-muted small mb-0 mt-1">
+        Comparing Time Complexity, Auxiliary Space, and Call Stack Frame allocation between Iterative loops and Recursive invocations.
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4 align-items-end">
+    <div class="col-md-5">
+      <label class="form-label small fw-bold text-heading">Select Algorithm Demonstration</label>
+      <select id="benchAlgo" class="form-select form-select-sm">
+        <option value="binary_search">Binary Search (Sorted Case ID Array) &bull; O(log N)</option>
+        <option value="fibonacci">SLA Response Escalator (Fibonacci) &bull; O(N) vs O(2^N)</option>
+        <option value="factorial">Legal Penalty Tier Multiplier (Factorial) &bull; O(N)</option>
+        <option value="linked_list_length">Linked List Traversal &amp; Length &bull; O(N)</option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label small fw-bold text-heading">Input Parameter (N)</label>
+      <input type="number" id="benchN" class="form-control form-control-sm" value="100" min="5" max="1000">
+    </div>
+    <div class="col-md-3">
+      <button class="btn btn-brand w-100" style="background:var(--gradient-danger);" onclick="runEfficiencyBenchmark()">
+        <i class="fas fa-microchip me-1"></i> Run Live Benchmark
+      </button>
+    </div>
+  </div>
+
+  <!-- Benchmark Comparison Cards -->
+  <div class="row g-4" id="benchmarkCardsRow">
+    <!-- Iterative Card -->
+    <div class="col-md-6">
+      <div class="p-3 rounded bg-subtle border border-primary h-100">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="badge bg-primary text-white"><i class="fas fa-repeat me-1"></i> ITERATIVE IMPLEMENTATION</span>
+          <span class="badge bg-primary-subtle text-primary border font-monospace" id="iterTimeBadge">Time: 1.20 µs</span>
+        </div>
+        <h5 class="fw-bold text-heading mb-1" id="iterResultTitle">Found at index 50</h5>
+        <div class="d-flex flex-column gap-2 mt-3 small">
+          <div class="d-flex justify-content-between border-bottom pb-1">
+            <span class="text-muted">Time Complexity:</span>
+            <strong class="text-primary font-monospace" id="iterTimeComp">O(log N)</strong>
+          </div>
+          <div class="d-flex justify-content-between border-bottom pb-1">
+            <span class="text-muted">Auxiliary Space Complexity:</span>
+            <strong class="text-success font-monospace" id="iterSpaceComp">O(1) [Constant Memory]</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="text-muted">Loop Iterations / Steps:</span>
+            <strong class="text-heading font-monospace" id="iterSteps">7 steps</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recursive Card -->
+    <div class="col-md-6">
+      <div class="p-3 rounded bg-subtle border border-danger h-100">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="badge bg-danger text-white"><i class="fas fa-diagram-project me-1"></i> RECURSIVE IMPLEMENTATION</span>
+          <span class="badge bg-danger-subtle text-danger border font-monospace" id="recTimeBadge">Time: 2.80 µs</span>
+        </div>
+        <h5 class="fw-bold text-heading mb-1" id="recResultTitle">Found at index 50</h5>
+        <div class="d-flex flex-column gap-2 mt-3 small">
+          <div class="d-flex justify-content-between border-bottom pb-1">
+            <span class="text-muted">Time Complexity:</span>
+            <strong class="text-danger font-monospace" id="recTimeComp">O(log N)</strong>
+          </div>
+          <div class="d-flex justify-content-between border-bottom pb-1">
+            <span class="text-muted">Auxiliary Space Complexity:</span>
+            <strong class="text-warning font-monospace" id="recSpaceComp">O(log N) [Call Stack Frames]</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="text-muted">Call Stack Depth / Steps:</span>
+            <strong class="text-heading font-monospace" id="recSteps">7 stack frames</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytical Takeaway -->
+    <div class="col-12">
+      <div class="alert alert-info d-flex align-items-center gap-3 mb-0" id="analysisBox">
+        <i class="fas fa-lightbulb fs-3 text-info"></i>
+        <div>
+          <strong class="d-block mb-1" id="analysisWinner">Algorithm Analysis: Iterative Advantage</strong>
+          <span class="small" id="analysisExpl">Iterative avoids function call overhead and maintains O(1) auxiliary space, whereas recursive creates stack frames that risk overflow on large data sets.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ============================================================================
+// 1. LINKED LIST AJAX HANDLERS
+// ============================================================================
+function renderLinkedList(nodes, size) {
+  const badge = document.getElementById('llSizeBadge');
+  if (badge) badge.textContent = `Size: ${size} Nodes`;
+
+  const track = document.getElementById('llVisualTrack');
+  if (!track) return;
+
+  if (!nodes || nodes.length === 0) {
+    track.innerHTML = '<div class="text-muted small p-3">Linked list is empty. Add nodes using the buttons above.</div><div class="ll-arrow"><i class="fas fa-arrow-right"></i></div><div class="ll-null-box">NULL</div>';
+    return;
+  }
+
+  let html = '';
+  nodes.forEach(node => {
+    const sev = node.data.severity || 'Medium';
+    const nextText = node.has_next ? `Node #${node.index + 1}` : 'NULL (0x0)';
+    html += `
+      <div class="ll-node-box" id="ll-node-${node.index}">
+        <div class="d-flex align-items-center justify-content-between mb-1">
+          <span class="badge bg-primary text-white" style="font-size:0.65rem;">Node #${node.index}</span>
+          <span class="badge-priority ${sev}" style="font-size:0.65rem;">${sev}</span>
+        </div>
+        <div class="fw-bold text-heading text-truncate small">${node.data.id || 'Case Node'}</div>
+        <div class="text-muted small text-truncate" style="font-size:0.75rem;">${node.data.title || 'Record'}</div>
+        <div class="text-primary mt-1 font-monospace" style="font-size:0.7rem;">
+          <span>next &rarr; </span><strong>${nextText}</strong>
+        </div>
+      </div>
+    `;
+    if (node.has_next) {
+      html += `<div class="ll-arrow"><i class="fas fa-arrow-right"></i></div>`;
+    }
+  });
+
+  html += `<div class="ll-arrow"><i class="fas fa-arrow-right"></i></div><div class="ll-null-box">NULL</div>`;
+  track.innerHTML = html;
+}
+
+async function insertLLNode(position) {
+  const caseId = document.getElementById('llCaseId').value.trim();
+  const title = document.getElementById('llCaseTitle').value.trim() || 'Procurement Violation';
+
+  try {
+    const res = await fetch('/api/dsa/linked-list/insert', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ position: position, id: caseId, title: title })
+    });
+    const data = await res.json();
+    if (data.success) {
+      renderLinkedList(data.nodes, data.size);
+      // Auto-generate next random ID
+      document.getElementById('llCaseId').value = 'CCMS-2026-' + Math.floor(1000 + Math.random() * 9000);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function deleteLLNode() {
+  const key = document.getElementById('llDeleteKey').value.trim();
+  const isIdx = !isNaN(key) && key !== '';
+
+  try {
+    const res = await fetch('/api/dsa/linked-list/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(isIdx ? { index: key } : { key: key })
+    });
+    const data = await res.json();
+    renderLinkedList(data.nodes, data.size);
+    if (!data.success) alert(data.message);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function searchLLNode() {
+  const query = document.getElementById('llSearchKey').value.trim();
+  if (!query) return;
+
+  try {
+    const res = await fetch('/api/dsa/linked-list/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: query })
+    });
+    const data = await res.json();
+    if (data.found) {
+      document.querySelectorAll('.ll-node-box').forEach(el => el.classList.remove('highlight'));
+      const targetEl = document.getElementById(`ll-node-${data.index}`);
+      if (targetEl) {
+        targetEl.classList.add('highlight');
+        targetEl.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+      }
+    } else {
+      alert(data.message);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// ============================================================================
+// 2. STACK & QUEUE AJAX HANDLERS
+// ============================================================================
+function renderStack(items, size) {
+  document.getElementById('stackSizeBadge').textContent = `Size: ${size}`;
+  const container = document.getElementById('stackVisualContainer');
+  if (!container) return;
+
+  if (!items || items.length === 0) {
+    container.innerHTML = '<div class="text-center text-muted small py-4">Stack is currently empty.</div>';
+    return;
+  }
+
+  let html = '';
+  items.forEach((item, idx) => {
+    const isTop = (idx === 0);
+    html += `
+      <div class="stack-item ${isTop ? 'top-item' : ''}">
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="fw-bold small text-heading">${item.action}</span>
+          <span class="badge bg-subtle text-muted border font-monospace" style="font-size:0.65rem;">${item.time || 'Now'}</span>
+        </div>
+        <div class="text-muted small text-truncate" style="font-size:0.75rem;">${item.details || ''}</div>
+        ${isTop ? '<div class="text-violet fw-bold mt-1 font-monospace" style="font-size:0.68rem;"><i class="fas fa-arrow-down me-1"></i> TOP POINTER</div>' : ''}
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+async function pushStackItem() {
+  const action = document.getElementById('stackItemText').value.trim() || 'Log Verified';
+  try {
+    const res = await fetch('/api/dsa/stack/push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: action })
+    });
+    const data = await res.json();
+    if (data.success) renderStack(data.items, data.size);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function popStackItem() {
+  try {
+    const res = await fetch('/api/dsa/stack/pop', { method: 'POST' });
+    const data = await res.json();
+    if (data.success) renderStack(data.items, data.size);
+    else alert(data.error);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function renderQueue(items, size) {
+  document.getElementById('queueSizeBadge').textContent = `Size: ${size}`;
+  const container = document.getElementById('queueVisualContainer');
+  if (!container) return;
+
+  if (!items || items.length === 0) {
+    container.innerHTML = '<div class="text-center text-muted small py-4 w-100">Queue is currently empty.</div>';
+    return;
+  }
+
+  let html = '';
+  items.forEach((item, idx) => {
+    const isFront = (idx === 0);
+    const isRear = (idx === items.length - 1);
+    const sev = item.severity || 'Medium';
+
+    html += `
+      <div class="queue-item">
+        <div class="d-flex align-items-center justify-content-between mb-1">
+          <span class="badge-priority ${sev}" style="font-size:0.65rem;">${sev}</span>
+          ${isFront ? '<span class="badge bg-success" style="font-size:0.6rem;">FRONT</span>' : ''}
+          ${isRear ? '<span class="badge bg-primary" style="font-size:0.6rem;">REAR</span>' : ''}
+        </div>
+        <div class="fw-bold text-heading small text-truncate">${item.id}</div>
+        <div class="text-muted small text-truncate" style="font-size:0.72rem;">${item.title}</div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+async function enqueueQueueItem() {
+  const title = document.getElementById('queueCaseTitle').value.trim() || 'Urgent Triage Case';
+  try {
+    const res = await fetch('/api/dsa/queue/enqueue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: title })
+    });
+    const data = await res.json();
+    if (data.success) renderQueue(data.items, data.size);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function dequeueQueueItem() {
+  try {
+    const res = await fetch('/api/dsa/queue/dequeue', { method: 'POST' });
+    const data = await res.json();
+    if (data.success) renderQueue(data.items, data.size);
+    else alert(data.error);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// ============================================================================
+// 3. EXPRESSION HANDLING AJAX
+// ============================================================================
+async function processExpression() {
+  const expr = document.getElementById('exprInput').value.trim();
+  if (!expr) return;
+
+  try {
+    const res = await fetch('/api/dsa/expression/process', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ expression: expr })
+    });
+    const data = await res.json();
+    if (!data.success) {
+      alert("Expression error: " + data.error);
+      return;
+    }
+
+    document.getElementById('resInfix').textContent = data.infix;
+    document.getElementById('resPostfix').textContent = data.postfix;
+    document.getElementById('resFinal').textContent = data.result;
+
+    // Render Infix trace table
+    const infixTbody = document.getElementById('infixTraceTbody');
+    let infixHtml = '';
+    data.infix_trace.forEach(step => {
+      infixHtml += `
+        <tr>
+          <td class="font-monospace fw-bold">${step.token}</td>
+          <td class="font-monospace text-violet">${step.stack.join(' ')}</td>
+          <td class="font-monospace text-primary">${step.output}</td>
+        </tr>
+      `;
+    });
+    infixTbody.innerHTML = infixHtml;
+
+    // Render Eval trace table
+    const evalTbody = document.getElementById('evalTraceTbody');
+    let evalHtml = '';
+    data.eval_trace.forEach(step => {
+      evalHtml += `
+        <tr>
+          <td class="font-monospace fw-bold">${step.token}</td>
+          <td class="small">${step.action}</td>
+          <td class="font-monospace text-emerald">${step.stack.join(', ')}</td>
+        </tr>
+      `;
+    });
+    evalTbody.innerHTML = evalHtml;
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// ============================================================================
+// 4. EFFICIENCY BENCHMARK AJAX
+// ============================================================================
+async function runEfficiencyBenchmark() {
+  const algo = document.getElementById('benchAlgo').value;
+  const n = document.getElementById('benchN').value;
+
+  try {
+    const res = await fetch('/api/dsa/benchmark/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ algorithm: algo, input_n: n })
+    });
+    const data = await res.json();
+    if (!data.success) return;
+
+    const b = data.data;
+
+    // Iterative Card
+    document.getElementById('iterTimeBadge').textContent = `Time: ${b.iterative.time_us} µs`;
+    document.getElementById('iterResultTitle').textContent = b.iterative.result;
+    document.getElementById('iterTimeComp').textContent = b.iterative.time_complexity;
+    document.getElementById('iterSpaceComp').textContent = b.iterative.space_complexity;
+    document.getElementById('iterSteps').textContent = `${b.iterative.steps} steps`;
+
+    // Recursive Card
+    document.getElementById('recTimeBadge').textContent = `Time: ${b.recursive.time_us} µs`;
+    document.getElementById('recResultTitle').textContent = b.recursive.result;
+    document.getElementById('recTimeComp').textContent = b.recursive.time_complexity;
+    document.getElementById('recSpaceComp').textContent = b.recursive.space_complexity;
+    document.getElementById('recSteps').textContent = `${b.recursive.steps} stack calls`;
+
+    // Analysis
+    document.getElementById('analysisWinner').textContent = `Algorithm Analysis: ${b.analysis.winner}`;
+    document.getElementById('analysisExpl').textContent = b.analysis.explanation;
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+</script>
+{% endblock %}

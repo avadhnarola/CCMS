@@ -66,6 +66,7 @@ def verify_user_password(stored_hash, plain_password):
     # 3. PHP bcrypt ($2y$ or $2b$) check
     if stored_hash.startswith("$2y$") or stored_hash.startswith("$2a$") or stored_hash.startswith("$2b$"):
         try:
+            # pyrefly: ignore [missing-import]
             import bcrypt
             compat_hash = stored_hash
             if compat_hash.startswith("$2y$"):
@@ -129,35 +130,32 @@ def init_db():
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
             """)
 
+            # Add any missing columns to users table if it was previously created with fewer columns
+            for col_sql in [
+                "ALTER TABLE users ADD COLUMN address VARCHAR(255) NULL",
+                "ALTER TABLE users ADD COLUMN email_verified TINYINT(1) DEFAULT 1",
+                "ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'citizen'",
+                "ALTER TABLE users ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+            ]:
+                try:
+                    cur.execute(col_sql)
+                except Exception:
+                    pass
+
             # Add any missing columns to complaints table if it was previously created with fewer columns
-            try:
-                cur.execute("ALTER TABLE complaints ADD COLUMN assigned_officer VARCHAR(150) NULL")
-            except Exception:
-                pass
-            try:
-                cur.execute("ALTER TABLE complaints ADD COLUMN assigned_officer_id VARCHAR(30) NULL")
-            except Exception:
-                pass
-            try:
-                cur.execute("ALTER TABLE complaints ADD COLUMN investigation_notes TEXT NULL")
-            except Exception:
-                pass
-            try:
-                cur.execute("ALTER TABLE complaints ADD COLUMN rating INT NULL")
-            except Exception:
-                pass
-            try:
-                cur.execute("ALTER TABLE complaints ADD COLUMN feedback TEXT NULL")
-            except Exception:
-                pass
-            try:
-                cur.execute("ALTER TABLE complaints ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-            except Exception:
-                pass
-            try:
-                cur.execute("ALTER TABLE complaints ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-            except Exception:
-                pass
+            for col_sql in [
+                "ALTER TABLE complaints ADD COLUMN assigned_officer VARCHAR(150) NULL",
+                "ALTER TABLE complaints ADD COLUMN assigned_officer_id VARCHAR(30) NULL",
+                "ALTER TABLE complaints ADD COLUMN investigation_notes TEXT NULL",
+                "ALTER TABLE complaints ADD COLUMN rating INT NULL",
+                "ALTER TABLE complaints ADD COLUMN feedback TEXT NULL",
+                "ALTER TABLE complaints ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+                "ALTER TABLE complaints ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            ]:
+                try:
+                    cur.execute(col_sql)
+                except Exception:
+                    pass
 
             # Contact Messages table
             cur.execute("""

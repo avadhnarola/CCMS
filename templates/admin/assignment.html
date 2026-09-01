@@ -91,7 +91,7 @@
             <div class="text-muted small mb-2">{{ off.department }} &bull; {{ off.rank }}</div>
             <div class="progress" style="height: 6px;">
               {% set pct = (off.active_cases / 5 * 100)|int if off.active_cases < 5 else 100 %}
-              <div class="progress-bar {% if off.active_cases >= 3 %}bg-warning{% elif off.active_cases >= 5 %}bg-danger{% else %}bg-success{% endif %}" style="width: {{ pct }}%;"></div>
+              <div class="progress-bar {% if off.active_cases >= 3 %}bg-warning{% elif off.active_cases >= 5 %}bg-danger{% else %}bg-success{% endif %}" style="width: {{ pct }}%; border-radius: 10px;"></div>
             </div>
           </div>
         {% endfor %}
