@@ -23,10 +23,10 @@
         <!-- Admin Login Form -->
         <form action="{{ url_for('admin_login') }}" method="POST" class="text-start">
           <div class="mb-3">
-            <label class="form-label">Super Admin Master Email</label>
+            <label class="form-label">Admin Email</label>
             <div class="input-group">
               <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
-              <input type="email" name="email" class="form-control border-start-0" placeholder="admin@ccms.gov.in" value="admin@ccms.gov.in" required>
+              <input type="email" name="email" class="form-control border-start-0" placeholder="admin@ccms.com" value="admin@ccms.com" required>
             </div>
           </div>
 
@@ -47,8 +47,8 @@
         </form>
 
         <div class="p-3 rounded bg-subtle border text-start small text-muted">
-          <div class="fw-bold text-heading mb-1"><i class="fas fa-circle-info text-primary me-1"></i> Default Admin Credentials:</div>
-          <div>Email: <code>admin@ccms.gov.in</code></div>
+          <div class="fw-bold text-heading mb-1"><i class="fas fa-circle-info text-primary me-1"></i> Admin Credentials:</div>
+          <div>Email: <code>admin@ccms.com</code></div>
           <div>Password: <code>admin123</code></div>
         </div>
       </div>

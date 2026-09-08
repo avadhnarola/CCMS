@@ -67,7 +67,7 @@ def verify_user_password(stored_hash, plain_password):
     if stored_hash.startswith("$2y$") or stored_hash.startswith("$2a$") or stored_hash.startswith("$2b$"):
         try:
             # pyrefly: ignore [missing-import]
-            import bcrypt
+            import bcrypt # type: ignore
             compat_hash = stored_hash
             if compat_hash.startswith("$2y$"):
                 compat_hash = "$2b$" + compat_hash[4:]

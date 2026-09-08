@@ -1,0 +1,974 @@
+================================================================================
+CCMS PROJECT - DATA STRUCTURES & ALGORITHMS (DSA) IMPLEMENTATION GUIDE
+================================================================================
+Date: 2026-09-01
+Project: Corruption Complaint Management System (CCMS)
+File Location: /dsa.py, /app.py
+
+================================================================================
+OVERVIEW
+================================================================================
+This document explains how DSA (Data Structures & Algorithms) concepts are
+integrated into the CCMS project for real-time data operations. The project
+uses three main in-memory DSA structures for efficient data handling:
+
+1. Singly Linked List (for dynamic complaint storage)
+2. Linked-based Stack (for activity logging - LIFO)
+3. Linked-based Queue (for complaint dispatch - FIFO)
+4. Expression Handler (for formula evaluation using stacks)
+
+================================================================================
+PART 1: SINGLY LINKED LIST - COMPLAINTS MANAGEMENT
+================================================================================
+
+STRUCTURE: SinglyLinkedList
+PURPOSE: In-memory dynamic storage for recent complaint records
+DATABASE TABLE: complaints
+OPERATIONS SUPPORTED: INSERT (HEAD/TAIL), DELETE (BY VALUE/INDEX), SEARCH, TRAVERSE
+
+---
+
+INITIALIZATION (From Database to DSA):
+Location: app.py - init_dsa_stores() function (Line 23-29)
+
+    recent_cases = db.query_db(
+        "SELECT complaint_id, complaint_title, sector, severity, complaint_status, 
+         created_at FROM complaints ORDER BY created_at DESC LIMIT 5"
+    )
+    
+    for c in recent_cases:
+        complaints_linked_list.insert_at_tail({
+            "id": c["complaint_id"],
+            "title": c["complaint_title"],
+            "sector": c["sector"],
+            "severity": c["severity"],
+            "status": c["complaint_status"],
+            "timestamp": str(c["created_at"])
+        })
+
+WHAT HAPPENS:
+  ✓ Fetches last 5 complaints from MySQL database
+  ✓ Inserts each complaint as a NODE into linked list (at TAIL)
+  ✓ Each node contains complaint details
+  ✓ Linked list maintains order: newest → oldest
+
+EXAMPLE DATA STRUCTURE IN MEMORY:
+    Head → [Complaint-1] → [Complaint-2] → [Complaint-3] → NULL
+    
+    Node contains:
+    {
+        "id": "CCMS-2026-9456",
+        "title": "Embezzlement & Procurement Breach",
+        "sector": "Public Works",
+        "severity": "High",
+        "status": "Pending",
+        "timestamp": "2026-09-01 10:30"
+    }
+
+---
+
+OPERATION 1: INSERT AT HEAD (Database: INSERT)
+Location: app.py - api_ll_insert() function (Line 1153-1183)
+API Endpoint: POST /api/dsa/linked-list/insert
+DSA Method: insert_at_head()
+Time Complexity: O(1)
+
+USAGE SCENARIO: Admin adds new complaint from DSA Lab
+REQUEST:
+    {
+        "position": "head",
+        "id": "CCMS-2026-7890",
+        "title": "Bribery in Land Registration",
+        "sector": "Revenue",
+        "severity": "Critical"
+    }
+
+CODE:
+    node_data = {
+        "id": complaint_id,
+        "title": title,
+        "sector": sector,
+        "severity": severity,
+        "status": "Pending",
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    }
+    
+    if position == "head":
+        complaints_linked_list.insert_at_head(node_data)  ← O(1) operation
+    else:
+        complaints_linked_list.insert_at_tail(node_data)  ← O(n) operation
+
+LINKED LIST BEFORE:
+    Head → [Old-1] → [Old-2] → [Old-3] → NULL
+
+LINKED LIST AFTER INSERT AT HEAD:
+    Head → [NEW] → [Old-1] → [Old-2] → [Old-3] → NULL
+
+---
+
+OPERATION 2: INSERT AT TAIL (Database: INSERT)
+Location: app.py - api_ll_insert() function (Line 1177)
+DSA Method: insert_at_tail()
+Time Complexity: O(n)
+
+USAGE SCENARIO: Append new complaint to end of list
+    complaints_linked_list.insert_at_tail(node_data)
+
+LINKED LIST BEFORE:
+    Head → [Old-1] → [Old-2] → [Old-3] → NULL
+
+LINKED LIST AFTER INSERT AT TAIL:
+    Head → [Old-1] → [Old-2] → [Old-3] → [NEW] → NULL
+
+---
+
+OPERATION 3: DELETE BY INDEX (Database: DELETE)
+Location: app.py - api_ll_delete() function (Line 1192-1208)
+API Endpoint: POST /api/dsa/linked-list/delete
+DSA Method: delete_at_index()
+Time Complexity: O(n)
+
+USAGE SCENARIO: Admin removes specific complaint by position
+REQUEST:
+    {
+        "index": 2
+    }
+
+CODE:
+    if index is not None and str(index).isdigit():
+        deleted = complaints_linked_list.delete_at_index(int(index))
+        success = deleted is not None
+
+EXAMPLE:
+BEFORE:
+    Head → [Index-0] → [Index-1] → [Index-2] ← DELETE THIS → [Index-3] → NULL
+
+AFTER:
+    Head → [Index-0] → [Index-1] → [Index-3] → NULL
+
+---
+
+OPERATION 4: DELETE BY VALUE/KEY (Database: DELETE)
+Location: app.py - api_ll_delete() function (Line 1199)
+DSA Method: delete_by_value()
+Time Complexity: O(n)
+
+USAGE SCENARIO: Remove complaint by complaint ID or title
+REQUEST:
+    {
+        "key": "CCMS-2026-9456"
+    }
+
+CODE:
+    success = complaints_linked_list.delete_by_value(key)
+
+HOW IT MATCHES:
+    if isinstance(node_data, dict):
+        return (node_data.get('id') == search_key or 
+                node_data.get('complaint_id') == search_key or 
+                str(node_data) == str(search_key))
+
+---
+
+OPERATION 5: SEARCH (Database: SELECT)
+Location: app.py - api_ll_search() function (Line 1211-1225)
+API Endpoint: POST /api/dsa/linked-list/search
+DSA Method: search()
+Time Complexity: O(n)
+
+USAGE SCENARIO: Admin searches for complaint by ID, title, or keyword
+REQUEST:
+    {
+        "query": "Embezzlement"
+    }
+
+CODE:
+    result = complaints_linked_list.search(query)
+    if result:
+        idx, node_data = result
+        return {"found": True, "index": idx, "data": node_data}
+
+SEARCH MECHANISM:
+    • Traverses linked list node by node
+    • Compares query against: id, complaint_id, or title
+    • Returns (index, data) tuple when match found
+    • Returns None if no match
+
+---
+
+OPERATION 6: TRAVERSE & DISPLAY (Database: SELECT *)
+Location: app.py - api_ll_list() function (Line 1128-1149)
+DSA Method: traverse(), to_list()
+Time Complexity: O(n)
+
+CODE:
+    ll_nodes = complaints_linked_list.to_list()
+    
+    return jsonify({
+        "nodes": ll_nodes,
+        "size": complaints_linked_list.get_size()
+    })
+
+RESPONSE FORMAT:
+    {
+        "nodes": [
+            {
+                "index": 0,
+                "data": {
+                    "id": "CCMS-2026-7890",
+                    "title": "Bribery in Land Registration",
+                    "sector": "Revenue",
+                    "severity": "Critical",
+                    "status": "Pending",
+                    "timestamp": "2026-09-01 10:30"
+                },
+                "has_next": true
+            },
+            {
+                "index": 1,
+                "data": {...},
+                "has_next": false
+            }
+        ],
+        "size": 2
+    }
+
+---
+
+LINKED LIST SUMMARY TABLE:
++----------+-----------+---+-----+-----------+
+| Operation | Method    | TC| Table | Purpose  |
++----------+-----------+---+-----+-----------+
+| INSERT-H | insert_at_head | O(1) | complaints | Add at start |
+| INSERT-T | insert_at_tail | O(n) | complaints | Add at end |
+| DELETE   | delete_by_value | O(n) | complaints | Remove by ID |
+| DELETE   | delete_at_index | O(n) | complaints | Remove by pos |
+| SEARCH   | search  | O(n) | complaints | Find record |
+| TRAVERSE | traverse/to_list | O(n) | complaints | Display all |
++----------+-----------+---+-----+-----------+
+
+================================================================================
+PART 2: LINKED-BASED STACK - ACTIVITY LOGGING
+================================================================================
+
+STRUCTURE: LinkedStack (LIFO - Last In First Out)
+PURPOSE: Maintain audit trail of admin actions
+DATABASE TABLE: activity_logs
+OPERATIONS SUPPORTED: PUSH (INSERT), POP (DELETE), PEEK, TRAVERSE
+
+---
+
+INITIALIZATION (From Database to DSA):
+Location: app.py - init_dsa_stores() function (Line 34-43)
+
+    recent_logs = db.query_db(
+        "SELECT actor, action, details, timestamp FROM activity_logs 
+         ORDER BY timestamp DESC LIMIT 4"
+    )
+    
+    if recent_logs:
+        for l in reversed(recent_logs):  ← Reverse to maintain LIFO order
+            activity_stack.push({
+                "actor": l["actor"],
+                "action": l["action"],
+                "details": l["details"],
+                "time": str(l["timestamp"])
+            })
+
+WHAT HAPPENS:
+  ✓ Fetches last 4 activity logs from database
+  ✓ REVERSES order (most recent pushed last = top of stack)
+  ✓ Each action becomes a node on the stack
+  ✓ Latest action is at the TOP (for quick access)
+
+---
+
+STACK VISUALIZATION (LIFO):
+    TOP → [Latest-Action] ↑
+            [Previous-Action] |
+            [Older-Action] |
+            [Oldest-Action]
+            
+EXAMPLE STACK:
+    Push 1: [Admin Login - 10:30]
+    Push 2: [Complaint Created - 10:31]
+    Push 3: [Evidence Uploaded - 10:32]  ← TOP (Last In)
+    
+    Pop: Returns [Evidence Uploaded - 10:32]  ← First Out
+
+---
+
+OPERATION 1: PUSH (Database: INSERT)
+Location: app.py - api_stack_push() function (Line 1227-1240)
+API Endpoint: POST /api/dsa/stack/push
+DSA Method: push()
+Time Complexity: O(1)
+
+USAGE SCENARIO: Log admin action to stack
+REQUEST:
+    {
+        "action": "Evidence Document Verified",
+        "actor": "Super Admin",
+        "details": "Cryptographic integrity validated for case #7890"
+    }
+
+CODE:
+    item = {
+        "actor": actor,
+        "action": action,
+        "details": details,
+        "time": datetime.datetime.now().strftime("%H:%M:%S")
+    }
+    activity_stack.push(item)  ← O(1) Push to top
+
+WHAT HAPPENS:
+    1. Create new node with activity data
+    2. Set node.next = current top
+    3. Make node the new top
+    4. Increment stack size
+
+---
+
+OPERATION 2: POP (Database: DELETE - Remove Latest)
+Location: app.py - api_stack_pop() function (Line 1242-1248)
+API Endpoint: POST /api/dsa/stack/pop
+DSA Method: pop()
+Time Complexity: O(1)
+
+USAGE SCENARIO: Retrieve and remove latest admin action
+CODE:
+    try:
+        popped = activity_stack.pop()  ← O(1) Remove from top
+        return {"success": True, "popped": popped, "size": activity_stack.size()}
+    except dsa.StackUnderflowError as e:
+        return {"success": False, "error": str(e)}, 400
+
+STACK BEFORE POP:
+    TOP → [Evidence Uploaded - 10:32]
+           [Complaint Created - 10:31]
+           [Admin Login - 10:30]
+
+STACK AFTER POP (Evidence Uploaded removed):
+    TOP → [Complaint Created - 10:31]
+           [Admin Login - 10:30]
+
+---
+
+OPERATION 3: PEEK (Database: SELECT - Read Latest)
+Location: dsa.py - LinkedStack.peek() function
+DSA Method: peek()
+Time Complexity: O(1)
+
+USAGE SCENARIO: View latest action WITHOUT removing it
+CODE:
+    latest_action = activity_stack.peek()
+
+Returns the top item but doesn't remove it.
+
+---
+
+OPERATION 4: TRAVERSE & DISPLAY (Database: SELECT *)
+Location: app.py - api_dsa_lab() function (Line 1131-1149)
+DSA Method: to_list()
+Time Complexity: O(n)
+
+CODE:
+    stack_items = activity_stack.to_list()  ← Get all from top to bottom
+    
+    return jsonify({
+        "stack_items": stack_items,
+        "stack_size": activity_stack.size()
+    })
+
+RESPONSE FORMAT (Stack displayed in visual order - Top first):
+    {
+        "stack_items": [
+            {
+                "actor": "Super Admin",
+                "action": "Evidence Document Verified",
+                "details": "Case #7890 validated",
+                "time": "10:32:45"
+            },
+            {
+                "actor": "Admin Officer",
+                "action": "Complaint Created",
+                "details": "New case registered",
+                "time": "10:31:20"
+            },
+            {
+                "actor": "Super Admin",
+                "action": "Admin Login",
+                "details": "Session started",
+                "time": "10:30:00"
+            }
+        ],
+        "stack_size": 3
+    }
+
+---
+
+STACK SUMMARY TABLE:
++----------+-----------+---+-----+-----------+
+| Operation| Method    | TC| Table | Purpose  |
++----------+-----------+---+-----+-----------+
+| PUSH     | push      | O(1) | activity_logs | Log new action |
+| POP      | pop       | O(1) | activity_logs | Remove latest |
+| PEEK     | peek      | O(1) | activity_logs | View latest |
+| DISPLAY  | to_list   | O(n) | activity_logs | Show all |
++----------+-----------+---+-----+-----------+
+
+WHY STACK FOR ACTIVITY LOGS?
+  ✓ LIFO ensures latest actions visible first (most important)
+  ✓ Fast O(1) insertion and deletion at top
+  ✓ Perfect for audit trail (undo operations)
+  ✓ Common use case: "Recent activity" displays
+
+================================================================================
+PART 3: LINKED-BASED QUEUE - COMPLAINT DISPATCH
+================================================================================
+
+STRUCTURE: LinkedQueue (FIFO - First In First Out)
+PURPOSE: Maintain queue of pending complaints for assignment
+DATABASE TABLE: complaints
+OPERATIONS SUPPORTED: ENQUEUE (INSERT), DEQUEUE (DELETE), PEEK, TRAVERSE
+
+---
+
+INITIALIZATION (From Database to DSA):
+Location: app.py - init_dsa_stores() function (Line 45-51)
+
+    pending = db.query_db(
+        "SELECT complaint_id, complaint_title, sector, severity 
+         FROM complaints WHERE complaint_status = 'Pending' LIMIT 4"
+    )
+    
+    if pending:
+        for p in pending:
+            dispatch_queue.enqueue({
+                "id": p["complaint_id"],
+                "title": p["complaint_title"],
+                "sector": p["sector"],
+                "severity": p["severity"]
+            })
+
+WHAT HAPPENS:
+  ✓ Fetches all PENDING complaints from database
+  ✓ Adds each to queue at REAR (enqueue)
+  ✓ First pending complaint is at FRONT
+  ✓ Maintains FIFO order for fair dispatch
+
+---
+
+QUEUE VISUALIZATION (FIFO):
+    Front [First-Complaint] → [Second-Complaint] → [Third-Complaint] Rear
+    
+    When next officer ready → Dequeue from FRONT
+    New complaint arrives → Enqueue at REAR
+
+EXAMPLE QUEUE:
+    Enqueue 1: [Case-A]
+    Enqueue 2: [Case-B]
+    Enqueue 3: [Case-C]  ← REAR
+    
+    Dequeue: Returns [Case-A]  ← Removed from FRONT (First In)
+    
+    Remaining: [Case-B] → [Case-C]
+
+---
+
+OPERATION 1: ENQUEUE (Database: INSERT)
+Location: app.py - api_queue_enqueue() function (Line 1253-1266)
+API Endpoint: POST /api/dsa/queue/enqueue
+DSA Method: enqueue()
+Time Complexity: O(1)
+
+USAGE SCENARIO: Add new complaint to dispatch queue
+REQUEST:
+    {
+        "id": "CCMS-2026-5678",
+        "title": "High-Value Kickback Detection",
+        "sector": "Revenue & Taxation",
+        "severity": "Critical"
+    }
+
+CODE:
+    item = {"id": cid, "title": title, "sector": sector, "severity": severity}
+    dispatch_queue.enqueue(item)  ← O(1) Add to rear
+
+WHAT HAPPENS:
+    1. Create new node with complaint data
+    2. Link current rear.next to new node
+    3. Make new node the rear
+    4. Increment queue size
+
+QUEUE BEFORE ENQUEUE:
+    Front [Case-A] → [Case-B] → [Case-C] Rear
+
+QUEUE AFTER ENQUEUE (Case-D added):
+    Front [Case-A] → [Case-B] → [Case-C] → [Case-D] Rear
+
+---
+
+OPERATION 2: DEQUEUE (Database: DELETE - Remove Oldest)
+Location: app.py - api_queue_dequeue() function (Line 1268-1275)
+API Endpoint: POST /api/dsa/queue/dequeue
+DSA Method: dequeue()
+Time Complexity: O(1)
+
+USAGE SCENARIO: Assign next complaint from queue to officer
+CODE:
+    try:
+        dequeued = dispatch_queue.dequeue()  ← O(1) Remove from front
+        return {"success": True, "dequeued": dequeued, "size": dispatch_queue.size()}
+    except dsa.QueueUnderflowError as e:
+        return {"success": False, "error": str(e)}, 400
+
+QUEUE BEFORE DEQUEUE:
+    Front [Case-A] → [Case-B] → [Case-C] → [Case-D] Rear
+
+QUEUE AFTER DEQUEUE (Case-A removed and assigned):
+    Front [Case-B] → [Case-C] → [Case-D] Rear
+
+RESPONSE:
+    {
+        "success": true,
+        "dequeued": {
+            "id": "CCMS-2026-1234",
+            "title": "Embezzlement Incident",
+            "sector": "Public Works",
+            "severity": "High"
+        },
+        "size": 3
+    }
+
+---
+
+OPERATION 3: PEEK (Database: SELECT - Read Front)
+Location: dsa.py - LinkedQueue.peek() function
+DSA Method: peek()
+Time Complexity: O(1)
+
+USAGE SCENARIO: View next complaint WITHOUT assigning it
+CODE:
+    next_complaint = dispatch_queue.peek()
+
+Returns complaint at front but doesn't remove it.
+
+---
+
+OPERATION 4: TRAVERSE & DISPLAY (Database: SELECT *)
+Location: app.py - api_dsa_lab() function (Line 1132-1149)
+DSA Method: to_list()
+Time Complexity: O(n)
+
+CODE:
+    queue_items = dispatch_queue.to_list()  ← Get all from front to rear
+    
+    return jsonify({
+        "queue_items": queue_items,
+        "queue_size": dispatch_queue.size()
+    })
+
+RESPONSE FORMAT (Queue displayed in dispatch order - Front first):
+    {
+        "queue_items": [
+            {
+                "id": "CCMS-2026-1234",
+                "title": "Embezzlement Incident",
+                "sector": "Public Works",
+                "severity": "High"
+            },
+            {
+                "id": "CCMS-2026-5678",
+                "title": "High-Value Kickback Detection",
+                "sector": "Revenue & Taxation",
+                "severity": "Critical"
+            },
+            {
+                "id": "CCMS-2026-9999",
+                "title": "Bribery Case",
+                "sector": "Police",
+                "severity": "Critical"
+            }
+        ],
+        "queue_size": 3
+    }
+
+---
+
+QUEUE SUMMARY TABLE:
++----------+-----------+---+-----+-----------+
+| Operation| Method    | TC| Table | Purpose  |
++----------+-----------+---+-----+-----------+
+| ENQUEUE  | enqueue   | O(1) | complaints | Add to rear |
+| DEQUEUE  | dequeue   | O(1) | complaints | Remove/assign |
+| PEEK     | peek      | O(1) | complaints | View next |
+| DISPLAY  | to_list   | O(n) | complaints | Show all |
++----------+-----------+---+-----+-----------+
+
+WHY QUEUE FOR COMPLAINT DISPATCH?
+  ✓ FIFO ensures fair assignment (no favoritism)
+  ✓ O(1) insertion and removal at opposite ends
+  ✓ Perfect for task assignment (officers process in order)
+  ✓ Prevents starvation (old cases get handled first)
+
+================================================================================
+PART 4: EXPRESSION HANDLER - FORMULA EVALUATION
+================================================================================
+
+STRUCTURE: ExpressionHandler using LinkedStack
+PURPOSE: Convert mathematical expressions and evaluate penalty/risk calculations
+OPERATIONS: Infix → Postfix conversion, Postfix evaluation with tracing
+
+---
+
+LOCATION & IMPLEMENTATION:
+File: dsa.py - ExpressionHandler class (Lines 343-450+)
+
+Key Methods:
+  1. tokenize() - Break expression into tokens
+  2. infix_to_postfix() - Convert to Postfix using Stack (Shunting Yard Algorithm)
+  3. evaluate_postfix() - Evaluate Postfix expression with step-by-step trace
+
+---
+
+OPERATION 1: TOKENIZE (Parse Expression)
+Method: ExpressionHandler.tokenize()
+Time Complexity: O(n)
+
+EXAMPLE:
+    Input: "(2500 * 2) + 150"
+    Output: ['(', '2500', '*', '2', ')', '+', '150']
+
+---
+
+OPERATION 2: INFIX TO POSTFIX CONVERSION (Shunting Yard Algorithm)
+Location: app.py - api_expression_process() function (Line 1277-1298)
+API Endpoint: POST /api/dsa/expression/process
+Method: ExpressionHandler.infix_to_postfix()
+Time Complexity: O(n)
+
+USAGE SCENARIO: Convert penalty calculation formula
+REQUEST:
+    {
+        "expression": "( 5000 * 2 ) + ( 15 * 100 ) - 500"
+    }
+
+ALGORITHM USES STACK:
+    1. Create output queue and operator stack
+    2. Read tokens left to right:
+       - If number → add to output
+       - If operator → pop operators with higher precedence to output
+       - If '(' → push to stack
+       - If ')' → pop until matching '('
+    3. Pop remaining operators to output
+
+STEP-BY-STEP TRACE:
+    Input Infix: ( 5000 * 2 ) + ( 15 * 100 ) - 500
+    
+    Token: (          → Stack: [(]
+    Token: 5000       → Output: [5000]
+    Token: *          → Stack: [(, *]
+    Token: 2          → Output: [5000, 2]
+    Token: )          → Output: [5000, 2, *], Stack: []
+    Token: +          → Stack: [+]
+    Token: (          → Stack: [+, (]
+    Token: 15         → Output: [5000, 2, *, 15]
+    Token: *          → Stack: [+, (, *]
+    Token: 100        → Output: [5000, 2, *, 15, 100]
+    Token: )          → Output: [5000, 2, *, 15, 100, *], Stack: [+]
+    Token: -          → Output: [5000, 2, *, 15, 100, *, +], Stack: [-]
+    Token: 500        → Output: [5000, 2, *, 15, 100, *, +, 500]
+    End                → Output: [5000, 2, *, 15, 100, *, +, 500, -]
+    
+    Final Postfix: 5000 2 * 15 100 * + 500 -
+
+RESPONSE:
+    {
+        "infix": "( 5000 * 2 ) + ( 15 * 100 ) - 500",
+        "postfix": "5000 2 * 15 100 * + 500 -",
+        "result": 10500,
+        "infix_trace": [
+            {"token": "(", "stack": ["("], "output": []},
+            {"token": "5000", "stack": ["("], "output": ["5000"]},
+            ...
+        ],
+        "eval_trace": [
+            {"step": 1, "operation": "5000 * 2 = 10000"},
+            {"step": 2, "operation": "15 * 100 = 1500"},
+            {"step": 3, "operation": "10000 + 1500 = 11500"},
+            {"step": 4, "operation": "11500 - 500 = 10000"}
+        ]
+    }
+
+---
+
+OPERATION 3: EVALUATE POSTFIX EXPRESSION
+Method: ExpressionHandler.evaluate_postfix()
+Time Complexity: O(n)
+
+USAGE SCENARIO: Calculate penalty amount from postfix expression
+    Postfix: 5000 2 * 15 100 * + 500 -
+
+ALGORITHM USES STACK:
+    1. Create empty stack
+    2. Read tokens left to right:
+       - If number → push to stack
+       - If operator → pop two operands, apply operator, push result
+    3. Final stack top is result
+
+STEP-BY-STEP EVALUATION:
+    Read: 5000     → Stack: [5000]
+    Read: 2        → Stack: [5000, 2]
+    Read: *        → Pop 2,5000 → 5000*2=10000 → Stack: [10000]
+    Read: 15       → Stack: [10000, 15]
+    Read: 100      → Stack: [10000, 15, 100]
+    Read: *        → Pop 100,15 → 15*100=1500 → Stack: [10000, 1500]
+    Read: +        → Pop 1500,10000 → 10000+1500=11500 → Stack: [11500]
+    Read: 500      → Stack: [11500, 500]
+    Read: -        → Pop 500,11500 → 11500-500=10500 → Stack: [10500]
+    
+    FINAL RESULT: 10500
+
+WHY USE POSTFIX FOR CALCULATIONS?
+  ✓ No parentheses needed (unambiguous)
+  ✓ Single left-to-right pass evaluation
+  ✓ Stack-based evaluation is very efficient O(n)
+  ✓ Perfect for automated calculation systems
+
+================================================================================
+PART 5: COMPLETE WORKFLOW EXAMPLE - END TO END
+================================================================================
+
+SCENARIO: Admin creates new complaint and tracks it through the system
+
+STEP 1: NEW COMPLAINT FILED (INSERT into LINKED LIST)
+  Action: Admin enters complaint via DSA Lab
+  API: POST /api/dsa/linked-list/insert
+  
+  Request:
+    {
+        "position": "tail",
+        "id": "CCMS-2026-9001",
+        "title": "Land Mafia Extortion",
+        "sector": "Real Estate",
+        "severity": "Critical"
+    }
+  
+  DSA Operation:
+    complaints_linked_list.insert_at_tail(node_data)
+  
+  Result: New complaint added to linked list
+
+STEP 2: ACTIVITY LOGGED (PUSH to STACK)
+  Action: System logs the admin action
+  API: POST /api/dsa/stack/push (automatic)
+  
+  Data:
+    {
+        "actor": "Super Admin",
+        "action": "Complaint Registered",
+        "details": "Case CCMS-2026-9001 created",
+        "time": "2026-09-01 14:30:45"
+    }
+  
+  DSA Operation:
+    activity_stack.push(log_item)
+  
+  Result: Action logged to top of stack
+
+STEP 3: COMPLAINT ADDED TO DISPATCH QUEUE (ENQUEUE)
+  Action: Pending complaint queued for officer assignment
+  API: POST /api/dsa/queue/enqueue (automatic)
+  
+  Data:
+    {
+        "id": "CCMS-2026-9001",
+        "title": "Land Mafia Extortion",
+        "sector": "Real Estate",
+        "severity": "Critical"
+    }
+  
+  DSA Operation:
+    dispatch_queue.enqueue(complaint)
+  
+  Result: Complaint added to queue rear
+
+STEP 4: OFFICER RETRIEVES NEXT COMPLAINT (DEQUEUE)
+  Action: Officer requests next assignment
+  API: POST /api/dsa/queue/dequeue
+  
+  DSA Operation:
+    dispatch_queue.dequeue()  → Returns CCMS-2026-9001 from front
+  
+  Result: Complaint removed from queue and sent to officer
+
+STEP 5: CALCULATE PENALTY (EXPRESSION EVALUATION)
+  Action: System evaluates penalty formula
+  API: POST /api/dsa/expression/process
+  
+  Formula:
+    "( base_fine * severity_multiplier ) + ( evidence_count * weight ) - discount"
+    "( 5000 * 3 ) + ( 8 * 100 ) - 500"
+  
+  DSA Operations:
+    1. infix_to_postfix() → "5000 3 * 8 100 * + 500 -"
+    2. evaluate_postfix() → 15000 + 800 - 500 = 15300
+  
+  Result: Penalty calculated = 15300
+
+STEP 6: DISPLAY ALL DATA STRUCTURES (TRAVERSE)
+  Action: Admin views DSA Lab dashboard
+  API: GET /api/dsa/lab
+  
+  Response includes:
+    - complaints_linked_list.to_list()  → All recent complaints
+    - activity_stack.to_list()          → All recent activities (latest first)
+    - dispatch_queue.to_list()          → All pending assignments (oldest first)
+
+================================================================================
+PART 6: DATABASE vs. DSA COMPARISON
+================================================================================
+
+LINKED LIST vs. DATABASE (complaints table):
+┌─────────────────┬──────────────────────┬──────────────────────┐
+| Operation       | Database (SQL)       | DSA (Linked List)    |
+├─────────────────┼──────────────────────┼──────────────────────┤
+| Insert          | INSERT INTO table... | insert_at_tail()     |
+| Delete          | DELETE WHERE id=...  | delete_by_value()    |
+| Search by ID    | SELECT WHERE id=...  | search()             |
+| Traverse        | SELECT * ORDER BY... | traverse()           |
+| Time Complexity | O(log n) to O(n)     | O(1) to O(n)         |
+| Use Case        | Persistent Storage   | In-Memory Cache      |
+└─────────────────┴──────────────────────┴──────────────────────┘
+
+STACK vs. DATABASE (activity_logs table):
+┌─────────────────┬──────────────────────┬──────────────────────┐
+| Operation       | Database (SQL)       | DSA (Stack)          |
+├─────────────────┼──────────────────────┼──────────────────────┤
+| Add Log         | INSERT INTO table... | push()               |
+| Get Latest      | SELECT * ORDER BY... | peek() / pop()       |
+| Remove Latest   | DELETE WHERE...      | pop()                |
+| All Logs        | SELECT *             | to_list()            |
+| Time Complexity | O(n)                 | O(1)                 |
+| Use Case        | Permanent Record     | Quick Access (LIFO)  |
+└─────────────────┴──────────────────────┴──────────────────────┘
+
+QUEUE vs. DATABASE (complaints table for pending):
+┌─────────────────┬──────────────────────┬──────────────────────┐
+| Operation       | Database (SQL)       | DSA (Queue)          |
+├─────────────────┼──────────────────────┼──────────────────────┤
+| Add Task        | INSERT INTO table... | enqueue()            |
+| Get Next Task   | SELECT LIMIT 1...    | dequeue()            |
+| Remove Task     | DELETE WHERE...      | dequeue()            |
+| All Tasks       | SELECT WHERE stat... | to_list()            |
+| Time Complexity | O(n)                 | O(1)                 |
+| Use Case        | Persistent Record    | Fair Assignment      |
+└─────────────────┴──────────────────────┴──────────────────────┘
+
+================================================================================
+PART 7: TIME COMPLEXITY ANALYSIS
+================================================================================
+
+SINGLY LINKED LIST:
+  insert_at_head()      O(1)  ← Create node, update pointers
+  insert_at_tail()      O(n)  ← Must traverse to end
+  delete_at_index()     O(n)  ← Must traverse to position
+  delete_by_value()     O(n)  ← Must search for value
+  search()              O(n)  ← Must traverse all nodes
+  traverse()            O(n)  ← Visit each node once
+
+LINKED STACK:
+  push()                O(1)  ← Add to top only
+  pop()                 O(1)  ← Remove from top only
+  peek()                O(1)  ← Read top without removal
+  to_list()             O(n)  ← Visit each node once
+
+LINKED QUEUE:
+  enqueue()             O(1)  ← Add to rear only
+  dequeue()             O(1)  ← Remove from front only
+  peek()                O(1)  ← Read front without removal
+  to_list()             O(n)  ← Visit each node once
+
+EXPRESSION HANDLER:
+  tokenize()            O(n)  ← Scan expression once
+  infix_to_postfix()    O(n)  ← Process each token once
+  evaluate_postfix()    O(n)  ← Process each token once
+
+================================================================================
+PART 8: ACCESS THE DSA LAB IN APPLICATION
+================================================================================
+
+ADMIN DSA LAB INTERFACE:
+  URL: http://127.0.0.1:5000/admin/dsa-lab
+  Access: Admin only (role_required decorator)
+
+AVAILABLE FEATURES:
+  1. Linked List Operations
+     - Insert complaint at HEAD/TAIL
+     - Delete complaint by INDEX/VALUE
+     - Search complaint by keyword
+     - Display all nodes with visual representation
+
+  2. Stack Operations
+     - Push activity log
+     - Pop latest activity
+     - View stack of recent actions
+
+  3. Queue Operations
+     - Enqueue complaint
+     - Dequeue (assign next complaint)
+     - View dispatch queue
+
+  4. Expression Evaluation
+     - Enter mathematical formula
+     - See step-by-step conversion to postfix
+     - View calculation steps
+     - Get final result
+
+  5. Algorithm Benchmarking
+     - Compare performance metrics
+     - View time complexity demonstrations
+
+================================================================================
+PART 9: KEY TAKEAWAYS
+================================================================================
+
+WHY DSA IN CCMS?
+  1. Real-time Operations: In-memory structures for instant access (O(1))
+  2. Audit Trail: Stack maintains action history in LIFO order
+  3. Fair Processing: Queue ensures FIFO complaint dispatch
+  4. Efficient Caching: Linked list caches recent complaints
+  5. Formula Evaluation: Expression handler calculates penalties
+  6. Educational: Demonstrates DSA concepts practically
+
+DSA STRUCTURES USED:
+  ✓ Singly Linked List → Dynamic complaint storage
+  ✓ Linked Stack → Activity logging (LIFO)
+  ✓ Linked Queue → Task dispatch (FIFO)
+  ✓ Expression Handler → Mathematical calculations
+
+DATABASE INTEGRATION:
+  • DSA structures are IN-MEMORY (seeded from database)
+  • Database remains SOURCE OF TRUTH for persistence
+  • DSA provides fast access for real-time operations
+  • Changes can be synced back to database if needed
+
+TIME COMPLEXITY BENEFITS:
+  • Most operations O(1) instead of O(n) database queries
+  • Stack operations always O(1) for push/pop/peek
+  • Queue operations always O(1) for enqueue/dequeue
+  • Linked List insert at head is O(1) (vs database INSERT)
+
+================================================================================
+END OF DOCUMENT
+================================================================================
+
+For Questions or Clarifications:
+  • Review the actual code: /dsa.py (implementations)
+  • Check integration: /app.py (usage in routes)
+  • See UI: /templates/admin/dsa_lab.html (interactive lab)
+  • Test API: http://127.0.0.1:5000/admin/dsa-lab
+
+Last Updated: 2026-09-01
+Author: CCMS Development Team

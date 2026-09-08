@@ -3,7 +3,7 @@ Unit Tests for CCMS DSA Core Engine
 """
 import unittest
 from dsa import (
-    Node, SinglyLinkedList, LinkedStack, LinkedQueue,
+    Node, SinglyLinkedList, LinkedStack, LinkedQueue, Queue,
     StackUnderflowError, QueueUnderflowError,
     ExpressionHandler, EfficiencyEngine
 )

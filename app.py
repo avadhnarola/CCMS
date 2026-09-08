@@ -360,18 +360,25 @@ def admin_login():
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "")
 
-        if (email == "admin@ccms.gov.in" or email == "admin@domain.com" or email == "admin") and (password == "admin123" or password == "admin" or password == "Avadh@2505"):
+        # Query database for admin user
+        user = db.query_db(
+            "SELECT id, full_name, email, password, role FROM users WHERE email = %s AND role = 'admin'",
+            (email,),
+            one=True
+        )
+
+        if user and db.verify_user_password(user["password"], password):
             session.clear()
-            session["user_id"] = "ADMIN-ROOT"
-            session["full_name"] = "Super Admin"
-            session["email"] = "admin@ccms.gov.in"
+            session["user_id"] = user["id"]
+            session["full_name"] = user["full_name"]
+            session["email"] = user["email"]
             session["role"] = "admin"
 
-            log_activity("Super Admin", "Admin Login", "Root master console authenticated successfully.")
-            flash("Super Admin Master Control Authenticated.", "success")
+            log_activity(user["full_name"], "Admin Login", "Admin console authenticated successfully.")
+            flash("Admin Panel Authenticated Successfully!", "success")
             return redirect(url_for("admin_dashboard"))
         else:
-            flash("Invalid super admin master credentials.", "danger")
+            flash("Invalid email/password. Please try again.", "danger")
 
     return render_template("auth/admin_login.html")
 
