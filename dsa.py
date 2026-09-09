@@ -20,10 +20,10 @@ SAMPLE_NUMERIC_DATASET = [10, 25, 42, 55, 78, 99, 120, 150, 200]
 SAMPLE_SECTORS_DATASET = [
     "Bribery & Cash Demands",
     "Land Scam & Title Fraud",
-    "Corruption in Tenders",
-    "Misuse of Public Property",
-    "Land and Property",
-    "Municipal Services"
+    "Medical Supply Embezzlement",
+    "Police Misconduct & Extortion",
+    "Procurement & Tender Fraud",
+    "Road & Construction Scam"
 ]
 
 SAMPLE_COMPLAINT_RECORDS = [
