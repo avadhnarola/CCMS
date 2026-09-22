@@ -33,23 +33,23 @@
           <img src="{{ url_for('static', filename='logo.png') }}" alt="CCMS" height="28" class="rounded">
           <span>CCMS</span>
         </a>
-        <span class="app-logo-badge">CITIZEN</span>
+        <span class="app-logo-badge" style="background:#2563eb;">CITIZEN</span>
       </div>
-      <div class="text-info mt-1" style="font-size:0.65rem; font-weight:700; letter-spacing:1px; text-transform:uppercase;">
-        <i class="fas fa-shield-halved me-1"></i> WHISTLEBLOWER VAULT
+      <div class="small mt-2 d-flex align-items-center gap-1" style="font-size:0.65rem; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#93c5fd;">
+        <i class="fas fa-shield-halved"></i> WHISTLEBLOWER VAULT
       </div>
 
       <!-- User info card inside sidebar -->
-      <div class="mt-3 p-2 rounded d-flex align-items-center gap-2" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);">
-        <div class="user-avatar-circle" style="width:34px; height:34px; font-size:0.8rem;">
+      <div class="sidebar-user-card">
+        <div class="user-avatar-circle" style="width:34px; height:34px; font-size:0.8rem; background: linear-gradient(135deg, #2563eb, #3b82f6); border-color: rgba(59,130,246,0.4);">
           {{ session.get('full_name', 'Citizen')[:1]|upper }}
         </div>
         <div class="overflow-hidden">
           <div class="fw-bold text-white small text-truncate" style="max-width: 140px;">
             {{ session.get('full_name', 'Citizen') }}
           </div>
-          <div class="text-emerald small" style="font-size:0.7rem;">
-            <i class="fas fa-shield-check me-1"></i> Verified Whistleblower
+          <div class="small" style="font-size:0.7rem; color:#93c5fd;">
+            <i class="fas fa-shield-check me-1" style="color:#10b981;"></i> Verified Whistleblower
           </div>
         </div>
       </div>
@@ -59,45 +59,45 @@
     <div class="app-sidebar-nav">
       <div class="nav-section-title">PORTAL NAVIGATION</div>
       <a href="{{ url_for('citizen_dashboard') }}" class="sidebar-link {% if active_page == 'dashboard' %}active{% endif %}">
-        <i class="text-info fas fa-chart-pie text-primary"></i> <span>Overview &amp; Stats</span>
+        <i class="fas fa-chart-pie"></i> <span>Overview &amp; Stats</span>
       </a>
       <a href="{{ url_for('file_complaint') }}" class="sidebar-link {% if active_page == 'file_complaint' %}active{% endif %}">
-        <i class="text-info fas fa-plus-circle text-emerald"></i> <span>File New Complaint</span>
+        <i class="fas fa-plus-circle"></i> <span>File New Complaint</span>
       </a>
       <a href="{{ url_for('my_complaints') }}" class="sidebar-link {% if active_page == 'my_complaints' %}active{% endif %}">
-        <i class="text-info fas fa-folder-open text-cyan"></i> <span>My Complaints</span>
+        <i class="fas fa-folder-open"></i> <span>My Complaints</span>
       </a>
       <a href="{{ url_for('track_complaint') }}" class="sidebar-link {% if active_page == 'track' %}active{% endif %}">
-        <i class="text-info fas fa-route text-amber"></i> <span>Track Live Case</span>
+        <i class="fas fa-route"></i> <span>Track Live Case</span>
       </a>
       <a href="{{ url_for('citizen_evidence') }}" class="sidebar-link {% if active_page == 'evidence' %}active{% endif %}">
-        <i class="text-info fas fa-vault text-violet"></i> <span>Evidence Vault</span>
+        <i class="fas fa-vault"></i> <span>Evidence Vault</span>
       </a>
       <a href="{{ url_for('citizen_feedback') }}" class="sidebar-link {% if active_page == 'feedback' %}active{% endif %}">
-        <i class="text-info fas fa-star text-amber"></i> <span>Case Feedback</span>
+        <i class="fas fa-star"></i> <span>Case Feedback</span>
       </a>
 
       <div class="nav-section-title">SECURITY &amp; ACCOUNT</div>
       <a href="{{ url_for('citizen_notifications') }}" class="sidebar-link {% if active_page == 'notifications' %}active{% endif %}">
-        <i class="text-info fas fa-bell text-info"></i> <span>Alerts &amp; Notices</span>
+        <i class="fas fa-bell"></i> <span>Alerts &amp; Notices</span>
       </a>
       <a href="{{ url_for('citizen_profile') }}" class="sidebar-link {% if active_page == 'profile' %}active{% endif %}">
-        <i class="text-info fas fa-user-gear"></i> <span>Profile &amp; Security</span>
+        <i class="fas fa-user-gear"></i> <span>Profile &amp; Security</span>
       </a>
       <a href="{{ url_for('help_faq') }}" class="sidebar-link {% if active_page == 'help' %}active{% endif %}">
-        <i class="text-info fas fa-circle-question"></i> <span>Rights &amp; Help FAQ</span>
+        <i class="fas fa-circle-question"></i> <span>Rights &amp; Help FAQ</span>
       </a>
-      <a href="{{ url_for('logout') }}" class="sidebar-link text-danger mt-2">
-        <i class="text-info fas fa-power-off"></i> <span>Sign Out</span>
+      <a href="{{ url_for('logout') }}" class="sidebar-link logout-link text-danger mt-3">
+        <i class="fas fa-power-off"></i> <span>Sign Out</span>
       </a>
     </div>
 
     <!-- Sidebar footer badge -->
-    <div class="p-3 border-top border-secondary border-opacity-25" style="background: rgba(0,0,0,0.2);">
+    <div class="sidebar-footer-card">
       <div class="small fw-bold text-white d-flex align-items-center gap-1">
-        <i class="fas fa-lock text-emerald"></i> AES-256 GCM Protection
+        <i class="fas fa-lock me-1" style="color:#10b981;"></i> AES-256 GCM Protection
       </div>
-      <div class="text-muted" style="font-size:0.7rem;">IP Scrubbed &bull; Zero Log Identity</div>
+      <div class="text-muted mt-1" style="font-size:0.7rem;">IP Scrubbed &bull; Zero Log Identity</div>
     </div>
   </aside>
 

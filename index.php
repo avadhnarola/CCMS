@@ -1450,13 +1450,13 @@
           <li class="nav-item"><a class="nav-link nav-link-ccms" href="#dept-scorecard">SLA Ratings</a></li>
           <li class="nav-item"><a class="nav-link nav-link-ccms" href="#faq">FAQ</a></li>
           <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-            <a href="citizen/login.php" class="btn-nav-secondary" id="citizenLoginBtn"
+            <a href="/citizen/login" class="btn-nav-secondary" id="citizenLoginBtn"
               style="display:inline-flex;align-items:center;gap:6px;">
               <i class="fas fa-user-circle"></i> Citizen Login
             </a>
           </li>
           <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-            <a href="citizen/register.php" class="btn-nav-action" id="citizenRegisterBtn"
+            <a href="/citizen/register" class="btn-nav-action" id="citizenRegisterBtn"
               style="display:inline-flex;align-items:center;gap:8px;">
               <i class="fas fa-user-plus"></i> Register
             </a>

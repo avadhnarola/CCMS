@@ -14,15 +14,18 @@ import dsa
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "ccms-secret-key-vigilance-2026-secure")
 
-# In-memory DSA Data Stores (Linked List, Stack, Queue)
+# In-memory DSA Data Stores (Phase 1 & Phase 2)
 complaints_linked_list = dsa.SinglyLinkedList()
-activity_stack = dsa.LinkedStack()
-dispatch_queue = dsa.LinkedQueue()
+activity_stack = dsa.Stack()
+dispatch_queue = dsa.Queue()
+vigilance_binary_tree = dsa.build_default_vigilance_tree()
+complaints_bst = dsa.build_default_complaints_bst()
+escalation_graph = dsa.build_default_escalation_graph()
 
 def init_dsa_stores():
-    """Seed in-memory DSA structures with recent records from database."""
+    """Seed in-memory DSA structures with recent records from database / static data."""
     try:
-        recent_cases = db.query_db("SELECT complaint_id, complaint_title, sector, severity, complaint_status, created_at FROM complaints ORDER BY created_at DESC LIMIT 5")
+        recent_cases = db.query_db("SELECT complaint_id, complaint_title, sector, severity, complaint_status, created_at FROM complaints ORDER BY created_at DESC LIMIT 6")
         if recent_cases:
             complaints_linked_list.clear()
             for c in recent_cases:
@@ -37,6 +40,7 @@ def init_dsa_stores():
         
         recent_logs = db.query_db("SELECT actor, action, details, timestamp FROM activity_logs ORDER BY timestamp DESC LIMIT 4")
         if recent_logs:
+            activity_stack.clear()
             for l in reversed(recent_logs):
                 activity_stack.push({
                     "actor": l["actor"],
@@ -47,6 +51,7 @@ def init_dsa_stores():
 
         pending = db.query_db("SELECT complaint_id, complaint_title, sector, severity FROM complaints WHERE complaint_status = 'Pending' LIMIT 4")
         if pending:
+            dispatch_queue.clear()
             for p in pending:
                 dispatch_queue.enqueue({
                     "id": p["complaint_id"],
@@ -1039,7 +1044,7 @@ def admin_reports():
     from_date = request.args.get("from_date", "2026-01-01")
     to_date = request.args.get("to_date", "2026-12-31")
 
-    query = "SELECT * FROM complaints WHERE incident_date BETWEEN %s AND %s"
+    query = "SELECT * FROM complaints ORDER BY incident_date ASC"
     params = [from_date, to_date]
 
     if dept != "all":
@@ -1128,6 +1133,7 @@ def admin_dsa_lab():
     if complaints_linked_list.is_empty():
         init_dsa_stores()
 
+    # Phase 1 data
     ll_nodes = complaints_linked_list.to_list()
     stack_items = activity_stack.to_list()
     queue_items = dispatch_queue.to_list()
@@ -1135,23 +1141,44 @@ def admin_dsa_lab():
     sample_benchmarks = {
         "binary_search": dsa.EfficiencyEngine.run_benchmark("binary_search", 100),
         "factorial": dsa.EfficiencyEngine.run_benchmark("factorial", 8),
-        "fibonacci": dsa.EfficiencyEngine.run_benchmark("fibonacci", 15),
-        "linked_list_length": dsa.EfficiencyEngine.run_benchmark("linked_list_length", 50)
+        "fibonacci": dsa.EfficiencyEngine.run_benchmark("fibonacci", 15)
     }
+
+    # Phase 2 data
+    tree_traversals = {
+        "inorder": vigilance_binary_tree.inorder_traversal(),
+        "preorder": vigilance_binary_tree.preorder_traversal(),
+        "postorder": vigilance_binary_tree.postorder_traversal(),
+        "level_order": vigilance_binary_tree.level_order_traversal()
+    }
+    bst_min_node = complaints_bst.find_min()
+    bst_max_node = complaints_bst.find_max()
 
     return render_template(
         "admin/dsa_lab.html",
+        # Phase 1
         ll_nodes=ll_nodes,
         ll_size=complaints_linked_list.get_size(),
         stack_items=stack_items,
         stack_size=activity_stack.size(),
         queue_items=queue_items,
         queue_size=dispatch_queue.size(),
-        sample_benchmarks=sample_benchmarks
+        sample_benchmarks=sample_benchmarks,
+        # Phase 2
+        tree_dict=vigilance_binary_tree.to_dict(),
+        tree_height=vigilance_binary_tree.get_height(),
+        tree_nodes_count=vigilance_binary_tree.count_nodes(),
+        tree_traversals=tree_traversals,
+        bst_items=complaints_bst.inorder_traversal(),
+        bst_size=complaints_bst.size(),
+        bst_min=bst_min_node.key if bst_min_node else None,
+        bst_max=bst_max_node.key if bst_max_node else None,
+        graph_adj=escalation_graph.to_dict(),
+        graph_vertices=escalation_graph.get_vertices()
     )
 
 
-# --- DSA AJAX API Endpoints ---
+# --- DSA AJAX API Endpoints (Phase 1) ---
 
 @app.route("/api/dsa/linked-list/insert", methods=["POST"])
 @role_required("admin")
@@ -1311,6 +1338,134 @@ def api_benchmark_run():
         return jsonify({"success": False, "error": str(e)}), 400
 
 
+# --- DSA AJAX API Endpoints (Phase 2: Trees, BST, Graphs) ---
+
+@app.route("/api/dsa/tree/traversals", methods=["GET", "POST"])
+@role_required("admin")
+def api_tree_traversals():
+    """Returns Inorder, Preorder, Postorder, and Level-Order traversals of the Vigilance Binary Tree."""
+    try:
+        traversals = {
+            "inorder": vigilance_binary_tree.inorder_traversal(),
+            "preorder": vigilance_binary_tree.preorder_traversal(),
+            "postorder": vigilance_binary_tree.postorder_traversal(),
+            "level_order": vigilance_binary_tree.level_order_traversal()
+        }
+        return jsonify({
+            "success": True,
+            "traversals": traversals,
+            "height": vigilance_binary_tree.get_height(),
+            "total_nodes": vigilance_binary_tree.count_nodes()
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 400
+
+
+@app.route("/api/dsa/bst/insert", methods=["POST"])
+@role_required("admin")
+def api_bst_insert():
+    """Insert a new case record into the Binary Search Tree keyed by Risk Score."""
+    data = request.get_json() or {}
+    risk_score = int(data.get("risk_score", random.randint(10, 99)))
+    cid = data.get("id") or f"CCMS-2026-{random.randint(1000, 9999)}"
+    title = data.get("title", "Procurement Kickback")
+    sector = data.get("sector", "Public Works")
+    severity = data.get("severity", "High")
+
+    case_data = {
+        "id": cid,
+        "title": title,
+        "sector": sector,
+        "severity": severity,
+        "risk_score": risk_score
+    }
+    complaints_bst.insert(risk_score, case_data)
+    min_node = complaints_bst.find_min()
+    max_node = complaints_bst.find_max()
+
+    return jsonify({
+        "success": True,
+        "message": f"Case inserted into BST with Risk Score {risk_score}.",
+        "size": complaints_bst.size(),
+        "min_key": min_node.key if min_node else None,
+        "max_key": max_node.key if max_node else None,
+        "sorted_records": complaints_bst.inorder_traversal()
+    })
+
+
+@app.route("/api/dsa/bst/search", methods=["POST"])
+@role_required("admin")
+def api_bst_search():
+    """Search for a case in the BST by its numerical Risk Score key."""
+    data = request.get_json() or {}
+    try:
+        key = int(data.get("risk_score", 0))
+    except (ValueError, TypeError):
+        return jsonify({"found": False, "message": "Invalid risk score format."})
+
+    found_node = complaints_bst.search(key)
+    if found_node:
+        return jsonify({"found": True, "key": found_node.key, "data": found_node.data})
+    return jsonify({"found": False, "message": f"No case found with Risk Score {key} in BST."})
+
+
+@app.route("/api/dsa/bst/delete", methods=["POST"])
+@role_required("admin")
+def api_bst_delete():
+    """Delete a node by its Risk Score key from the BST."""
+    data = request.get_json() or {}
+    try:
+        key = int(data.get("risk_score", 0))
+    except (ValueError, TypeError):
+        return jsonify({"success": False, "message": "Invalid risk score format."})
+
+    deleted = complaints_bst.delete(key)
+    min_node = complaints_bst.find_min()
+    max_node = complaints_bst.find_max()
+
+    return jsonify({
+        "success": deleted,
+        "message": f"Case with Risk Score {key} removed from BST." if deleted else f"Key {key} not found.",
+        "size": complaints_bst.size(),
+        "min_key": min_node.key if min_node else None,
+        "max_key": max_node.key if max_node else None,
+        "sorted_records": complaints_bst.inorder_traversal()
+    })
+
+
+@app.route("/api/dsa/bst/inorder", methods=["GET"])
+@role_required("admin")
+def api_bst_inorder():
+    """Retrieve all BST records sorted in ascending order of Risk Score."""
+    return jsonify({
+        "success": True,
+        "size": complaints_bst.size(),
+        "sorted_records": complaints_bst.inorder_traversal()
+    })
+
+
+@app.route("/api/dsa/graph/traverse", methods=["POST"])
+@role_required("admin")
+def api_graph_traverse():
+    """Execute BFS or DFS traversal on the Escalation Graph starting from a specified vertex."""
+    data = request.get_json() or {}
+    traversal_type = data.get("type", "bfs").lower()
+    start_vertex = data.get("start_vertex", "Citizen Front Desk")
+
+    if traversal_type == "dfs":
+        path, trace = escalation_graph.dfs(start_vertex)
+    else:
+        path, trace = escalation_graph.bfs(start_vertex)
+
+    return jsonify({
+        "success": True,
+        "traversal_type": traversal_type.upper(),
+        "start_vertex": start_vertex,
+        "path": path,
+        "trace": trace
+    })
+
+
 # -------------------------------------------------------------
 # ERROR HANDLERS
 # -------------------------------------------------------------
@@ -1320,7 +1475,7 @@ def page_not_found(e):
 
 @app.errorhandler(500)
 def server_error(e):
-    return "<h3>Internal System Alert</h3><p>An unexpected database error occurred. Please ensure MySQL in XAMPP is running.</p>", 500
+    return "<h3>Internal System Alert</h3><p>An unexpected system error occurred.</p>", 500
 
 
 if __name__ == "__main__":

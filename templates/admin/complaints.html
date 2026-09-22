@@ -7,10 +7,10 @@
 <div class="ccms-card p-4 shadow-sm mb-4">
   <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-3">
     <div>
-      <h5 class="fw-bold text-heading mb-0"><i class="fas fa-folder-tree text-primary me-2"></i>Global Complaints
-        Inventory</h5>
-      <span class="text-muted small">Centralized supervisory oversight across all municipal, police, and revenue
-        complaints</span>
+      <h5 class="fw-bold text-heading mb-0">
+        <i class="fas fa-folder-tree me-2" style="color: var(--primary);"></i>Global Complaints Inventory
+      </h5>
+      <span class="text-muted small">Centralized supervisory oversight across all municipal, police, and revenue complaints</span>
     </div>
 
     <div class="d-flex flex-wrap align-items-center gap-2">
@@ -20,8 +20,7 @@
         <input type="text" id="adminSearchComplaints" class="form-control border-start-0" placeholder="Filter cases...">
       </div>
 
-      <a href="{{ url_for('admin_assignment') }}" class="btn btn-sm btn-brand"
-        style="background:var(--gradient-brand);">
+      <a href="{{ url_for('admin_assignment') }}" class="btn btn-sm btn-brand" style="background:var(--gradient-brand);">
         <i class="fas fa-wand-magic-sparkles me-1"></i> Greedy Auto-Assign
       </a>
     </div>
@@ -46,7 +45,7 @@
         {% for c in complaints %}
         <tr>
           <td>
-            <span class="fw-bold text-primary brand-font">{{ c.complaint_id }}</span>
+            <span class="fw-bold brand-font" style="color: var(--primary);">{{ c.complaint_id }}</span>
           </td>
           <td>
             <div class="fw-semibold text-heading text-truncate" style="max-width: 200px;">{{ c.complaint_title }}</div>
@@ -73,9 +72,15 @@
                 class="btn btn-sm btn-outline-custom" title="View Dossier">
                 <i class="fas fa-eye"></i>
               </a>
-              <button type="button" class="btn btn-sm btn-outline-custom" title="Assign Officer" data-bs-toggle="modal"
-                data-bs-target="#assignModal{{ loop.index }}">
-                <i class="fas fa-user-plus text-primary"></i>
+              <button type="button" 
+                      class="btn btn-sm btn-outline-custom assign-officer-btn" 
+                      title="Assign Officer"
+                      data-complaint-id="{{ c.complaint_id }}"
+                      data-complaint-title="{{ c.complaint_title }}"
+                      data-complaint-sector="{{ c.sector }}"
+                      data-complaint-severity="{{ c.severity }}"
+                      data-current-officer="{{ c.assigned_officer or '' }}">
+                <i class="fas fa-user-plus"></i>
               </button>
               <form action="{{ url_for('admin_delete_complaint', complaint_id=c.complaint_id) }}" method="POST"
                 onsubmit="return confirm('Are you sure you want to permanently delete this complaint?');"
@@ -84,38 +89,6 @@
                   <i class="fas fa-trash-can"></i>
                 </button>
               </form>
-            </div>
-
-            <!-- Modal for manual assignment -->
-            <div class="modal fade" id="assignModal{{ loop.index }}" tabindex="-1">
-              <div class="modal-dialog">
-                <div class="modal-content" style="background:var(--bg-surface); color:var(--text-body);">
-                  <div class="modal-header border-bottom">
-                    <h5 class="modal-title fw-bold text-heading">Assign Officer to {{ c.complaint_id }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                  </div>
-                  <form action="{{ url_for('admin_assign_single') }}" method="POST">
-                    <input type="hidden" name="complaint_id" value="{{ c.complaint_id }}">
-                    <div class="modal-body text-start">
-                      <p class="small text-muted mb-3">{{ c.complaint_title }} &bull; Sector: {{ c.sector }}</p>
-                      <div class="mb-3">
-                        <label class="form-label">Select Vigilance Officer</label>
-                        <select name="officer_name" class="form-select" required>
-                          <option value="" selected disabled>Select officer...</option>
-                          {% for off in officers %}
-                          <option value="{{ off.name }}">{{ off.name }} ({{ off.department }} - {{ off.active_cases }}
-                            active)</option>
-                          {% endfor %}
-                        </select>
-                      </div>
-                    </div>
-                    <div class="modal-footer border-top">
-                      <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Cancel</button>
-                      <button type="submit" class="btn btn-brand">Assign Case</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
             </div>
           </td>
         </tr>
@@ -129,21 +102,120 @@
       <i class="fas fa-folder-open"></i>
     </div>
     <h5 class="fw-bold text-heading mb-1">No Complaints in System</h5>
-    <p class="text-muted small mb-0">Complaints submitted by citizens will appear here for administrative routing and
-      audit.</p>
+    <p class="text-muted small mb-0">Complaints submitted by citizens will appear here for administrative routing and audit.</p>
   </div>
   {% endif %}
+</div>
+
+<!-- Dedicated Dynamic Modal for Assigning Officer -->
+<div class="modal fade" id="assignOfficerModal" tabindex="-1" aria-labelledby="assignOfficerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
+    <div class="modal-content assign-officer-modal">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title fw-bold mb-0" id="assignOfficerModalLabel">
+            <i class="fas fa-user-shield me-2" style="color: var(--primary);"></i>Assign Vigilance Officer
+          </h5>
+          <span class="small text-muted" id="modalCaseIdText"></span>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{{ url_for('admin_assign_single') }}" method="POST">
+        <input type="hidden" name="complaint_id" id="modalComplaintIdInput" value="">
+        <div class="modal-body text-start">
+          <div class="assign-officer-summary">
+            <span class="summary-label">Case Dossier Reference</span>
+            <div class="summary-title" id="modalCaseTitle"></div>
+            <div class="summary-meta d-flex align-items-center gap-2 mt-1">
+              <span><i class="fas fa-building me-1"></i><span id="modalCaseSector"></span></span>
+              <span>&bull;</span>
+              <span id="modalCaseSeverityBadge"></span>
+            </div>
+          </div>
+          <div class="assign-officer-field">
+            <label class="form-label" for="officerSelectDropdown">
+              <i class="fas fa-user-check"></i> Select Vigilance Officer
+            </label>
+            <select name="officer_name" id="officerSelectDropdown" class="form-select assign-officer-select" required>
+              <option value="" selected disabled>Choose assigned investigator...</option>
+              {% for off in officers %}
+              <option value="{{ off.name }}">
+                {{ off.name }} &mdash; {{ off.department }} ({{ off.active_cases }} active cases)
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-brand">
+            <i class="fas fa-paper-plane me-1"></i> Assign Officer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+  // Filter complaints table in real-time
   document.getElementById('adminSearchComplaints')?.addEventListener('keyup', function () {
     const query = this.value.toLowerCase();
     const rows = document.querySelectorAll('#adminComplaintsTable tbody tr');
     rows.forEach(row => {
       const text = row.textContent.toLowerCase();
       row.style.display = text.includes(query) ? '' : 'none';
+    });
+  });
+
+  // Dynamic Assign Officer Modal Trigger
+  document.addEventListener('DOMContentLoaded', function () {
+    const assignModalEl = document.getElementById('assignOfficerModal');
+    let assignModal = null;
+    if (assignModalEl && typeof bootstrap !== 'undefined') {
+      assignModal = new bootstrap.Modal(assignModalEl);
+    }
+
+    document.querySelectorAll('.assign-officer-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const caseId = this.getAttribute('data-complaint-id') || '';
+        const title = this.getAttribute('data-complaint-title') || '';
+        const sector = this.getAttribute('data-complaint-sector') || '';
+        const severity = this.getAttribute('data-complaint-severity') || 'Medium';
+        const currentOfficer = this.getAttribute('data-current-officer') || '';
+
+        const idInput = document.getElementById('modalComplaintIdInput');
+        const idText = document.getElementById('modalCaseIdText');
+        const titleEl = document.getElementById('modalCaseTitle');
+        const sectorEl = document.getElementById('modalCaseSector');
+        const badgeEl = document.getElementById('modalCaseSeverityBadge');
+        const select = document.getElementById('officerSelectDropdown');
+
+        if (idInput) idInput.value = caseId;
+        if (idText) idText.textContent = 'Tracking ID: ' + caseId;
+        if (titleEl) titleEl.textContent = title;
+        if (sectorEl) sectorEl.textContent = sector;
+        if (badgeEl) {
+          badgeEl.innerHTML = `<span class="badge-priority ${severity}">${severity} priority</span>`;
+        }
+
+        if (select) {
+          if (currentOfficer && currentOfficer !== 'Unassigned') {
+            select.value = currentOfficer;
+          } else {
+            select.selectedIndex = 0;
+          }
+        }
+
+        if (assignModal) {
+          assignModal.show();
+        } else if (assignModalEl && typeof bootstrap !== 'undefined') {
+          const m = new bootstrap.Modal(assignModalEl);
+          m.show();
+        }
+      });
     });
   });
 </script>

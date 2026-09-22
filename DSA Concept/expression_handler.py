@@ -1,5 +1,5 @@
 import re
-from stack import LinkedStack
+from stack import Stack
 
 class ExpressionHandler:
     OPERATORS = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
@@ -11,7 +11,7 @@ class ExpressionHandler:
     @classmethod
     def infix_to_postfix(cls, expr):
         tokens = cls.tokenize(expr)
-        stack = LinkedStack()
+        stack = Stack()
         postfix = []
         
         for token in tokens:
@@ -40,7 +40,7 @@ class ExpressionHandler:
 
     @classmethod
     def evaluate_postfix(cls, tokens):
-        stack = LinkedStack()
+        stack = Stack()
         for token in tokens:
             if re.match(r'^-?\d+(?:\.\d+)?$', token):
                 stack.push(float(token) if '.' in token else int(token))

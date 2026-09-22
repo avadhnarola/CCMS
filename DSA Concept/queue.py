@@ -1,6 +1,6 @@
 from node import Node
 
-class LinkedQueue:
+class Queue:
     def __init__(self):
         self.front = None
         self.rear = None

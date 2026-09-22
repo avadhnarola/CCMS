@@ -6,14 +6,16 @@
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
-      <div class="ccms-card p-4 p-md-5 shadow-lg border-violet border-opacity-25 text-center" style="border-color: rgba(124,58,237,0.35);">
+      <div class="ccms-card p-4 p-md-5 shadow-lg border-violet border-opacity-25 text-center"
+        style="border-color: rgba(124,58,237,0.35);">
         <!-- Brand -->
         <a href="{{ url_for('home') }}" class="d-inline-flex align-items-center gap-2 mb-3 text-decoration-none">
           <img src="{{ url_for('static', filename='logo.png') }}" alt="CCMS Logo" height="42" class="rounded">
           <h2 class="brand-font fw-bold mb-0" style="color:#7c3aed;">CCMS</h2>
         </a>
 
-        <div class="badge bg-violet-subtle text-violet border border-violet-subtle px-3 py-1 rounded-pill mb-3 fw-bold" style="font-size:0.7rem; letter-spacing:1.5px; background:rgba(124,58,237,0.1); color:#7c3aed;">
+        <div class="badge bg-violet-subtle text-violet border border-violet-subtle px-3 py-1 rounded-pill mb-3 fw-bold"
+          style="font-size:0.7rem; letter-spacing:1.5px; background:rgba(124,58,237,0.1); color:#7c3aed;">
           <i class="fas fa-user-shield me-1"></i> MASTER SUPER ADMIN ACCESS
         </div>
 
@@ -26,7 +28,7 @@
             <label class="form-label">Admin Email</label>
             <div class="input-group">
               <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
-              <input type="email" name="email" class="form-control border-start-0" placeholder="admin@ccms.com" value="admin@ccms.com" required>
+              <input type="email" name="email" class="form-control border-start-0" placeholder="admin@ccms.gov.in" value="admin@ccms.gov.in" required>
             </div>
           </div>
 
@@ -34,21 +36,25 @@
             <label class="form-label">Master Key</label>
             <div class="input-group">
               <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-key"></i></span>
-              <input type="password" id="adminPwd" name="password" class="form-control border-start-0 border-end-0" placeholder="Enter master key" value="admin123" required>
-              <button type="button" class="input-group-text bg-subtle border-start-0 text-muted" onclick="toggleAdminPwd('adminPwd', this)">
+              <input type="password" id="adminPwd" name="password" class="form-control border-start-0 border-end-0"
+                placeholder="Enter master key" value="admin123" required>
+              <button type="button" class="input-group-text bg-subtle border-start-0 text-muted"
+                onclick="toggleAdminPwd('adminPwd', this)">
                 <i class="fas fa-eye"></i>
               </button>
             </div>
           </div>
 
-          <button type="submit" class="btn btn-brand w-100 justify-content-center py-2.5 my-3" style="background:var(--gradient-brand);">
+          <button type="submit" class="btn btn-brand w-100 justify-content-center py-2.5 my-3"
+            style="background:var(--gradient-brand);">
             <i class="fas fa-shield-halved me-1"></i> Authenticate Master Console
           </button>
         </form>
 
         <div class="p-3 rounded bg-subtle border text-start small text-muted">
-          <div class="fw-bold text-heading mb-1"><i class="fas fa-circle-info text-primary me-1"></i> Admin Credentials:</div>
-          <div>Email: <code>admin@ccms.com</code></div>
+          <div class="fw-bold text-heading mb-1"><i class="fas fa-circle-info text-primary me-1"></i> Admin Credentials:
+          </div>
+          <div>Email: <code>admin@ccms.gov.in.com</code></div>
           <div>Password: <code>admin123</code></div>
         </div>
       </div>
@@ -59,16 +65,16 @@
 
 {% block extra_js %}
 <script>
-function toggleAdminPwd(id, btn) {
-  const el = document.getElementById(id);
-  const icon = btn.querySelector('i');
-  if (el.type === 'password') {
-    el.type = 'text';
-    icon.className = 'fas fa-eye-slash';
-  } else {
-    el.type = 'password';
-    icon.className = 'fas fa-eye';
+  function toggleAdminPwd(id, btn) {
+    const el = document.getElementById(id);
+    const icon = btn.querySelector('i');
+    if (el.type === 'password') {
+      el.type = 'text';
+      icon.className = 'fas fa-eye-slash';
+    } else {
+      el.type = 'password';
+      icon.className = 'fas fa-eye';
+    }
   }
-}
 </script>
 {% endblock %}

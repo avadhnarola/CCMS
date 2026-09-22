@@ -1,6 +1,6 @@
 from linked_list import SinglyLinkedList
-from stack import LinkedStack
-from queue import LinkedQueue
+from stack import Stack
+from queue import Queue
 from expression_handler import ExpressionHandler
 from efficiency_engine import EfficiencyEngine
 from data import SAMPLE_NUMERIC_DATASET, SAMPLE_COMPLAINT_RECORDS
@@ -26,8 +26,8 @@ def run_demo():
     
     # 3. Stack & Queue
     print("\n[3] STACK & QUEUE:")
-    s = LinkedStack()
-    q = LinkedQueue()
+    s = Stack()
+    q = Queue()
     for item in ["Event-1", "Event-2", "Event-3"]:
         s.push(item)
         q.enqueue(item)

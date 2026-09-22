@@ -26,84 +26,71 @@
 
 <div class="app-wrapper">
   <!-- SUPER ADMIN SIDEBAR -->
-  <aside class="app-sidebar" id="adminSidebar" style="background: #0f111a; border-right: 1px solid rgba(124,58,237,0.25);">
+  <aside class="app-sidebar" id="adminSidebar">
     <div class="app-sidebar-header">
       <div class="d-flex align-items-center justify-content-between">
         <a href="{{ url_for('admin_dashboard') }}" class="app-logo">
           <img src="{{ url_for('static', filename='logo.png') }}" alt="CCMS" height="28" class="rounded">
-          <span style="color:#a78bfa;">CCMS</span>
+          <span>CCMS</span>
         </a>
-        <span class="badge text-white fw-bold" style="font-size:0.65rem; letter-spacing:1px; background:#7c3aed;">ADMIN</span>
+        <span class="app-logo-badge" style="background:#7c3aed;">ADMIN</span>
       </div>
-      <div class="text-violet small mt-1" style="font-size:0.65rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#c4b5fd;">
-        <i class="fas fa-user-shield me-1"></i> MASTER COMMAND CONSOLE
+      <div class="small mt-2 d-flex align-items-center gap-1" style="font-size:0.65rem; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#c4b5fd;">
+        <i class="fas fa-user-shield"></i> MASTER COMMAND CONSOLE
       </div>
     </div>
 
     <!-- Navigation items -->
     <div class="app-sidebar-nav">
-      <div class="nav-section-title" style="color:#a78bfa;">SYSTEM CONTROL</div>
+      <div class="nav-section-title">SYSTEM CONTROL</div>
       <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link {% if active_page == 'dashboard' %}active{% endif %}">
-        <i class="fas fa-chart-pie text-violet"></i> <span>Overview &amp; KPIs</span>
+        <i class="fas fa-chart-pie"></i> <span>Overview &amp; KPIs</span>
       </a>
       <a href="{{ url_for('admin_complaints') }}" class="sidebar-link {% if active_page == 'complaints' %}active{% endif %}">
-        <i class="fas fa-folder-tree text-primary"></i> <span>Complaints Master</span>
+        <i class="fas fa-folder-tree"></i> <span>Complaints Master</span>
       </a>
       <a href="{{ url_for('admin_assignment') }}" class="sidebar-link {% if active_page == 'assignment' %}active{% endif %}">
-        <i class="fas fa-diagram-project text-emerald"></i> <span>Greedy Assignment</span>
+        <i class="fas fa-diagram-project"></i> <span>Greedy Assignment</span>
       </a>
       <a href="{{ url_for('admin_analytics') }}" class="sidebar-link {% if active_page == 'analytics' %}active{% endif %}">
-        <i class="fas fa-chart-line text-cyan"></i> <span>Visual Analytics</span>
-      </a>
-      <a href="{{ url_for('admin_dsa_lab') }}" class="sidebar-link {% if active_page == 'dsa_lab' %}active{% endif %}">
-        <i class="fas fa-brain text-amber"></i> <span>DSA Intelligence Lab</span>
-        <span class="badge bg-danger ms-auto" style="font-size:0.6rem; padding: 2px 6px;">CORE</span>
+        <i class="fas fa-chart-line"></i> <span>Visual Analytics</span>
       </a>
 
-      <div class="nav-section-title" style="color:#a78bfa;">USERS &amp; ROSTERS</div>
+      <div class="nav-section-title">USERS &amp; ROSTERS</div>
       <a href="{{ url_for('admin_citizens') }}" class="sidebar-link {% if active_page == 'citizens' %}active{% endif %}">
-        <i class="fas fa-users text-info"></i> <span>Citizens Directory</span>
+        <i class="fas fa-users"></i> <span>Citizens Directory</span>
       </a>
       <a href="{{ url_for('admin_officers') }}" class="sidebar-link {% if active_page == 'officers' %}active{% endif %}">
-        <i class="fas fa-user-gear text-warning"></i> <span>Officer Roster</span>
+        <i class="fas fa-user-gear"></i> <span>Officer Roster</span>
       </a>
 
-      <div class="nav-section-title" style="color:#a78bfa;">GOVERNANCE &amp; RULES</div>
+      <div class="nav-section-title">GOVERNANCE &amp; RULES</div>
       <a href="{{ url_for('admin_departments') }}" class="sidebar-link {% if active_page == 'departments' %}active{% endif %}">
-        <i class="fas fa-building-columns text-emerald"></i> <span>Departments</span>
+        <i class="fas fa-building-columns"></i> <span>Departments</span>
       </a>
       <a href="{{ url_for('admin_categories') }}" class="sidebar-link {% if active_page == 'categories' %}active{% endif %}">
-        <i class="fas fa-tags text-amber"></i> <span>Misconduct Types</span>
+        <i class="fas fa-tags"></i> <span>Misconduct Types</span>
       </a>
 
-      <div class="nav-section-title" style="color:#a78bfa;">AUDIT &amp; SECURITY</div>
-      <a href="{{ url_for('admin_reports') }}" class="sidebar-link {% if active_page == 'reports' %}active{% endif %}">
-        <i class="fas fa-file-invoice text-primary"></i> <span>Audit Reports</span>
-      </a>
-      <a href="{{ url_for('admin_search') }}" class="sidebar-link {% if active_page == 'search' %}active{% endif %}">
-        <i class="fas fa-search text-cyan"></i> <span>Universal Search</span>
-      </a>
-      <a href="{{ url_for('admin_activity_logs') }}" class="sidebar-link {% if active_page == 'activity_logs' %}active{% endif %}">
-        <i class="fas fa-list-check text-violet"></i> <span>Security Logs</span>
-      </a>
+      <div class="nav-section-title">SETTINGS &amp; COMMS</div>
       <a href="{{ url_for('admin_notifications') }}" class="sidebar-link {% if active_page == 'notifications' %}active{% endif %}">
-        <i class="fas fa-bullhorn text-danger"></i> <span>Broadcast Center</span>
+        <i class="fas fa-bullhorn"></i> <span>Broadcast Center</span>
       </a>
       <a href="{{ url_for('admin_settings') }}" class="sidebar-link {% if active_page == 'settings' %}active{% endif %}">
-        <i class="fas fa-sliders text-muted"></i> <span>System Settings</span>
+        <i class="fas fa-sliders"></i> <span>System Settings</span>
       </a>
-      <a href="{{ url_for('logout') }}" class="sidebar-link text-danger mt-2">
+      <a href="{{ url_for('logout') }}" class="sidebar-link logout-link text-danger mt-3">
         <i class="fas fa-power-off"></i> <span>Master Logoff</span>
       </a>
     </div>
 
     <!-- Live System health -->
-    <div class="p-3 border-top border-secondary border-opacity-25" style="background: rgba(0,0,0,0.3);">
+    <div class="sidebar-footer-card">
       <div class="d-flex align-items-center justify-content-between">
-        <span class="text-white small fw-bold"><i class="fas fa-database text-emerald me-1"></i> MySQL (XAMPP)</span>
-        <span class="badge bg-success">Online</span>
+        <span class="text-white small fw-bold"><i class="fas fa-database me-1" style="color:#10b981;"></i> Database Engine</span>
+        <span class="badge bg-success" style="font-size:0.65rem;">Online</span>
       </div>
-      <div class="text-muted mt-1" style="font-size:0.7rem;">Database: ccms @ 127.0.0.1:3306</div>
+      <div class="text-muted mt-1" style="font-size:0.7rem;">CCMS Core Vigilance Node</div>
     </div>
   </aside>
 

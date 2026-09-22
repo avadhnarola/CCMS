@@ -251,7 +251,7 @@ LINKED LIST SUMMARY TABLE:
 PART 2: LINKED-BASED STACK - ACTIVITY LOGGING
 ================================================================================
 
-STRUCTURE: LinkedStack (LIFO - Last In First Out)
+STRUCTURE: Stack (LIFO - Last In First Out)
 PURPOSE: Maintain audit trail of admin actions
 DATABASE TABLE: activity_logs
 OPERATIONS SUPPORTED: PUSH (INSERT), POP (DELETE), PEEK, TRAVERSE
@@ -355,7 +355,7 @@ STACK AFTER POP (Evidence Uploaded removed):
 ---
 
 OPERATION 3: PEEK (Database: SELECT - Read Latest)
-Location: dsa.py - LinkedStack.peek() function
+Location: dsa.py - Stack.peek() function
 DSA Method: peek()
 Time Complexity: O(1)
 
@@ -427,7 +427,7 @@ WHY STACK FOR ACTIVITY LOGS?
 PART 3: LINKED-BASED QUEUE - COMPLAINT DISPATCH
 ================================================================================
 
-STRUCTURE: LinkedQueue (FIFO - First In First Out)
+STRUCTURE: Queue (FIFO - First In First Out)
 PURPOSE: Maintain queue of pending complaints for assignment
 DATABASE TABLE: complaints
 OPERATIONS SUPPORTED: ENQUEUE (INSERT), DEQUEUE (DELETE), PEEK, TRAVERSE
@@ -544,7 +544,7 @@ RESPONSE:
 ---
 
 OPERATION 3: PEEK (Database: SELECT - Read Front)
-Location: dsa.py - LinkedQueue.peek() function
+Location: dsa.py - Queue.peek() function
 DSA Method: peek()
 Time Complexity: O(1)
 
@@ -616,7 +616,7 @@ WHY QUEUE FOR COMPLAINT DISPATCH?
 PART 4: EXPRESSION HANDLER - FORMULA EVALUATION
 ================================================================================
 
-STRUCTURE: ExpressionHandler using LinkedStack
+STRUCTURE: ExpressionHandler using Stack
 PURPOSE: Convert mathematical expressions and evaluate penalty/risk calculations
 OPERATIONS: Infix → Postfix conversion, Postfix evaluation with tracing
 

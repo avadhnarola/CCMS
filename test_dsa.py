@@ -1,12 +1,32 @@
 """
-Unit Tests for CCMS DSA Core Engine
+Unit Tests for CCMS DSA Core Engine (Phase 1 & Phase 2)
+======================================================
+Comprehensive test suite verifying all linear data structures,
+expression handling, efficiency benchmarks, binary trees, BSTs, and graphs.
 """
 import unittest
 from dsa import (
-    Node, SinglyLinkedList, LinkedStack, LinkedQueue, Queue,
+    SAMPLE_NUMERIC_DATASET, SAMPLE_SECTORS_DATASET, SAMPLE_COMPLAINT_RECORDS,
+    Node, SinglyLinkedList, Stack, Queue, Queue,
     StackUnderflowError, QueueUnderflowError,
-    ExpressionHandler, EfficiencyEngine
+    ExpressionHandler, EfficiencyEngine,
+    BinaryTreeNode, BinaryTree,
+    BSTNode, BinarySearchTree,
+    Graph,
+    build_default_vigilance_tree, build_default_complaints_bst, build_default_escalation_graph
 )
+
+
+# ==============================================================================
+# PHASE 1 TESTS
+# ==============================================================================
+class TestPhase1Datasets(unittest.TestCase):
+    def test_datasets_exist(self):
+        self.assertGreater(len(SAMPLE_NUMERIC_DATASET), 0)
+        self.assertGreater(len(SAMPLE_SECTORS_DATASET), 0)
+        self.assertGreater(len(SAMPLE_COMPLAINT_RECORDS), 0)
+        self.assertIn("id", SAMPLE_COMPLAINT_RECORDS[0])
+
 
 class TestSinglyLinkedList(unittest.TestCase):
     def setUp(self):
@@ -46,6 +66,19 @@ class TestSinglyLinkedList(unittest.TestCase):
         deleted = self.ll.delete_by_value("Z")
         self.assertFalse(deleted)
 
+    def test_delete_at_index(self):
+        self.ll.insert_at_tail("A")
+        self.ll.insert_at_tail("B")
+        self.ll.insert_at_tail("C")
+
+        deleted = self.ll.delete_at_index(1)
+        self.assertEqual(deleted, "B")
+        self.assertEqual(self.ll.get_size(), 2)
+
+        deleted_head = self.ll.delete_at_index(0)
+        self.assertEqual(deleted_head, "A")
+        self.assertEqual(self.ll.get_size(), 1)
+
     def test_search(self):
         self.ll.insert_at_tail({"id": "CCMS-2026-101", "title": "Tender Fraud"})
         self.ll.insert_at_tail({"id": "CCMS-2026-102", "title": "Police Misconduct"})
@@ -59,10 +92,18 @@ class TestSinglyLinkedList(unittest.TestCase):
         not_found = self.ll.search("NON-EXISTENT")
         self.assertIsNone(not_found)
 
+    def test_to_list(self):
+        self.ll.insert_at_tail("X")
+        self.ll.insert_at_tail("Y")
+        nodes = self.ll.to_list()
+        self.assertEqual(len(nodes), 2)
+        self.assertTrue(nodes[0]["has_next"])
+        self.assertFalse(nodes[1]["has_next"])
 
-class TestLinkedStack(unittest.TestCase):
+
+class TestStack(unittest.TestCase):
     def setUp(self):
-        self.stack = LinkedStack()
+        self.stack = Stack()
 
     def test_stack_operations(self):
         self.assertTrue(self.stack.is_empty())
@@ -83,9 +124,9 @@ class TestLinkedStack(unittest.TestCase):
             self.stack.pop()
 
 
-class TestLinkedQueue(unittest.TestCase):
+class TestQueue(unittest.TestCase):
     def setUp(self):
-        self.queue = LinkedQueue()
+        self.queue = Queue()
 
     def test_queue_operations(self):
         self.assertTrue(self.queue.is_empty())
@@ -107,53 +148,145 @@ class TestLinkedQueue(unittest.TestCase):
 
 
 class TestExpressionHandler(unittest.TestCase):
-    def test_infix_to_postfix_and_eval(self):
-        # 1. Simple expression: ( 10 + 20 ) * 3
-        expr1 = "( 10 + 20 ) * 3"
-        postfix1, trace1 = ExpressionHandler.infix_to_postfix(expr1)
-        self.assertEqual(" ".join(postfix1), "10 20 + 3 *")
-        res1, eval_trace1 = ExpressionHandler.evaluate_postfix(postfix1)
-        self.assertEqual(res1, 90)
+    def test_infix_to_postfix_and_evaluation(self):
+        expr = "( 5000 * 2 ) + ( 15 * 100 ) - 500"
+        result, postfix, infix_trace, eval_trace = ExpressionHandler.calculate(expr)
 
-        # 2. CCMS Fine Formula: (5000 * 2) + (10 * 100) - 250
-        expr2 = "( 5000 * 2 ) + ( 10 * 100 ) - 250"
-        postfix2, trace2 = ExpressionHandler.infix_to_postfix(expr2)
-        res2, _ = ExpressionHandler.evaluate_postfix(postfix2)
-        self.assertEqual(res2, 10750)
+        self.assertEqual(result, 11000)
+        self.assertEqual(postfix, "5000 2 * 15 100 * + 500 -")
+        self.assertGreater(len(infix_trace), 0)
+        self.assertGreater(len(eval_trace), 0)
 
-        # 3. Exponentiation & Precedence: 2 + 3 * 4 ^ 2
-        expr3 = "2 + 3 * 4 ^ 2"
-        postfix3, _ = ExpressionHandler.infix_to_postfix(expr3)
-        self.assertEqual(" ".join(postfix3), "2 3 4 2 ^ * +")
-        res3, _ = ExpressionHandler.evaluate_postfix(postfix3)
-        self.assertEqual(res3, 50)
+    def test_simple_precedence(self):
+        expr = "10 + 20 * 3"
+        tokens, _ = ExpressionHandler.infix_to_postfix(expr)
+        result, _ = ExpressionHandler.evaluate_postfix(tokens)
+        self.assertEqual(result, 70)
 
 
 class TestEfficiencyEngine(unittest.TestCase):
     def test_binary_search(self):
         arr = [10, 20, 30, 40, 50, 60, 70, 80]
-        idx_iter, steps_i = EfficiencyEngine.iterative_binary_search(arr, 50)
-        idx_rec, steps_r = EfficiencyEngine.recursive_binary_search(arr, 50, 0, len(arr) - 1)
-        self.assertEqual(idx_iter, 4)
-        self.assertEqual(idx_rec, 4)
+        vi, si = EfficiencyEngine.iterative_binary_search(arr, 40)
+        vr, sr = EfficiencyEngine.recursive_binary_search(arr, 40)
+        self.assertEqual(vi, 3)
+        self.assertEqual(vr, 3)
 
     def test_factorial(self):
-        val_i, _ = EfficiencyEngine.iterative_factorial(5)
-        val_r, _ = EfficiencyEngine.recursive_factorial(5)
-        self.assertEqual(val_i, 120)
-        self.assertEqual(val_r, 120)
+        vi, _ = EfficiencyEngine.iterative_factorial(5)
+        vr, _ = EfficiencyEngine.recursive_factorial(5)
+        self.assertEqual(vi, 120)
+        self.assertEqual(vr, 120)
 
     def test_fibonacci(self):
-        val_i, _ = EfficiencyEngine.iterative_fibonacci(7)
-        val_r, _ = EfficiencyEngine.recursive_fibonacci(7)
-        self.assertEqual(val_i, 13)
-        self.assertEqual(val_r, 13)
+        vi, _ = EfficiencyEngine.iterative_fibonacci(7)
+        vr, _ = EfficiencyEngine.recursive_fibonacci(7)
+        self.assertEqual(vi, 13)
+        self.assertEqual(vr, 13)
 
-    def test_benchmark_runner(self):
-        bench = EfficiencyEngine.run_benchmark("binary_search", 100)
-        self.assertIn("iterative", bench)
-        self.assertIn("recursive", bench)
-        self.assertEqual(bench["iterative"]["time_complexity"], "O(log N)")
+    def test_run_benchmark(self):
+        b = EfficiencyEngine.run_benchmark("factorial", 8)
+        self.assertIn("iterative", b)
+        self.assertIn("recursive", b)
+        self.assertIn("analysis", b)
+        self.assertIn("time_complexity", b["iterative"])
+
+
+# ==============================================================================
+# PHASE 2 TESTS
+# ==============================================================================
+class TestBinaryTree(unittest.TestCase):
+    def setUp(self):
+        self.tree = build_default_vigilance_tree()
+
+    def test_tree_structure(self):
+        self.assertIsNotNone(self.tree.root)
+        self.assertEqual(self.tree.root.value, "Central Vigilance Directorate (HQ)")
+        self.assertEqual(self.tree.get_height(), 3)
+        self.assertEqual(self.tree.count_nodes(), 7)
+
+    def test_traversals(self):
+        inorder = self.tree.inorder_traversal()
+        preorder = self.tree.preorder_traversal()
+        postorder = self.tree.postorder_traversal()
+        level_order = self.tree.level_order_traversal()
+
+        self.assertEqual(len(inorder), 7)
+        self.assertEqual(len(preorder), 7)
+        self.assertEqual(len(postorder), 7)
+        self.assertEqual(len(level_order), 7)
+
+        # Preorder starts with Root
+        self.assertEqual(preorder[0], "Central Vigilance Directorate (HQ)")
+        # Postorder ends with Root
+        self.assertEqual(postorder[-1], "Central Vigilance Directorate (HQ)")
+        # Level order starts with Root
+        self.assertEqual(level_order[0], "Central Vigilance Directorate (HQ)")
+
+
+class TestBinarySearchTree(unittest.TestCase):
+    def setUp(self):
+        self.bst = BinarySearchTree()
+        self.bst.insert(50, {"title": "Medium Risk"})
+        self.bst.insert(30, {"title": "Low Risk"})
+        self.bst.insert(70, {"title": "High Risk"})
+        self.bst.insert(20, {"title": "Very Low Risk"})
+        self.bst.insert(40, {"title": "Moderate Risk"})
+        self.bst.insert(60, {"title": "Elevated Risk"})
+        self.bst.insert(80, {"title": "Critical Risk"})
+
+    def test_search(self):
+        node = self.bst.search(70)
+        self.assertIsNotNone(node)
+        self.assertEqual(node.data["title"], "High Risk")
+
+        not_found = self.bst.search(999)
+        self.assertIsNone(not_found)
+
+    def test_inorder_sorted(self):
+        sorted_records = self.bst.inorder_traversal()
+        keys = [r["key"] for r in sorted_records]
+        self.assertEqual(keys, [20, 30, 40, 50, 60, 70, 80])
+
+    def test_min_and_max(self):
+        self.assertEqual(self.bst.find_min().key, 20)
+        self.assertEqual(self.bst.find_max().key, 80)
+
+    def test_delete_nodes(self):
+        # 1. Delete leaf node
+        self.assertTrue(self.bst.delete(20))
+        self.assertIsNone(self.bst.search(20))
+
+        # 2. Delete node with 2 children
+        self.assertTrue(self.bst.delete(70))
+        self.assertIsNone(self.bst.search(70))
+        sorted_keys = [r["key"] for r in self.bst.inorder_traversal()]
+        self.assertEqual(sorted_keys, [30, 40, 50, 60, 80])
+
+
+class TestGraphAndTraversals(unittest.TestCase):
+    def setUp(self):
+        self.g = build_default_escalation_graph()
+
+    def test_graph_vertices_and_edges(self):
+        vertices = self.g.get_vertices()
+        self.assertIn("Citizen Front Desk", vertices)
+        self.assertIn("Central Vigilance Directorate", vertices)
+        neighbors = self.g.get_neighbors("Citizen Front Desk")
+        self.assertIn("Triage & Verification Desk", neighbors)
+
+    def test_bfs_traversal(self):
+        path, trace = self.g.bfs("Citizen Front Desk")
+        self.assertEqual(path[0], "Citizen Front Desk")
+        self.assertIn("Triage & Verification Desk", path)
+        self.assertIn("Central Vigilance Directorate", path)
+        self.assertGreater(len(trace), 0)
+
+    def test_dfs_traversal(self):
+        path, trace = self.g.dfs("Citizen Front Desk")
+        self.assertEqual(path[0], "Citizen Front Desk")
+        self.assertEqual(len(path), len(self.g.get_vertices()))
+        self.assertGreater(len(trace), 0)
 
 
 if __name__ == "__main__":

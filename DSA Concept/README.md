@@ -31,12 +31,12 @@ Singly Linked List for dynamic data storage.
 
 ### stack.py
 LIFO (Last In First Out) Stack implementation using linked nodes.
-- `LinkedStack`: Push, Pop, Peek, and traversal operations
+- `Stack`: Push, Pop, Peek, and traversal operations
 - Time Complexity: O(1) for all operations
 
 ### queue.py
 FIFO (First In First Out) Queue implementation using linked nodes.
-- `LinkedQueue`: Enqueue, Dequeue, Peek, and traversal operations
+- `Queue`: Enqueue, Dequeue, Peek, and traversal operations
 - Time Complexity: O(1) for all operations
 
 ### expression_handler.py
@@ -70,8 +70,8 @@ python demo.py
 ```python
 from node import Node
 from linked_list import SinglyLinkedList
-from stack import LinkedStack
-from queue import LinkedQueue
+from stack import Stack
+from queue import Queue
 from expression_handler import ExpressionHandler
 from efficiency_engine import EfficiencyEngine
 
