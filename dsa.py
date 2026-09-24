@@ -487,16 +487,14 @@ class ExpressionHandler:
 # PHASE 1 - PART 5: EFFICIENCY CONCEPTS (ITERATIVE VS RECURSIVE)
 # ==============================================================================
 class EfficiencyEngine:
-    """
-    Demonstrates and benchmarks basic algorithm efficiency:
-    Compares Iterative loops vs Recursive calls across Time and Space Complexity.
-    """
-    def iterative_factorial(n):
-        result = 1
-        for i in range(1, n + 1):
-            result = result * i
 
-        return result
+    def iterative_factorial(n):
+        """Iterative Factorial: O(N) Time, O(1) Space."""
+        result, steps = 1, 0
+        for i in range(2, n + 1):
+            steps += 1
+            result *= i
+        return result, max(1, steps)
 
     def recursive_factorial(n):
         if n <= 1:
@@ -788,7 +786,7 @@ class BinarySearchTree:
     def to_dict(self):
         return self.root.to_dict() if self.root else None
 
-
+    
 # ==============================================================================
 # PHASE 2 - PART 4 & 5: GRAPH REPRESENTATION & TRAVERSALS (BFS & DFS)
 # ==============================================================================
@@ -903,6 +901,257 @@ class Graph:
 # ==============================================================================
 # HELPER BUILDERS & DEMO RUNNERS
 # ==============================================================================
+
+def calculate_complaint_risk_score(complaint, index=0):
+    """Derives a deterministic, unique 1-100 risk score key for a complaint record."""
+    if isinstance(complaint, dict) and "risk_score" in complaint and complaint["risk_score"] is not None:
+        try:
+            return int(complaint["risk_score"])
+        except (ValueError, TypeError):
+            pass
+
+    severity = complaint.get("severity", "Medium") if isinstance(complaint, dict) else "Medium"
+    base_scores = {
+        "Critical": 90,
+        "High": 70,
+        "Medium": 45,
+        "Low": 20
+    }
+    base = base_scores.get(severity, 50)
+    
+    # Generate stable offset from complaint ID or index
+    cid = str(complaint.get("complaint_id", complaint.get("id", ""))) if isinstance(complaint, dict) else str(index)
+    digits = "".join([c for c in cid if c.isdigit()])
+    offset = (int(digits[-2:]) % 18) if len(digits) >= 2 else (index % 15)
+    return min(99, max(5, base + offset))
+
+
+def build_dataset_vigilance_tree(departments=None):
+    """
+    Builds Hierarchical Binary Tree directly from the CCMS Departments dataset.
+    Root: Central Vigilance Directorate (HQ)
+    Left Branch: Infrastructure & Municipal Wings
+    Right Branch: Law Enforcement, Healthcare & Public Services
+    """
+    tree = BinaryTree("Central Vigilance Directorate (HQ)", {
+        "role": "Super Admin Command Center",
+        "jurisdiction": "National Integrity Oversight",
+        "total_cases": sum([d.get("total_cases", 0) for d in departments]) if departments else 194
+    })
+
+    if not departments:
+        return build_default_vigilance_tree()
+
+    # Split departments into left & right branches
+    left_depts = [d for d in departments if any(k in d.get("name", "").lower() for k in ["public", "works", "transport", "municipality", "pwd", "trn"])]
+    right_depts = [d for d in departments if d not in left_depts]
+
+    if not left_depts and not right_depts:
+        left_depts = departments[:len(departments)//2]
+        right_depts = departments[len(departments)//2:]
+
+    # Left Root Branch
+    left_lead = left_depts[0] if left_depts else {"name": "Directorate of Public Infrastructure", "head": "Joint Director PWD", "risk_level": "High"}
+    tree.root.left = BinaryTreeNode(left_lead.get("name", "Directorate of Public Infrastructure"), {
+        "dept_id": left_lead.get("dept_id", "DEPT-PWD"),
+        "role": left_lead.get("head", "Joint Director PWD"),
+        "risk_level": left_lead.get("risk_level", "High"),
+        "total_cases": left_lead.get("total_cases", 0)
+    })
+
+    # Left children
+    if len(left_depts) > 1:
+        d1 = left_depts[1]
+        tree.root.left.left = BinaryTreeNode(d1.get("name", "Civil Works Bureau"), {
+            "dept_id": d1.get("dept_id", ""),
+            "role": d1.get("head", "Zonal Inspector"),
+            "risk_level": d1.get("risk_level", "High"),
+            "total_cases": d1.get("total_cases", 0)
+        })
+    if len(left_depts) > 2:
+        d2 = left_depts[2]
+        tree.root.left.right = BinaryTreeNode(d2.get("name", "Procurement Audit Wing"), {
+            "dept_id": d2.get("dept_id", ""),
+            "role": d2.get("head", "Chief Auditor"),
+            "risk_level": d2.get("risk_level", "Medium"),
+            "total_cases": d2.get("total_cases", 0)
+        })
+
+    # Right Root Branch
+    right_lead = right_depts[0] if right_depts else {"name": "Directorate of Law & Public Services", "head": "Joint Director Police", "risk_level": "High"}
+    tree.root.right = BinaryTreeNode(right_lead.get("name", "Directorate of Law & Public Services"), {
+        "dept_id": right_lead.get("dept_id", "DEPT-POL"),
+        "role": right_lead.get("head", "Superintendent of Police"),
+        "risk_level": right_lead.get("risk_level", "High"),
+        "total_cases": right_lead.get("total_cases", 0)
+    })
+
+    # Right children
+    if len(right_depts) > 1:
+        d3 = right_depts[1]
+        tree.root.right.left = BinaryTreeNode(d3.get("name", "Healthcare Oversight Wing"), {
+            "dept_id": d3.get("dept_id", ""),
+            "role": d3.get("head", "Chief Medical Inspector"),
+            "risk_level": d3.get("risk_level", "Medium"),
+            "total_cases": d3.get("total_cases", 0)
+        })
+    if len(right_depts) > 2:
+        d4 = right_depts[2]
+        tree.root.right.right = BinaryTreeNode(d4.get("name", "Education & Grants Wing"), {
+            "dept_id": d4.get("dept_id", ""),
+            "role": d4.get("head", "Deputy Commissioner"),
+            "risk_level": d4.get("risk_level", "Low"),
+            "total_cases": d4.get("total_cases", 0)
+        })
+
+    return tree
+
+
+def build_dataset_complaints_bst(complaints=None):
+    """
+    Builds Binary Search Tree (BST) directly from the CCMS Complaints dataset.
+    Organizes cases keyed by Risk Score (1-100).
+    """
+    bst = BinarySearchTree()
+    if not complaints:
+        for rec in SAMPLE_COMPLAINT_RECORDS:
+            bst.insert(rec["risk_score"], rec)
+        return bst
+
+    used_keys = set()
+    for idx, c in enumerate(complaints):
+        base_key = calculate_complaint_risk_score(c, idx)
+        key = base_key
+        # Ensure unique key for distinct complaint records in BST
+        while key in used_keys:
+            key += 1
+        used_keys.add(key)
+
+        data = {
+            "id": c.get("complaint_id", c.get("id")),
+            "title": c.get("complaint_title", c.get("title", "Corruption Complaint")),
+            "sector": c.get("sector", c.get("misconduct_category", "Public Governance")),
+            "severity": c.get("severity", "Medium"),
+            "status": c.get("complaint_status", c.get("status", "Pending")),
+            "risk_score": key,
+            "location": c.get("location", "Central Zone"),
+            "created_at": str(c.get("created_at", ""))
+        }
+        bst.insert(key, data)
+
+    return bst
+
+
+def build_dataset_escalation_graph(departments=None):
+    """
+    Builds Escalation & Jurisdictional Network Graph using CCMS Dataset Departments & Hubs.
+    """
+    g = Graph()
+    g.add_edge("Citizen Portal Intake", "Central Triage Desk")
+    
+    dept_names = [d.get("name") for d in departments] if departments else [
+        "Police & Law Enforcement", "Municipality & Public Works", "Healthcare & Supplies",
+        "Education & Grants", "Transport & Licensing"
+    ]
+
+    for dept in dept_names:
+        g.add_edge("Central Triage Desk", dept)
+        g.add_edge(dept, "Field & Forensic Investigation Unit")
+
+    g.add_edge("Field & Forensic Investigation Unit", "Central Vigilance Directorate")
+    g.add_edge("Central Vigilance Directorate", "Legal Prosecution & Disciplinary Tribunal")
+    return g
+
+
+def build_corruption_category_tree():
+    """
+    Constructs the Binary Tree for Complaint Category Classification:
+                     CORRUPTION
+                    /          \
+               BRIBERY        FRAUD
+               /     \        /    \
+           DEMAND   ACCEPT FINANCIAL DOCUMENT
+    """
+    root = BinaryTreeNode("CORRUPTION", {
+        "code": "CAT-ROOT",
+        "level": 0,
+        "category_type": "Root Classification",
+        "icon": "fa-shield-halved",
+        "severity": "Systemic",
+        "dept": "Central Vigilance Directorate (HQ)",
+        "description": "Master classification taxonomy covering all forms of public corruption and official misconduct."
+    })
+    
+    # Left Branch: BRIBERY
+    root.left = BinaryTreeNode("BRIBERY", {
+        "code": "CAT-BRB",
+        "level": 1,
+        "category_type": "Primary Misconduct Wing",
+        "icon": "fa-hand-holding-dollar",
+        "severity": "Critical",
+        "dept": "Police, Transport & Land Revenue",
+        "description": "Corrupt exchange, solicitation, or reception of illegal financial gratification for official acts."
+    })
+    
+    # Left -> Left: DEMAND
+    root.left.left = BinaryTreeNode("DEMAND", {
+        "code": "CAT-BRB-DEM",
+        "level": 2,
+        "category_type": "Actionable Leaf Category",
+        "icon": "fa-gavel",
+        "severity": "Critical",
+        "dept": "Anti-Extortion & Police Oversight Wing",
+        "description": "Active solicitation, coercion, or extortion of bribes/kickbacks from citizens prior to service delivery."
+    })
+    
+    # Left -> Right: ACCEPT
+    root.left.right = BinaryTreeNode("ACCEPT", {
+        "code": "CAT-BRB-ACC",
+        "level": 2,
+        "category_type": "Actionable Leaf Category",
+        "icon": "fa-money-bill-transfer",
+        "severity": "High",
+        "dept": "Central Triage & Verification Desk",
+        "description": "Voluntary receipt or taking of illicit kickbacks, speed money, or covert gifts by a public officer."
+    })
+    
+    # Right Branch: FRAUD
+    root.right = BinaryTreeNode("FRAUD", {
+        "code": "CAT-FRD",
+        "level": 1,
+        "category_type": "Primary Misconduct Wing",
+        "icon": "fa-file-invoice-dollar",
+        "severity": "Critical",
+        "dept": "Public Works & Municipal Corporation",
+        "description": "Intentional deception, embezzlement, or falsification resulting in wrongful loss to the public treasury."
+    })
+    
+    # Right -> Left: FINANCIAL
+    root.right.left = BinaryTreeNode("FINANCIAL", {
+        "code": "CAT-FRD-FIN",
+        "level": 2,
+        "category_type": "Actionable Leaf Category",
+        "icon": "fa-sack-dollar",
+        "severity": "Critical",
+        "dept": "Public Procurement Audit Cell",
+        "description": "Treasury fund embezzlement, procurement tender rigging, ghost beneficiary billing, and siphon schemes."
+    })
+    
+    # Right -> Right: DOCUMENT
+    root.right.right = BinaryTreeNode("DOCUMENT", {
+        "code": "CAT-FRD-DOC",
+        "level": 2,
+        "category_type": "Actionable Leaf Category",
+        "icon": "fa-file-signature",
+        "severity": "High",
+        "dept": "Land Records Intelligence Unit",
+        "description": "Forgery of official certificates, title deeds, falsified audit registers, and identity manipulation."
+    })
+    
+    tree = BinaryTree()
+    tree.root = root
+    return tree
+
 
 def build_default_vigilance_tree():
     """Build pre-seeded Departmental Hierarchy Binary Tree."""

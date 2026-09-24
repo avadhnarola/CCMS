@@ -9,22 +9,24 @@
     <!-- Left Column: User Card -->
     <div class="col-md-4">
       <div class="ccms-card p-4 text-center">
-        <div class="user-avatar-circle mx-auto mb-3" style="width:72px; height:72px; font-size:1.8rem; background: var(--gradient-brand);">
+        <div class="user-avatar-circle mx-auto mb-3"
+          style="width:72px; height:72px; font-size:1.8rem; background: var(--gradient-brand);">
           {{ user.full_name[:1]|upper if user else 'C' }}
         </div>
         <h5 class="fw-bold text-heading mb-1">{{ user.full_name }}</h5>
-        <div class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill small fw-bold mb-3">
+        <div
+          class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill small fw-bold mb-3">
           <i class="fas fa-shield-check me-1"></i> Verified Citizen
         </div>
 
         <div class="p-3 rounded bg-subtle border text-start small">
-          <div class="text-muted">Account Email</div>
+          <div class="">Account Email</div>
           <div class="fw-bold text-heading text-truncate mb-2">{{ user.email }}</div>
-          
-          <div class="text-muted">Registered Phone</div>
+
+          <div class="">Registered Phone</div>
           <div class="fw-bold text-heading text-truncate mb-2">{{ user.mobile_number }}</div>
 
-          <div class="text-muted">Security Role</div>
+          <div class="">Security Role</div>
           <div class="fw-bold text-primary">Whistleblower Protection</div>
         </div>
       </div>
@@ -34,7 +36,8 @@
     <div class="col-md-8">
       <!-- Edit Profile Details -->
       <div class="ccms-card p-4 mb-4 shadow-sm">
-        <h5 class="fw-bold text-heading mb-3"><i class="fas fa-user-pen text-primary me-2"></i>Update Personal Information</h5>
+        <h5 class="fw-bold text-heading mb-3"><i class="fas fa-user-pen text-primary me-2"></i>Update Personal
+          Information</h5>
         <form action="{{ url_for('citizen_profile') }}" method="POST">
           <input type="hidden" name="action" value="update_profile">
           <div class="mb-3">
@@ -53,7 +56,8 @@
           </div>
           <div class="mb-3">
             <label class="form-label">Jurisdiction / Residential Address</label>
-            <input type="text" name="address" class="form-control" value="{{ user.address or '' }}" placeholder="City, State">
+            <input type="text" name="address" class="form-control" value="{{ user.address or '' }}"
+              placeholder="City, State">
           </div>
           <button type="submit" class="btn btn-brand">Save Profile Changes</button>
         </form>
@@ -66,7 +70,8 @@
           <input type="hidden" name="action" value="change_password">
           <div class="mb-3">
             <label class="form-label">Current Password</label>
-            <input type="password" name="current_password" class="form-control" placeholder="Enter current password" required>
+            <input type="password" name="current_password" class="form-control" placeholder="Enter current password"
+              required>
           </div>
           <div class="row g-3 mb-3">
             <div class="col-md-6">
@@ -75,7 +80,8 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Confirm New Password</label>
-              <input type="password" name="confirm_password" class="form-control" placeholder="Re-type new password" required>
+              <input type="password" name="confirm_password" class="form-control" placeholder="Re-type new password"
+                required>
             </div>
           </div>
           <button type="submit" class="btn btn-outline-custom">Update Security Key</button>

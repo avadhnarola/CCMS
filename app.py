@@ -23,8 +23,10 @@ complaints_bst = dsa.build_default_complaints_bst()
 escalation_graph = dsa.build_default_escalation_graph()
 
 def init_dsa_stores():
-    """Seed in-memory DSA structures with recent records from database / static data."""
+    """Seed in-memory DSA structures with live records from database / static datasets."""
+    global vigilance_binary_tree, complaints_bst, escalation_graph
     try:
+        # Phase 1: Linked list of recent cases
         recent_cases = db.query_db("SELECT complaint_id, complaint_title, sector, severity, complaint_status, created_at FROM complaints ORDER BY created_at DESC LIMIT 6")
         if recent_cases:
             complaints_linked_list.clear()
@@ -38,6 +40,7 @@ def init_dsa_stores():
                     "timestamp": str(c["created_at"])
                 })
         
+        # Phase 1: Stack of activity logs
         recent_logs = db.query_db("SELECT actor, action, details, timestamp FROM activity_logs ORDER BY timestamp DESC LIMIT 4")
         if recent_logs:
             activity_stack.clear()
@@ -49,6 +52,7 @@ def init_dsa_stores():
                     "time": str(l["timestamp"])
                 })
 
+        # Phase 1: Queue of pending dispatches
         pending = db.query_db("SELECT complaint_id, complaint_title, sector, severity FROM complaints WHERE complaint_status = 'Pending' LIMIT 4")
         if pending:
             dispatch_queue.clear()
@@ -59,6 +63,18 @@ def init_dsa_stores():
                     "sector": p["sector"],
                     "severity": p["severity"]
                 })
+
+        # Phase 2: Hierarchical Tree & Graph built on actual Departments dataset
+        all_depts = db.query_db("SELECT * FROM departments ORDER BY total_cases DESC")
+        if all_depts:
+            vigilance_binary_tree = dsa.build_dataset_vigilance_tree(all_depts)
+            escalation_graph = dsa.build_dataset_escalation_graph(all_depts)
+
+        # Phase 2: Binary Search Tree (BST) built on actual Complaints dataset
+        all_complaints = db.query_db("SELECT complaint_id, complaint_title, sector, severity, complaint_status, location, created_at FROM complaints")
+        if all_complaints:
+            complaints_bst = dsa.build_dataset_complaints_bst(all_complaints)
+
     except Exception as e:
         print("DSA Init note:", e)
 
@@ -1036,6 +1052,59 @@ def admin_delete_category(category_id):
     return redirect(url_for("admin_categories"))
 
 
+@app.route("/admin/category-tree")
+@role_required("admin")
+def admin_category_tree():
+    """
+    Renders the Complaint Category Binary Tree Form:
+                     CORRUPTION
+                    /          \
+               BRIBERY        FRAUD
+               /     \        /    \
+           DEMAND   ACCEPT FINANCIAL DOCUMENT
+    """
+    cat_tree = dsa.build_corruption_category_tree()
+    departments = db.query_db("SELECT * FROM departments")
+    return render_template(
+        "admin/category_tree.html",
+        active_page="category_tree",
+        tree_dict=cat_tree.to_dict(),
+        departments=departments
+    )
+
+
+@app.route("/admin/category-tree/action", methods=["POST"])
+@role_required("admin")
+def admin_category_tree_action():
+    node_name = request.form.get("node_name", "CORRUPTION")
+    node_code = request.form.get("node_code", "CAT-ROOT")
+    severity = request.form.get("severity", "High")
+    dept = request.form.get("dept", "Central Vigilance Directorate (HQ)")
+    description = request.form.get("description", "")
+    action_type = request.form.get("action_type", "register_category")
+
+    if action_type == "generate_sample_case":
+        # Create a sample complaint under this category
+        new_id = f"CCMS-2026-{random.randint(1000, 9999)}"
+        db.execute_db(
+            """INSERT INTO complaints (complaint_id, user_id, complaint_title, misconduct_category, sector, incident_date, location, description, severity, complaint_status)
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+            (new_id, session.get("user_id", 1), f"Reported {node_name} Breach", node_name, dept,
+             datetime.datetime.now().strftime("%Y-%m-%d"), "Zonal Jurisdiction", description, severity, "Pending")
+        )
+        init_dsa_stores()
+        flash(f"Sample complaint {new_id} generated under Binary Tree category [{node_name}].", "success")
+        return redirect(url_for("admin_phase2"))
+    else:
+        # Register / Sync into categories table
+        db.execute_db(
+            "INSERT OR REPLACE INTO categories (category_id, name, icon, dept, description) VALUES (%s, %s, %s, %s, %s)",
+            (node_code, node_name, "fa-folder-tree", dept, description)
+        )
+        flash(f"Category node [{node_name}] ({node_code}) synchronized with reporting taxonomy.", "success")
+        return redirect(url_for("admin_category_tree"))
+
+
 @app.route("/admin/reports")
 @role_required("admin")
 def admin_reports():
@@ -1125,8 +1194,54 @@ def admin_settings():
 
 
 # -------------------------------------------------------------
-# DSA INTELLIGENCE LAB & DEMONSTRATION ROUTES
+# DSA INTELLIGENCE LAB & PHASE 2 STRUCTURED DATA ROUTES
 # -------------------------------------------------------------
+@app.route("/admin/phase2")
+@role_required("admin")
+def admin_phase2():
+    """
+    Dedicated Admin Module for Phase 2: Structured Data Representation (CLO2).
+    Operates strictly on the CCMS live dataset (complaints, departments).
+    Includes:
+      1. Binary Tree for Departmental Hierarchical Representation
+      2. 4 Basic Tree Traversals (Inorder, Preorder, Postorder, Level-Order/BFS)
+      3. Binary Search Tree (BST) for O(log N) Indexed Complaint Storage
+      4. Graph Adjacency List for Jurisdictional Escalation Network
+      5. Graph Traversals (BFS & DFS) with interactive step tracing
+    """
+    if complaints_bst.is_empty():
+        init_dsa_stores()
+
+    tree_traversals = {
+        "inorder": vigilance_binary_tree.inorder_traversal(),
+        "preorder": vigilance_binary_tree.preorder_traversal(),
+        "postorder": vigilance_binary_tree.postorder_traversal(),
+        "level_order": vigilance_binary_tree.level_order_traversal()
+    }
+    bst_min_node = complaints_bst.find_min()
+    bst_max_node = complaints_bst.find_max()
+
+    raw_depts = db.query_db("SELECT * FROM departments ORDER BY total_cases DESC") or []
+    raw_complaints = db.query_db("SELECT complaint_id, complaint_title, sector, severity, complaint_status, location, created_at FROM complaints") or []
+
+    return render_template(
+        "admin/phase2.html",
+        active_page="phase2",
+        departments=raw_depts,
+        complaints=raw_complaints,
+        tree_dict=vigilance_binary_tree.to_dict(),
+        tree_height=vigilance_binary_tree.get_height(),
+        tree_nodes_count=vigilance_binary_tree.count_nodes(),
+        tree_traversals=tree_traversals,
+        bst_items=complaints_bst.inorder_traversal(),
+        bst_size=complaints_bst.size(),
+        bst_min=bst_min_node.key if bst_min_node else None,
+        bst_max=bst_max_node.key if bst_max_node else None,
+        graph_adj=escalation_graph.to_dict(),
+        graph_vertices=escalation_graph.get_vertices()
+    )
+
+
 @app.route("/admin/dsa-lab")
 @role_required("admin")
 def admin_dsa_lab():
@@ -1156,6 +1271,7 @@ def admin_dsa_lab():
 
     return render_template(
         "admin/dsa_lab.html",
+        active_page="dsa_lab",
         # Phase 1
         ll_nodes=ll_nodes,
         ll_size=complaints_linked_list.get_size(),

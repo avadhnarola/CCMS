@@ -1373,6 +1373,7 @@
         opacity: 0;
         transform: translateY(8px) scale(0.96);
       }
+
       to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -1521,7 +1522,7 @@
               </div>
               <div>
                 <div class="fw-bold text-dark small">Complaint #CCMS-8902</div>
-                <div class="text-muted" style="font-size:0.75rem;">Resolved &amp; Assets Recovered</div>
+                <div class="" style="font-size:0.75rem;">Resolved &amp; Assets Recovered</div>
               </div>
             </div>
 
@@ -1539,15 +1540,15 @@
 
               <!-- Dashboard Console Snippet -->
               <div class="p-3 mb-3 rounded" style="background: var(--clr-subtle); border: 1px solid var(--clr-border);">
-                <div class="d-flex justify-content-between text-muted small mb-2">
+                <div class="d-flex justify-content-between  small mb-2">
                   <span>Encryption Standard:</span>
                   <span class="text-primary font-monospace fw-bold">AES-GCM-256</span>
                 </div>
-                <div class="d-flex justify-content-between text-muted small mb-2">
+                <div class="d-flex justify-content-between  small mb-2">
                   <span>Whistleblower Identity:</span>
                   <span class="text-success font-monospace fw-bold">SCRUBBED &amp; ANONYMOUS</span>
                 </div>
-                <div class="d-flex justify-content-between text-muted small">
+                <div class="d-flex justify-content-between  small">
                   <span>Vigilance SLA Timer:</span>
                   <span class="text-warning font-monospace fw-bold">&lt; 24 Hours Response</span>
                 </div>
@@ -1559,7 +1560,7 @@
                   <i class="fas fa-gavel text-accent fa-2x"></i>
                   <div>
                     <div class="text-dark fw-bold small">Direct Legal Escalation</div>
-                    <div class="text-muted" style="font-size:0.75rem;">Automatic Triage to Vigilance Directors</div>
+                    <div class="" style="font-size:0.75rem;">Automatic Triage to Vigilance Directors</div>
                   </div>
                 </div>
               </div>
@@ -1572,7 +1573,7 @@
               </div>
               <div>
                 <div class="fw-bold text-dark small">Zero Metadata Logged</div>
-                <div class="text-muted" style="font-size:0.75rem;">IP &amp; Device Signatures Scrubbed</div>
+                <div class="" style="font-size:0.75rem;">IP &amp; Device Signatures Scrubbed</div>
               </div>
             </div>
 
@@ -1591,7 +1592,7 @@
         <div class="col-lg-4">
           <h5 class="fw-bold mb-1 text-dark"><i class="fas fa-magnifying-glass-chart text-primary me-2"></i>Quick Case
             Lookup</h5>
-          <p class="text-muted small mb-0">Check real-time investigation status using your 16-digit tracking code.</p>
+          <p class=" small mb-0">Check real-time investigation status using your 16-digit tracking code.</p>
         </div>
         <div class="col-lg-8">
           <form id="quickSearchForm" class="row g-2 align-items-center"
@@ -1608,7 +1609,7 @@
               </button>
             </div>
           </form>
-          <div class="mt-2 d-flex align-items-center gap-2 text-muted small flex-wrap">
+          <div class="mt-2 d-flex align-items-center gap-2  small flex-wrap">
             <span>Try sample tracking keys:</span>
             <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-2026-6775')">CCMS-2026-6775</span>
             <span class="quick-sample-badge" onclick="openSampleStatus('CCMS-2026-8902')">CCMS-2026-8902</span>
@@ -1889,7 +1890,7 @@
           <div class="rights-card">
             <div class="rights-icon"><i class="fas fa-user-shield"></i></div>
             <h4 class="fw-bold mb-2 text-dark">100% Identity Scrubbing</h4>
-            <p class="text-muted small">Server-side stripping of EXIF data, IP signatures, and browser details before
+            <p class=" small">Server-side stripping of EXIF data, IP signatures, and browser details before
               filing into encrypted storage.</p>
           </div>
         </div>
@@ -1898,7 +1899,7 @@
           <div class="rights-card">
             <div class="rights-icon"><i class="fas fa-gavel"></i></div>
             <h4 class="fw-bold mb-2 text-dark">Legal Retaliation Immunity</h4>
-            <p class="text-muted small">Protected under national Whistleblower Directives against employment
+            <p class=" small">Protected under national Whistleblower Directives against employment
               termination, harassment, or civil suits.</p>
           </div>
         </div>
@@ -1907,7 +1908,7 @@
           <div class="rights-card">
             <div class="rights-icon"><i class="fas fa-sack-dollar"></i></div>
             <h4 class="fw-bold mb-2 text-dark">Financial Reward Scheme</h4>
-            <p class="text-muted small">Citizens reporting high-level financial fraud are eligible for up to 10% of
+            <p class=" small">Citizens reporting high-level financial fraud are eligible for up to 10% of
               recovered corrupt public assets.</p>
           </div>
         </div>
@@ -1916,7 +1917,7 @@
           <div class="rights-card">
             <div class="rights-icon"><i class="fas fa-handshake-angle"></i></div>
             <h4 class="fw-bold mb-2 text-dark">Free Legal Counsel</h4>
-            <p class="text-muted small">Access 24/7 confidential legal aid and witness protection protocols through our
+            <p class=" small">Access 24/7 confidential legal aid and witness protection protocols through our
               partnered anti-corruption attorneys.</p>
           </div>
         </div>
@@ -1946,7 +1947,7 @@
                 SLA</span>
             </div>
             <div class="mb-3">
-              <div class="d-flex justify-content-between text-muted small mb-1">
+              <div class="d-flex justify-content-between  small mb-1">
                 <span>Resolution Rate</span>
                 <span class="fw-bold text-dark">96.4%</span>
               </div>
@@ -1954,7 +1955,7 @@
                 <div class="progress-bar-fill" style="width: 96.4%;"></div>
               </div>
             </div>
-            <div class="d-flex justify-content-between text-muted small">
+            <div class="d-flex justify-content-between  small">
               <span>Avg Response SLA: <strong>32 Hours</strong></span>
               <span>Total Resolved: <strong>3,420</strong></span>
             </div>
@@ -1970,7 +1971,7 @@
                 SLA</span>
             </div>
             <div class="mb-3">
-              <div class="d-flex justify-content-between text-muted small mb-1">
+              <div class="d-flex justify-content-between  small mb-1">
                 <span>Resolution Rate</span>
                 <span class="fw-bold text-dark">94.1%</span>
               </div>
@@ -1978,7 +1979,7 @@
                 <div class="progress-bar-fill" style="width: 94.1%;"></div>
               </div>
             </div>
-            <div class="d-flex justify-content-between text-muted small">
+            <div class="d-flex justify-content-between  small">
               <span>Avg Response SLA: <strong>28 Hours</strong></span>
               <span>Total Resolved: <strong>4,110</strong></span>
             </div>
@@ -1994,7 +1995,7 @@
                 SLA</span>
             </div>
             <div class="mb-3">
-              <div class="d-flex justify-content-between text-muted small mb-1">
+              <div class="d-flex justify-content-between  small mb-1">
                 <span>Resolution Rate</span>
                 <span class="fw-bold text-dark">98.2%</span>
               </div>
@@ -2002,7 +2003,7 @@
                 <div class="progress-bar-fill" style="width: 98.2%;"></div>
               </div>
             </div>
-            <div class="d-flex justify-content-between text-muted small">
+            <div class="d-flex justify-content-between  small">
               <span>Avg Response SLA: <strong>24 Hours</strong></span>
               <span>Total Resolved: <strong>2,850</strong></span>
             </div>
@@ -2396,7 +2397,7 @@
             </div>
             <div>
               <h5 class="modal-title fw-bold text-dark" id="complaintModalLabel">Submit Confidential Complaint</h5>
-              <p class="text-muted small mb-0">End-to-End Encrypted &amp; 100% Anonymous</p>
+              <p class=" small mb-0">End-to-End Encrypted &amp; 100% Anonymous</p>
             </div>
           </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -2451,7 +2452,7 @@
                 <div class="border border-2 border-dashed rounded p-4 text-center bg-light">
                   <i class="fas fa-cloud-arrow-up fa-2x text-primary mb-2"></i>
                   <div class="fw-bold text-dark small">Drag &amp; drop files here or click to browse</div>
-                  <div class="text-muted" style="font-size:0.75rem;">Supported: PDF, DOCX, MP3, JPG, PNG, MP4 (Max
+                  <div class="" style="font-size:0.75rem;">Supported: PDF, DOCX, MP3, JPG, PNG, MP4 (Max
                     50MB). Automatically scrubbed of EXIF metadata.</div>
                   <input type="file" class="d-none" id="evidenceFileInput" name="evidenceFile"
                     onchange="showFileName(this)" />
@@ -2468,7 +2469,7 @@
                     <i class="fas fa-user-secret text-primary fa-xl"></i>
                     <div>
                       <div class="fw-bold text-dark small">Anonymous Mode (Recommended)</div>
-                      <div class="text-muted" style="font-size:0.75rem;">No personal contact info will be recorded or
+                      <div class="" style="font-size:0.75rem;">No personal contact info will be recorded or
                         associated with this report.</div>
                     </div>
                   </div>
@@ -2495,13 +2496,13 @@
               <i class="fas fa-check-circle fa-3x"></i>
             </div>
             <h4 class="fw-bold text-dark mb-2">Complaint Encrypted &amp; Registered!</h4>
-            <p class="text-muted small mx-auto" style="max-width:480px;">Your report has been encrypted with AES-256 and
+            <p class=" small mx-auto" style="max-width:480px;">Your report has been encrypted with AES-256 and
               dispatched to the Anti-Corruption Vigilance Bureau.</p>
 
             <div class="p-3 my-3 rounded bg-light border text-center">
-              <div class="text-muted small text-uppercase fw-bold mb-1">Your 16-Digit Complaint Tracking Key</div>
+              <div class=" small text-uppercase fw-bold mb-1">Your 16-Digit Complaint Tracking Key</div>
               <div class="fs-4 fw-bold text-primary font-monospace" id="generatedKeyDisplay">CCMS-2026-X981</div>
-              <div class="text-muted" style="font-size:0.75rem;">Save this key! It is required to track investigation
+              <div class="" style="font-size:0.75rem;">Save this key! It is required to track investigation
                 status anonymously.</div>
             </div>
 
@@ -2532,7 +2533,7 @@
             </div>
             <div>
               <h5 class="modal-title fw-bold text-dark" id="statusModalLabel">Live Complaint Tracker</h5>
-              <p class="text-muted small mb-0">Real-time status monitoring &amp; vigilance audit log</p>
+              <p class=" small mb-0">Real-time status monitoring &amp; vigilance audit log</p>
             </div>
           </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -2550,13 +2551,14 @@
           <div class="p-3 rounded bg-light border mb-4">
             <div class="row g-2 align-items-center">
               <div class="col-md-6">
-                <div class="text-muted small">Tracking Reference:</div>
+                <div class=" small">Tracking Reference:</div>
                 <div class="fw-bold font-monospace text-primary fs-5" id="activeKeyTitle">CCMS-2026-6775</div>
               </div>
               <div class="col-md-6 text-md-end">
-                <div class="text-muted small">Current Investigation Stage:</div>
+                <div class=" small">Current Investigation Stage:</div>
                 <span id="activeModalStageBadge"
-                  class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 fw-bold">Investigation Active</span>
+                  class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 fw-bold">Investigation
+                  Active</span>
               </div>
             </div>
           </div>
@@ -2702,28 +2704,28 @@
         <div class="timeline-step completed">
           <div class="timeline-dot"></div>
           <div class="fw-bold text-dark small">1. Encrypted Complaint Received</div>
-          <div class="text-muted" style="font-size:0.8rem;">Received via AES-GCM-256 vault. EXIF and IP metadata scrubbed.</div>
-          <div class="text-muted font-monospace" style="font-size:0.75rem;">Timestamp: 10 Aug 2026, 09:15 AM</div>
+          <div class="" style="font-size:0.8rem;">Received via AES-GCM-256 vault. EXIF and IP metadata scrubbed.</div>
+          <div class=" font-monospace" style="font-size:0.75rem;">Timestamp: 10 Aug 2026, 09:15 AM</div>
         </div>
 
         <div class="timeline-step ${step2Status}">
           <div class="timeline-dot"></div>
           <div class="fw-bold text-dark small">2. AI Priority &amp; Evidence Validation</div>
-          <div class="text-muted" style="font-size:0.8rem;">Evidence files verified authentic. Urgency score calculated: High (8.9/10).</div>
-          <div class="text-muted font-monospace" style="font-size:0.75rem;">Timestamp: 10 Aug 2026, 11:30 AM</div>
+          <div class="" style="font-size:0.8rem;">Evidence files verified authentic. Urgency score calculated: High (8.9/10).</div>
+          <div class=" font-monospace" style="font-size:0.75rem;">Timestamp: 10 Aug 2026, 11:30 AM</div>
         </div>
 
         <div class="timeline-step ${step3Status}">
           <div class="timeline-dot"></div>
           <div class="fw-bold text-dark small">3. Vigilance Officer Investigation</div>
-          <div class="text-muted" style="font-size:0.8rem;">Assigned to Senior Inspector A. Verma, Anti-Corruption Bureau. Official summons issued to department head.</div>
-          <div class="text-muted font-monospace text-primary" style="font-size:0.75rem;">${step3Subtext}</div>
+          <div class="" style="font-size:0.8rem;">Assigned to Senior Inspector A. Verma, Anti-Corruption Bureau. Official summons issued to department head.</div>
+          <div class=" font-monospace text-primary" style="font-size:0.75rem;">${step3Subtext}</div>
         </div>
 
         <div class="timeline-step ${step4Status}">
           <div class="timeline-dot"></div>
           <div class="fw-bold text-dark small">4. Final Legal Sanction &amp; Audit Log</div>
-          <div class="text-muted" style="font-size:0.8rem;">Execution of disciplinary or criminal proceedings and publication to public audit ledger.</div>
+          <div class="" style="font-size:0.8rem;">Execution of disciplinary or criminal proceedings and publication to public audit ledger.</div>
           ${step4Status === 'completed' ? '<div class="text-success font-monospace" style="font-size:0.75rem;">Status: Case Closed & Sanction Executed</div>' : ''}
         </div>
       `;

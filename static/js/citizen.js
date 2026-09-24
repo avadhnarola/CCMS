@@ -308,7 +308,7 @@ initTheme();
 // ============================================================
 function fileNewComplaint(formData) {
   const complaints = getStoredComplaints();
-  
+
   // Generate random Complaint ID
   const randomNum = Math.floor(1000 + Math.random() * 9000);
   const newId = `CCMS-2026-${randomNum}`;
@@ -425,8 +425,8 @@ function renderLinkedListTimeline(containerId, timelineArray) {
         </div>
         <div class="node-data">
           <div class="fw-bold mb-1">${current.data.stage}</div>
-          <div class="text-muted small mb-1"><i class="far fa-calendar me-1"></i>${current.data.date}</div>
-          <div class="text-muted" style="font-size:0.78rem;">${current.data.desc}</div>
+          <div class=" small mb-1"><i class="far fa-calendar me-1"></i>${current.data.date}</div>
+          <div class="" style="font-size:0.78rem;">${current.data.desc}</div>
         </div>
         <div class="node-ptr">
           <span>next &#8594; </span><strong class="${current.next ? 'text-primary' : 'text-danger'}">${nextAddress}</strong>
@@ -492,7 +492,7 @@ function showCcmsToast(message, type = 'info', title = '') {
     <div class="fs-4 ${icons[type] || icons.info}"></div>
     <div class="flex-grow-1 overflow-hidden">
       <div class="fw-bold text-heading small">${toastTitle}</div>
-      <div class="text-muted small text-truncate">${message}</div>
+      <div class=" small text-truncate">${message}</div>
     </div>
     <button type="button" class="btn-close btn-close-sm ms-2" onclick="this.parentElement.remove()"></button>
     <div class="ccms-toast-progress"></div>
@@ -518,7 +518,7 @@ function showCcmsToast(message, type = 'info', title = '') {
   }
 })();
 
-window.showCcmsModalAlert = function(title, message, icon = 'info', confirmText = 'OK') {
+window.showCcmsModalAlert = function (title, message, icon = 'info', confirmText = 'OK') {
   if (typeof Swal !== 'undefined') {
     return Swal.fire({
       title: title,
@@ -532,7 +532,7 @@ window.showCcmsModalAlert = function(title, message, icon = 'info', confirmText 
   }
 };
 
-window.showCcmsConfirm = function(title, message, callback) {
+window.showCcmsConfirm = function (title, message, callback) {
   if (typeof Swal !== 'undefined') {
     Swal.fire({
       title: title,
@@ -553,7 +553,7 @@ window.showCcmsConfirm = function(title, message, callback) {
 };
 
 // Automatic Interception of Native Browser Popups
-window.alert = function(msg) {
+window.alert = function (msg) {
   window.showCcmsModalAlert('CCMS Notification', String(msg), 'info');
 };
 

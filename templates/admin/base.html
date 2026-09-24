@@ -1,165 +1,200 @@
 <!doctype html>
 <html lang="en" data-theme="light">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Super Admin Console | CCMS Master Control{% endblock %}</title>
-  
+
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@600;700;800;900&display=swap"
+    rel="stylesheet">
 
   <!-- Bootstrap 5 CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-  
+
   <!-- FontAwesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
+
   <!-- Custom Modern Design System -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
   {% block extra_css %}{% endblock %}
 </head>
+
 <body>
 
-<div class="app-wrapper">
-  <!-- SUPER ADMIN SIDEBAR -->
-  <aside class="app-sidebar" id="adminSidebar">
-    <div class="app-sidebar-header">
-      <div class="d-flex align-items-center justify-content-between">
-        <a href="{{ url_for('admin_dashboard') }}" class="app-logo">
-          <img src="{{ url_for('static', filename='logo.png') }}" alt="CCMS" height="28" class="rounded">
-          <span>CCMS</span>
-        </a>
-        <span class="app-logo-badge" style="background:#7c3aed;">ADMIN</span>
-      </div>
-      <div class="small mt-2 d-flex align-items-center gap-1" style="font-size:0.65rem; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#c4b5fd;">
-        <i class="fas fa-user-shield"></i> MASTER COMMAND CONSOLE
-      </div>
-    </div>
-
-    <!-- Navigation items -->
-    <div class="app-sidebar-nav">
-      <div class="nav-section-title">SYSTEM CONTROL</div>
-      <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link {% if active_page == 'dashboard' %}active{% endif %}">
-        <i class="fas fa-chart-pie"></i> <span>Overview &amp; KPIs</span>
-      </a>
-      <a href="{{ url_for('admin_complaints') }}" class="sidebar-link {% if active_page == 'complaints' %}active{% endif %}">
-        <i class="fas fa-folder-tree"></i> <span>Complaints Master</span>
-      </a>
-      <a href="{{ url_for('admin_assignment') }}" class="sidebar-link {% if active_page == 'assignment' %}active{% endif %}">
-        <i class="fas fa-diagram-project"></i> <span>Greedy Assignment</span>
-      </a>
-      <a href="{{ url_for('admin_analytics') }}" class="sidebar-link {% if active_page == 'analytics' %}active{% endif %}">
-        <i class="fas fa-chart-line"></i> <span>Visual Analytics</span>
-      </a>
-
-      <div class="nav-section-title">USERS &amp; ROSTERS</div>
-      <a href="{{ url_for('admin_citizens') }}" class="sidebar-link {% if active_page == 'citizens' %}active{% endif %}">
-        <i class="fas fa-users"></i> <span>Citizens Directory</span>
-      </a>
-      <a href="{{ url_for('admin_officers') }}" class="sidebar-link {% if active_page == 'officers' %}active{% endif %}">
-        <i class="fas fa-user-gear"></i> <span>Officer Roster</span>
-      </a>
-
-      <div class="nav-section-title">GOVERNANCE &amp; RULES</div>
-      <a href="{{ url_for('admin_departments') }}" class="sidebar-link {% if active_page == 'departments' %}active{% endif %}">
-        <i class="fas fa-building-columns"></i> <span>Departments</span>
-      </a>
-      <a href="{{ url_for('admin_categories') }}" class="sidebar-link {% if active_page == 'categories' %}active{% endif %}">
-        <i class="fas fa-tags"></i> <span>Misconduct Types</span>
-      </a>
-
-      <div class="nav-section-title">SETTINGS &amp; COMMS</div>
-      <a href="{{ url_for('admin_notifications') }}" class="sidebar-link {% if active_page == 'notifications' %}active{% endif %}">
-        <i class="fas fa-bullhorn"></i> <span>Broadcast Center</span>
-      </a>
-      <a href="{{ url_for('admin_settings') }}" class="sidebar-link {% if active_page == 'settings' %}active{% endif %}">
-        <i class="fas fa-sliders"></i> <span>System Settings</span>
-      </a>
-      <a href="{{ url_for('logout') }}" class="sidebar-link logout-link text-danger mt-3">
-        <i class="fas fa-power-off"></i> <span>Master Logoff</span>
-      </a>
-    </div>
-
-    <!-- Live System health -->
-    <div class="sidebar-footer-card">
-      <div class="d-flex align-items-center justify-content-between">
-        <span class="text-white small fw-bold"><i class="fas fa-database me-1" style="color:#10b981;"></i> Database Engine</span>
-        <span class="badge bg-success" style="font-size:0.65rem;">Online</span>
-      </div>
-      <div class="text-muted mt-1" style="font-size:0.7rem;">CCMS Core Vigilance Node</div>
-    </div>
-  </aside>
-
-  <!-- MAIN ADMIN VIEW -->
-  <main class="app-main">
-    <header class="app-topbar" style="border-bottom: 1px solid rgba(124,58,237,0.15);">
-      <div class="d-flex align-items-center gap-3">
-        <button class="btn d-lg-none text-heading p-0 fs-4" onclick="document.getElementById('adminSidebar').classList.toggle('show')">
-          <i class="fas fa-bars"></i>
-        </button>
-        <h5 class="fw-bold mb-0 text-heading">{% block page_heading %}Super Admin Master Control{% endblock %}</h5>
-      </div>
-
-      <div class="d-flex align-items-center gap-3">
-        <!-- Quick Greedy Auto-Assign action -->
-        <a href="{{ url_for('admin_assignment') }}" class="btn btn-sm btn-brand d-none d-md-inline-flex" style="background: var(--gradient-brand);">
-          <i class="fas fa-wand-magic-sparkles me-1"></i> Auto-Assign Cases
-        </a>
-
-        <!-- Global Search button -->
-        <a href="{{ url_for('admin_search') }}" class="text-heading p-2 rounded hover-bg" title="Search System">
-          <i class="fas fa-search fs-5"></i>
-        </a>
-
-        <!-- Theme Toggle -->
-        <button class="theme-toggle-btn" title="Toggle Dark/Light Mode">
-          <i class="fas fa-moon"></i>
-        </button>
-
-        <!-- Admin user profile badge -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="user-avatar-circle" style="background: linear-gradient(135deg, #7c3aed, #2563eb);">
-            <i class="fas fa-user-shield"></i>
-          </div>
-          <div class="d-none d-md-block text-start">
-            <div class="fw-bold small text-heading">Super Admin</div>
-            <div class="text-violet" style="font-size:0.7rem; color:#7c3aed;">Master Root Access</div>
-          </div>
+  <div class="app-wrapper">
+    <!-- SUPER ADMIN SIDEBAR -->
+    <aside class="app-sidebar" id="adminSidebar">
+      <div class="app-sidebar-header">
+        <div class="d-flex align-items-center justify-content-between">
+          <a href="{{ url_for('admin_dashboard') }}" class="app-logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="CCMS" height="28" class="rounded">
+            <span>CCMS</span>
+          </a>
+          <span class="app-logo-badge" style="background:#7c3aed;">ADMIN</span>
+        </div>
+        <div class="small mt-2 d-flex align-items-center gap-1"
+          style="font-size:0.65rem; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#c4b5fd;">
+          <i class="fas fa-user-shield"></i> MASTER COMMAND CONSOLE
         </div>
       </div>
-    </header>
 
-    <!-- Flash message alerts -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="p-3 pb-0">
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm border" role="alert">
-              <div class="d-flex align-items-center gap-2">
-                <i class="fas {% if category == 'success' %}fa-circle-check text-success{% elif category == 'danger' or category == 'error' %}fa-triangle-exclamation text-danger{% else %}fa-circle-info text-primary{% endif %} fs-5"></i>
-                <div>{{ message }}</div>
-              </div>
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <!-- Navigation items -->
+      <div class="app-sidebar-nav">
+        <div class="nav-section-title">SYSTEM CONTROL</div>
+        <a href="{{ url_for('admin_dashboard') }}"
+          class="sidebar-link {% if active_page == 'dashboard' %}active{% endif %}">
+          <i class="fas fa-chart-pie"></i> <span>Overview &amp; KPIs</span>
+        </a>
+        <a href="{{ url_for('admin_complaints') }}"
+          class="sidebar-link {% if active_page == 'complaints' %}active{% endif %}">
+          <i class="fas fa-folder-tree"></i> <span>Complaints Master</span>
+        </a>
+        <a href="{{ url_for('admin_assignment') }}"
+          class="sidebar-link {% if active_page == 'assignment' %}active{% endif %}">
+          <i class="fas fa-diagram-project"></i> <span>Greedy Assignment</span>
+        </a>
+        <a href="{{ url_for('admin_analytics') }}"
+          class="sidebar-link {% if active_page == 'analytics' %}active{% endif %}">
+          <i class="fas fa-chart-line"></i> <span>Visual Analytics</span>
+        </a>
+
+        <div class="nav-section-title">USERS &amp; ROSTERS</div>
+        <a href="{{ url_for('admin_citizens') }}"
+          class="sidebar-link {% if active_page == 'citizens' %}active{% endif %}">
+          <i class="fas fa-users"></i> <span>Citizens Directory</span>
+        </a>
+        <a href="{{ url_for('admin_officers') }}"
+          class="sidebar-link {% if active_page == 'officers' %}active{% endif %}">
+          <i class="fas fa-user-gear"></i> <span>Officer Roster</span>
+        </a>
+
+        <div class="nav-section-title">GOVERNANCE &amp; RULES</div>
+        <a href="{{ url_for('admin_departments') }}"
+          class="sidebar-link {% if active_page == 'departments' %}active{% endif %}">
+          <i class="fas fa-building-columns"></i> <span>Departments</span>
+        </a>
+        <a href="{{ url_for('admin_categories') }}"
+          class="sidebar-link {% if active_page == 'categories' %}active{% endif %}">
+          <i class="fas fa-tags"></i> <span>Misconduct Types</span>
+        </a>
+
+        <div class="nav-section-title">DSA &amp; DATA STRUCTURES</div>
+        <a href="{{ url_for('admin_category_tree') }}"
+          class="sidebar-link {% if active_page == 'category_tree' %}active{% endif %}">
+          <i class="fas fa-sitemap" style="color:#10b981;"></i> <span>Category Binary Tree</span>
+        </a>
+        <a href="{{ url_for('admin_phase2') }}" class="sidebar-link {% if active_page == 'phase2' %}active{% endif %}">
+          <i class="fas fa-network-wired" style="color:#06b6d4;"></i> <span>Phase 2: Structured Data</span>
+        </a>
+        <a href="{{ url_for('admin_dsa_lab') }}"
+          class="sidebar-link {% if active_page == 'dsa_lab' %}active{% endif %}">
+          <i class="fas fa-brain" style="color:#a78bfa;"></i> <span>DSA Intelligence Lab</span>
+        </a>
+
+        <div class="nav-section-title">SETTINGS &amp; COMMS</div>
+        <a href="{{ url_for('admin_notifications') }}"
+          class="sidebar-link {% if active_page == 'notifications' %}active{% endif %}">
+          <i class="fas fa-bullhorn"></i> <span>Broadcast Center</span>
+        </a>
+        <a href="{{ url_for('admin_settings') }}"
+          class="sidebar-link {% if active_page == 'settings' %}active{% endif %}">
+          <i class="fas fa-sliders"></i> <span>System Settings</span>
+        </a>
+        <a href="{{ url_for('logout') }}" class="sidebar-link logout-link text-danger mt-3">
+          <i class="fas fa-power-off"></i> <span>Master Logoff</span>
+        </a>
+      </div>
+
+      <!-- Live System health -->
+      <div class="sidebar-footer-card">
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="text-white small fw-bold"><i class="fas fa-database me-1" style="color:#10b981;"></i> Database
+            Engine</span>
+          <span class="badge bg-success" style="font-size:0.65rem;">Online</span>
+        </div>
+        <div class=" mt-1" style="font-size:0.7rem;">CCMS Core Vigilance Node</div>
+      </div>
+    </aside>
+
+    <!-- MAIN ADMIN VIEW -->
+    <main class="app-main">
+      <header class="app-topbar" style="border-bottom: 1px solid rgba(124,58,237,0.15);">
+        <div class="d-flex align-items-center gap-3">
+          <button class="btn d-lg-none text-heading p-0 fs-4"
+            onclick="document.getElementById('adminSidebar').classList.toggle('show')">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h5 class="fw-bold mb-0 text-heading">{% block page_heading %}Super Admin Master Control{% endblock %}</h5>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <!-- Quick Greedy Auto-Assign action -->
+          <a href="{{ url_for('admin_assignment') }}" class="btn btn-sm btn-brand d-none d-md-inline-flex"
+            style="background: var(--gradient-brand);">
+            <i class="fas fa-wand-magic-sparkles me-1"></i> Auto-Assign Cases
+          </a>
+
+          <!-- Global Search button -->
+          <a href="{{ url_for('admin_search') }}" class="text-heading p-2 rounded hover-bg" title="Search System">
+            <i class="fas fa-search fs-5"></i>
+          </a>
+
+          <!-- Theme Toggle -->
+          <button class="theme-toggle-btn" title="Toggle Dark/Light Mode">
+            <i class="fas fa-moon"></i>
+          </button>
+
+          <!-- Admin user profile badge -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="user-avatar-circle" style="background: linear-gradient(135deg, #7c3aed, #2563eb);">
+              <i class="fas fa-user-shield"></i>
             </div>
-          {% endfor %}
+            <div class="d-none d-md-block text-start">
+              <div class="fw-bold small text-heading">Super Admin</div>
+              <div class="text-violet" style="font-size:0.7rem; color:#7c3aed;">Master Root Access</div>
+            </div>
+          </div>
         </div>
+      </header>
+
+      <!-- Flash message alerts -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="p-3 pb-0">
+        {% for category, message in messages %}
+        <div
+          class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm border"
+          role="alert">
+          <div class="d-flex align-items-center gap-2">
+            <i
+              class="fas {% if category == 'success' %}fa-circle-check text-success{% elif category == 'danger' or category == 'error' %}fa-triangle-exclamation text-danger{% else %}fa-circle-info text-primary{% endif %} fs-5"></i>
+            <div>{{ message }}</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+      </div>
       {% endif %}
-    {% endwith %}
+      {% endwith %}
 
-    <div class="app-content">
-      {% block content %}{% endblock %}
-    </div>
-  </main>
-</div>
+      <div class="app-content">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
-{% block extra_js %}{% endblock %}
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_js %}{% endblock %}
 </body>
+
 </html>

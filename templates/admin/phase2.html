@@ -1,0 +1,812 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Phase 2: Structured Data Representation (CLO2) | CCMS Admin{% endblock %}
+{% block page_heading %}Phase 2: Structured Data Representation (CLO2){% endblock %}
+
+{% block extra_css %}
+<style>
+  .phase2-hero {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.12) 0%, rgba(124, 58, 237, 0.12) 100%);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    border-radius: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .phase2-hero::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .clo-badge {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 0.35rem 0.75rem;
+    border-radius: 2rem;
+  }
+
+  .dataset-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 2rem;
+  }
+
+  .tree-node-box {
+    background: var(--bg-surface, #ffffff);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-radius: 0.75rem;
+    padding: 0.85rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+  }
+
+  .tree-node-box:hover {
+    transform: translateY(-2px);
+    border-color: #7c3aed;
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.12);
+  }
+
+  .tree-root-box {
+    border: 2px solid #7c3aed;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(6, 182, 212, 0.08));
+  }
+
+  .graph-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgba(124, 58, 237, 0.1);
+    color: #7c3aed;
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    transition: all 0.2s ease;
+  }
+
+  .graph-chip.active-visited {
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+  }
+
+  .algo-step-badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    background: #7c3aed;
+    color: white;
+  }
+
+  .traversal-pill-btn {
+    border-radius: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .traversal-pill-btn.active {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .trace-table th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+  <!-- ========================================================================= -->
+  <!-- 1. HERO BANNER: CLO2 STRUCTURED DATA REPRESENTATION (DATASET-DRIVEN) -->
+  <!-- ========================================================================= -->
+  <div class="phase2-hero p-4 mb-4 shadow-sm">
+    <div class="row align-items-center g-3">
+      <div class="col-lg-8">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+          <span class="clo-badge"><i class="fas fa-graduation-cap me-1"></i> CLO 2 Syllabus Module</span>
+          <span class="dataset-badge"><i class="fas fa-database me-1"></i> Live Dataset: {{ complaints|length }}
+            Complaints &bull; {{ departments|length }} Departments</span>
+          <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-monospace"
+            style="font-size: 0.72rem;">Non-Linear Structures</span>
+        </div>
+        <h3 class="fw-bold text-heading brand-font mb-2">
+          <i class="fas fa-network-wired text-cyan me-2"></i>Structured Data Representation Module
+        </h3>
+        <p class=" small mb-0 leading-relaxed">
+          This module demonstrates the complete implementation of <strong>CLO 2</strong> using our live CCMS dataset:
+          <strong>(1)</strong> Hierarchical Binary Tree for administrative oversight,
+          <strong>(2)</strong> 4 Basic Tree Traversals (Inorder, Preorder, Postorder, Level-Order),
+          <strong>(3)</strong> Binary Search Tree (BST) for \(O(\log N)\) risk-indexed complaint retrieval &amp;
+          modifications, and
+          <strong>(4 &amp; 5)</strong> Graph Adjacency List for jurisdictional routing with Breadth-First (BFS) &amp;
+          Depth-First (DFS) traversals.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <div class="d-flex flex-column align-items-lg-end gap-2">
+          <div class="d-flex gap-2">
+            <span class="badge bg-subtle text-heading border p-2 text-start">
+              <div class="small " style="font-size:0.65rem;">BST RECORD COUNT</div>
+              <div class="fw-bold text-emerald" id="heroBstCount">{{ bst_size }} Active Cases</div>
+            </span>
+            <span class="badge bg-subtle text-heading border p-2 text-start">
+              <div class="small " style="font-size:0.65rem;">TREE DEPTH</div>
+              <div class="fw-bold text-cyan">{{ tree_height }} Levels</div>
+            </span>
+          </div>
+          <a href="{{ url_for('admin_dsa_lab') }}" class="btn btn-outline-brand btn-sm">
+            <i class="fas fa-brain me-1"></i> Open Full DSA Lab
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK NAVIGATION ANCHORS -->
+  <div class="d-flex flex-wrap gap-2 mb-4">
+    <a href="#tree-section" class="btn btn-sm btn-subtle border text-heading fw-bold">
+      <i class="fas fa-sitemap text-primary me-1"></i> 1 &amp; 2. Binary Tree &amp; Traversals
+    </a>
+    <a href="#bst-section" class="btn btn-sm btn-subtle border text-heading fw-bold">
+      <i class="fas fa-tree text-emerald me-1"></i> 3. Binary Search Tree (BST)
+    </a>
+    <a href="#graph-section" class="btn btn-sm btn-subtle border text-heading fw-bold">
+      <i class="fas fa-circle-nodes text-violet me-1"></i> 4 &amp; 5. Graph Adjacency &amp; Traversals
+    </a>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. PART 1 & 2: BINARY TREE & 4 TRAVERSALS ON DATASET -->
+  <!-- ========================================================================= -->
+  <div class="ccms-card p-4 mb-4 shadow-sm" id="tree-section">
+    <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-2">
+      <div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-primary text-white rounded-pill px-2 py-1 small">CLO 2 &bull; Items 1 &amp; 2</span>
+          <h5 class="fw-bold text-heading mb-0">
+            <i class="fas fa-sitemap text-primary me-2"></i>Binary Tree: Hierarchical Command Structure &amp; Traversals
+          </h5>
+        </div>
+        <p class=" small mb-0 mt-1">
+          Hierarchical tree constructed from the CCMS <code>departments</code> dataset. Rooted at Central Vigilance HQ
+          branching into Infrastructure and Law Enforcement Directorates.
+        </p>
+      </div>
+      <div class="d-flex gap-2">
+        <span class="badge bg-primary-subtle text-primary border">Height: {{ tree_height }} Levels</span>
+        <span class="badge bg-success-subtle text-success border">Total Nodes: {{ tree_nodes_count }}</span>
+      </div>
+    </div>
+
+    <!-- Traversal Interactive Buttons -->
+    <div class="mb-3">
+      <div class="small fw-bold  mb-2 text-uppercase" style="letter-spacing:0.5px;">Execute Tree Traversal:</div>
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-sm btn-primary traversal-pill-btn active" id="btn-inorder"
+          onclick="setTreeTraversal('inorder')">
+          <i class="fas fa-arrow-right me-1"></i> 1. Inorder (Left &rarr; Root &rarr; Right)
+        </button>
+        <button class="btn btn-sm text-white traversal-pill-btn" style="background:#7c3aed;" id="btn-preorder"
+          onclick="setTreeTraversal('preorder')">
+          <i class="fas fa-arrow-down me-1"></i> 2. Preorder (Root &rarr; Left &rarr; Right)
+        </button>
+        <button class="btn btn-sm btn-warning text-dark traversal-pill-btn" id="btn-postorder"
+          onclick="setTreeTraversal('postorder')">
+          <i class="fas fa-arrow-up me-1"></i> 3. Postorder (Left &rarr; Right &rarr; Root)
+        </button>
+        <button class="btn btn-sm btn-info text-white traversal-pill-btn" id="btn-level_order"
+          onclick="setTreeTraversal('level_order')">
+          <i class="fas fa-layer-group me-1"></i> 4. Level-Order BFS (Queue-based)
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Traversal Output Banner -->
+    <div class="p-3 rounded bg-subtle border mb-4">
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <div class="small fw-bold " id="treeTraversalLabel">ACTIVE TRAVERSAL OUTPUT (INORDER TRAVERSAL)</div>
+        <span class="badge bg-primary" id="traversalComplexityBadge">Time Complexity: O(N)</span>
+      </div>
+      <div class="font-monospace fw-bold text-primary fs-6 p-2 rounded bg-surface border" id="treeTraversalOutput">
+        {{ tree_traversals.inorder | join(' &rarr; ') }}
+      </div>
+    </div>
+
+    <!-- Visual Hierarchical Tree Grid -->
+    <div class="p-3 rounded bg-subtle border">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h6 class="fw-bold text-heading small mb-0">
+          <i class="fas fa-network-wired text-primary me-1"></i> Hierarchical Departmental Organization (From Dataset)
+        </h6>
+        <span class="badge bg-subtle  border small">Binary Tree Node Structure</span>
+      </div>
+
+      <!-- Level 0: Root Node -->
+      <div class="tree-node-box tree-root-box mb-3 text-center mx-auto" style="max-width: 480px;">
+        <div class="d-flex align-items-center justify-content-between mb-1">
+          <span class="badge bg-primary text-white" style="font-size:0.65rem;">TREE ROOT</span>
+          <span class="small  font-monospace"><i class="fas fa-shield-halved text-primary"></i> HQ Command</span>
+        </div>
+        <div class="fw-bold text-primary fs-6">{{ tree_dict.value }}</div>
+        <div class="small ">{{ tree_dict.data.role if tree_dict.data else 'Chief Vigilance Commissioner' }} &bull; Total
+          Cases: {{ tree_dict.data.total_cases if tree_dict.data else '194' }}</div>
+      </div>
+
+      <!-- Level 1 & 2 Branches -->
+      <div class="row g-3">
+        <!-- Left Subtree -->
+        {% if tree_dict.left %}
+        <div class="col-lg-6">
+          <div class="p-3 rounded border bg-surface h-100">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="badge text-white" style="background:#7c3aed; font-size:0.65rem;">LEFT SUBTREE
+                (INFRASTRUCTURE)</span>
+              <span class="small ">Node.left</span>
+            </div>
+            <div class="tree-node-box mb-3">
+              <div class="fw-bold text-heading"><i class="fas fa-building text-violet me-1"></i> {{ tree_dict.left.value
+                }}</div>
+              <div class="small ">{{ tree_dict.left.data.role if tree_dict.left.data else 'Director PWD' }}</div>
+            </div>
+
+            <!-- Left Subtree Children -->
+            <div class="row g-2">
+              {% if tree_dict.left.left %}
+              <div class="col-6">
+                <div class="tree-node-box p-2 small">
+                  <div class="" style="font-size:0.65rem;">Left &rarr; Left</div>
+                  <div class="fw-bold text-heading">{{ tree_dict.left.left.value }}</div>
+                  <div class="" style="font-size:0.7rem;">{{ tree_dict.left.left.data.role if tree_dict.left.left.data
+                    else '' }}</div>
+                </div>
+              </div>
+              {% endif %}
+              {% if tree_dict.left.right %}
+              <div class="col-6">
+                <div class="tree-node-box p-2 small">
+                  <div class="" style="font-size:0.65rem;">Left &rarr; Right</div>
+                  <div class="fw-bold text-heading">{{ tree_dict.left.right.value }}</div>
+                  <div class="" style="font-size:0.7rem;">{{ tree_dict.left.right.data.role if tree_dict.left.right.data
+                    else '' }}</div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Right Subtree -->
+        {% if tree_dict.right %}
+        <div class="col-lg-6">
+          <div class="p-3 rounded border bg-surface h-100">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="badge text-white" style="background:#06b6d4; font-size:0.65rem;">RIGHT SUBTREE (SERVICES
+                &amp; LAW)</span>
+              <span class="small ">Node.right</span>
+            </div>
+            <div class="tree-node-box mb-3">
+              <div class="fw-bold text-heading"><i class="fas fa-user-shield text-cyan me-1"></i> {{
+                tree_dict.right.value }}</div>
+              <div class="small ">{{ tree_dict.right.data.role if tree_dict.right.data else 'Director Police & Services'
+                }}</div>
+            </div>
+
+            <!-- Right Subtree Children -->
+            <div class="row g-2">
+              {% if tree_dict.right.left %}
+              <div class="col-6">
+                <div class="tree-node-box p-2 small">
+                  <div class="" style="font-size:0.65rem;">Right &rarr; Left</div>
+                  <div class="fw-bold text-heading">{{ tree_dict.right.left.value }}</div>
+                  <div class="" style="font-size:0.7rem;">{{ tree_dict.right.left.data.role if tree_dict.right.left.data
+                    else '' }}</div>
+                </div>
+              </div>
+              {% endif %}
+              {% if tree_dict.right.right %}
+              <div class="col-6">
+                <div class="tree-node-box p-2 small">
+                  <div class="" style="font-size:0.65rem;">Right &rarr; Right</div>
+                  <div class="fw-bold text-heading">{{ tree_dict.right.right.value }}</div>
+                  <div class="" style="font-size:0.7rem;">{{ tree_dict.right.right.data.role if
+                    tree_dict.right.right.data else '' }}</div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. PART 3: BINARY SEARCH TREE (BST) ON COMPLAINTS DATASET -->
+  <!-- ========================================================================= -->
+  <div class="ccms-card p-4 mb-4 shadow-sm" id="bst-section">
+    <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-2">
+      <div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-emerald text-white rounded-pill px-2 py-1 small">CLO 2 &bull; Item 3</span>
+          <h5 class="fw-bold text-heading mb-0">
+            <i class="fas fa-tree text-emerald me-2"></i>Binary Search Tree (BST): Complaint Risk Index
+          </h5>
+        </div>
+        <p class=" small mb-0 mt-1">
+          Complaints from the CCMS dataset indexed in a Binary Search Tree by numerical <strong>Risk Score
+            (1-100)</strong>. Preserves BST property: <code>Left.key &lt; Root.key &lt; Right.key</code> for average
+          \(O(\log N)\) search.
+        </p>
+      </div>
+      <div class="d-flex gap-2">
+        <span class="badge bg-emerald-subtle text-emerald border" id="p2BstSizeBadge">Size: {{ bst_size }} Cases</span>
+        <span class="badge bg-subtle  border" id="p2BstMinBadge">Min Risk: {{ bst_min if bst_min is not none else 'N/A'
+          }}</span>
+        <span class="badge bg-subtle  border" id="p2BstMaxBadge">Max Risk: {{ bst_max if bst_max is not none else 'N/A'
+          }}</span>
+      </div>
+    </div>
+
+    <!-- BST Interactive Controls -->
+    <div class="row g-3 mb-4">
+      <!-- 1. Search Node -->
+      <div class="col-md-4">
+        <label class="form-label small fw-bold text-heading"><i class="fas fa-search text-primary me-1"></i> 1. Search
+          Case by Risk Score</label>
+        <div class="input-group input-group-sm">
+          <input type="number" id="p2BstSearchInput" class="form-control"
+            placeholder="Enter Risk Score (e.g. {{ bst_items[0].key if bst_items else 85 }})" min="1" max="100">
+          <button class="btn btn-primary" onclick="searchBSTCase()">
+            <i class="fas fa-magnifying-glass me-1"></i> Search O(log N)
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Insert Node -->
+      <div class="col-md-5">
+        <label class="form-label small fw-bold text-heading"><i class="fas fa-plus text-emerald me-1"></i> 2. Insert New
+          Case into BST</label>
+        <div class="input-group input-group-sm">
+          <input type="number" id="p2BstRiskInput" class="form-control" placeholder="Risk (1-100)"
+            style="max-width: 100px;" value="82" min="1" max="100">
+          <input type="text" id="p2BstTitleInput" class="form-control" placeholder="Complaint Title"
+            value="Procurement Kickback">
+          <button class="btn btn-success" onclick="insertBSTCase()">
+            <i class="fas fa-plus me-1"></i> Insert
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. Delete Node -->
+      <div class="col-md-3">
+        <label class="form-label small fw-bold text-heading"><i class="fas fa-trash text-danger me-1"></i> 3. Delete
+          from BST</label>
+        <div class="input-group input-group-sm">
+          <input type="number" id="p2BstDeleteInput" class="form-control" placeholder="Risk Score" min="1" max="100">
+          <button class="btn btn-outline-danger" onclick="deleteBSTCase()">
+            <i class="fas fa-trash me-1"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Search Feedback Alert -->
+    <div id="p2BstFeedbackBox" class="d-none mb-3 alert alert-info alert-dismissible fade show" role="alert">
+      <div id="p2BstFeedbackMsg"></div>
+      <button type="button" class="btn-close"
+        onclick="document.getElementById('p2BstFeedbackBox').classList.add('d-none')"></button>
+    </div>
+
+    <!-- Sorted Inorder Complaints Table -->
+    <div class="d-flex align-items-center justify-content-between mb-2">
+      <span class="small fw-bold  text-uppercase" style="letter-spacing:0.5px;">
+        <i class="fas fa-arrow-down-short-wide text-emerald me-1"></i> BST Inorder Traversal (Automatically Sorted by
+        Risk Score Ascending):
+      </span>
+      <span class="badge bg-emerald-subtle text-emerald border small">Sorted O(N) Output</span>
+    </div>
+
+    <div class="table-responsive rounded border">
+      <table class="table table-sm table-bordered table-hover mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th style="width: 130px;">BST Key (Risk Score)</th>
+            <th>Case ID</th>
+            <th>Complaint Title</th>
+            <th>Sector / Misconduct</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="p2BstTableBody">
+          {% for item in bst_items %}
+          <tr id="bst-row-{{ item.key }}">
+            <td>
+              <span class="badge bg-emerald text-white fw-bold">Score: {{ item.key }}</span>
+            </td>
+            <td class="font-monospace fw-bold small text-primary">{{ item.data.id }}</td>
+            <td class="small fw-bold text-heading">{{ item.data.title }}</td>
+            <td class="small ">{{ item.data.sector }}</td>
+            <td>
+              <span class="badge-priority {{ item.data.severity if item.data.severity else 'Medium' }}"
+                style="font-size:0.65rem;">
+                {{ item.data.severity }}
+              </span>
+            </td>
+            <td>
+              <span class="badge bg-subtle  border small">{{ item.data.status }}</span>
+            </td>
+            <td style="width: 80px;">
+              <button class="btn btn-outline-danger btn-xs py-0 px-2" onclick="quickDeleteBST({{ item.key }})"
+                title="Delete key {{ item.key }} from BST">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="7" class="text-center  py-3">BST is currently empty.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 4. PART 4 & 5: GRAPH ADJACENCY LIST & BFS / DFS TRAVERSALS -->
+  <!-- ========================================================================= -->
+  <div class="ccms-card p-4 mb-4 shadow-sm" id="graph-section">
+    <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-2">
+      <div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge text-white rounded-pill px-2 py-1 small" style="background:#7c3aed;">CLO 2 &bull; Items 4
+            &amp; 5</span>
+          <h5 class="fw-bold text-heading mb-0">
+            <i class="fas fa-circle-nodes text-violet me-2"></i>Escalation Graph (Adjacency List) &amp; BFS/DFS
+            Traversals
+          </h5>
+        </div>
+        <p class=" small mb-0 mt-1">
+          Undirected graph connecting CCMS departments, intake portals, and disciplinary tribunals. Explored using
+          <strong>Breadth-First Search (Queue FIFO)</strong> and <strong>Depth-First Search (Call Stack /
+            Backtracking)</strong>.
+        </p>
+      </div>
+      <div class="d-flex gap-2">
+        <span class="badge bg-subtle text-heading border">Vertices: {{ graph_vertices|length }} Hubs</span>
+        <span class="badge bg-subtle text-violet border">Adjacency List Model</span>
+      </div>
+    </div>
+
+    <!-- Graph Traversal Controls -->
+    <div class="row g-3 mb-4 align-items-end">
+      <div class="col-md-5">
+        <label class="form-label small fw-bold text-heading">Starting Vertex / Department</label>
+        <select id="p2GraphStartVertex" class="form-select form-select-sm">
+          {% for v in graph_vertices %}
+          <option value="{{ v }}" {% if loop.first %}selected{% endif %}>{{ v }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label small fw-bold text-heading">Execute Traversal Algorithm</label>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-primary flex-fill" onclick="runP2GraphTraversal('bfs')">
+            <i class="fas fa-arrows-split-up-and-left me-1"></i> Run BFS (Queue)
+          </button>
+          <button class="btn btn-sm text-white flex-fill" style="background:#7c3aed;"
+            onclick="runP2GraphTraversal('dfs')">
+            <i class="fas fa-diagram-project me-1"></i> Run DFS (Deep)
+          </button>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="small  p-2 rounded bg-subtle border">
+          <strong>Time Complexity:</strong> \(O(V + E)\)<br>
+          <strong>Space:</strong> \(O(V)\) Visited Set
+        </div>
+      </div>
+    </div>
+
+    <!-- Traversal Route Visualization -->
+    <div class="p-3 rounded bg-subtle border mb-4">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <span class="small fw-bold  font-monospace" id="p2GraphRouteHeading">
+          TRAVERSAL ROUTE (BFS FROM {{ graph_vertices[0] if graph_vertices else 'Citizen Intake' }})
+        </span>
+        <span class="badge bg-primary text-white" id="p2GraphAlgoBadge">BFS TRAVERSAL</span>
+      </div>
+      <div class="d-flex flex-wrap align-items-center gap-2" id="p2GraphPathContainer">
+        {% for v in graph_vertices %}
+        <span class="graph-chip active-visited">{{ v }}</span>
+        {% if not loop.last %}<i class="fas fa-arrow-right  small"></i>{% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Graph Adjacency List & Step Trace -->
+    <div class="row g-3">
+      <!-- Adjacency List View -->
+      <div class="col-lg-5">
+        <div class="p-3 rounded border bg-surface h-100">
+          <h6 class="fw-bold text-heading small mb-3">
+            <i class="fas fa-list-check text-violet me-1"></i> In-Memory Adjacency List (Dataset Hubs)
+          </h6>
+          <div class="table-responsive">
+            <table class="table table-sm table-borderless mb-0">
+              <tbody>
+                {% for node, neighbors in graph_adj.items() %}
+                <tr>
+                  <td class="font-monospace fw-bold text-heading small" style="width: 45%;">
+                    <i class="fas fa-circle text-violet me-1" style="font-size:0.5rem;"></i> {{ node }}:
+                  </td>
+                  <td class="small ">
+                    [ {{ neighbors | join(', ') }} ]
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step-by-Step Traversal Trace -->
+      <div class="col-lg-7">
+        <div class="p-3 rounded border bg-surface h-100">
+          <h6 class="fw-bold text-heading small mb-3">
+            <i class="fas fa-shoe-prints text-cyan me-1"></i> Algorithm Step-by-Step Execution Trace
+          </h6>
+          <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+            <table class="table table-sm table-striped trace-table mb-0" id="p2TraceTable">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th>Step</th>
+                  <th>Visited Node</th>
+                  <th>Enqueued / Neighbors</th>
+                </tr>
+              </thead>
+              <tbody id="p2TraceTableBody">
+                <tr>
+                  <td><span class="algo-step-badge">1</span></td>
+                  <td class="fw-bold text-primary">{{ graph_vertices[0] if graph_vertices else 'Citizen Intake' }}</td>
+                  <td class=" small">Dispatched to adjacent hubs level-by-level</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- JAVASCRIPT AJAX & INTERACTIVE CONTROLLERS -->
+<!-- ========================================================================= -->
+<script>
+  const treeTraversalsData = {{ tree_traversals | tojson }};
+
+  // 1. Binary Tree Traversals Controller
+  function setTreeTraversal(type) {
+    const titles = {
+      'inorder': 'INORDER TRAVERSAL (LEFT &rarr; ROOT &rarr; RIGHT)',
+      'preorder': 'PREORDER TRAVERSAL (ROOT &rarr; LEFT &rarr; RIGHT)',
+      'postorder': 'POSTORDER TRAVERSAL (LEFT &rarr; RIGHT &rarr; ROOT)',
+      'level_order': 'LEVEL-ORDER TRAVERSAL (BREADTH-FIRST BFS USING QUEUE)'
+    };
+
+    document.querySelectorAll('.traversal-pill-btn').forEach(btn => btn.classList.remove('active'));
+    const targetBtn = document.getElementById(`btn-${type}`);
+    if (targetBtn) targetBtn.classList.add('active');
+
+    document.getElementById('treeTraversalLabel').innerHTML = `ACTIVE TRAVERSAL OUTPUT (${titles[type] || type.toUpperCase()})`;
+    const sequence = treeTraversalsData[type] || [];
+    document.getElementById('treeTraversalOutput').innerHTML = sequence.join(' &rarr; ');
+  }
+
+  // 2. BST Search Controller
+  function searchBSTCase() {
+    const key = document.getElementById('p2BstSearchInput').value.trim();
+    if (!key) {
+      alert('Please enter a numeric Risk Score to search.');
+      return;
+    }
+
+    fetch('/api/dsa/bst/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ risk_score: parseInt(key) })
+    })
+      .then(r => r.json())
+      .then(data => {
+        const fbBox = document.getElementById('p2BstFeedbackBox');
+        const fbMsg = document.getElementById('p2BstFeedbackMsg');
+        fbBox.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-info');
+
+        if (data.found) {
+          fbBox.classList.add('alert-success');
+          fbMsg.innerHTML = `<strong><i class="fas fa-check-circle me-1"></i> Case Found! (O(log N) Lookup):</strong> ` +
+            `Key <strong>${data.key}</strong> &bull; ID: <code>${data.data.id}</code> &bull; Title: <em>${data.data.title}</em> &bull; Severity: ${data.data.severity}`;
+
+          // Highlight row
+          const targetRow = document.getElementById(`bst-row-${data.key}`);
+          if (targetRow) {
+            targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            targetRow.classList.add('table-warning');
+            setTimeout(() => targetRow.classList.remove('table-warning'), 3000);
+          }
+        } else {
+          fbBox.classList.add('alert-danger');
+          fbMsg.innerHTML = `<strong><i class="fas fa-times-circle me-1"></i> Not Found:</strong> ${data.message}`;
+        }
+      })
+      .catch(err => console.error(err));
+  }
+
+  // 3. BST Insert Controller
+  function insertBSTCase() {
+    const risk = document.getElementById('p2BstRiskInput').value.trim();
+    const title = document.getElementById('p2BstTitleInput').value.trim();
+
+    if (!risk || !title) {
+      alert('Please enter both a Risk Score and Complaint Title.');
+      return;
+    }
+
+    fetch('/api/dsa/bst/insert', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ risk_score: parseInt(risk), title: title, sector: 'Administrative Inquiry' })
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          renderP2BSTTable(data.sorted_records, data.size, data.min_key, data.max_key);
+          const fbBox = document.getElementById('p2BstFeedbackBox');
+          const fbMsg = document.getElementById('p2BstFeedbackMsg');
+          fbBox.classList.remove('d-none', 'alert-danger', 'alert-info');
+          fbBox.classList.add('alert-success');
+          fbMsg.innerHTML = `<strong><i class="fas fa-plus-circle me-1"></i> Node Inserted into BST:</strong> ${data.message}`;
+        }
+      })
+      .catch(err => console.error(err));
+  }
+
+  // 4. BST Delete Controller
+  function deleteBSTCase() {
+    const key = document.getElementById('p2BstDeleteInput').value.trim();
+    if (!key) {
+      alert('Please enter a Risk Score to delete.');
+      return;
+    }
+    quickDeleteBST(parseInt(key));
+  }
+
+  function quickDeleteBST(key) {
+    if (!confirm(`Are you sure you want to remove node with Risk Score ${key} from the BST?`)) return;
+
+    fetch('/api/dsa/bst/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ risk_score: key })
+    })
+      .then(r => r.json())
+      .then(data => {
+        const fbBox = document.getElementById('p2BstFeedbackBox');
+        const fbMsg = document.getElementById('p2BstFeedbackMsg');
+        fbBox.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-info');
+
+        if (data.success) {
+          renderP2BSTTable(data.sorted_records, data.size, data.min_key, data.max_key);
+          fbBox.classList.add('alert-success');
+          fbMsg.innerHTML = `<strong><i class="fas fa-trash-can me-1"></i> Node Removed:</strong> ${data.message}`;
+        } else {
+          fbBox.classList.add('alert-danger');
+          fbMsg.innerHTML = `<strong><i class="fas fa-triangle-exclamation me-1"></i> Delete Failed:</strong> ${data.message}`;
+        }
+      })
+      .catch(err => console.error(err));
+  }
+
+  // Re-render BST Table helper
+  function renderP2BSTTable(records, size, minKey, maxKey) {
+    document.getElementById('p2BstSizeBadge').textContent = `Size: ${size} Cases`;
+    document.getElementById('heroBstCount').textContent = `${size} Active Cases`;
+    document.getElementById('p2BstMinBadge').textContent = `Min Risk: ${minKey !== null ? minKey : 'N/A'}`;
+    document.getElementById('p2BstMaxBadge').textContent = `Max Risk: ${maxKey !== null ? maxKey : 'N/A'}`;
+
+    const tbody = document.getElementById('p2BstTableBody');
+    if (!records || records.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center  py-3">BST is currently empty.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = records.map(item => `
+      <tr id="bst-row-${item.key}">
+        <td><span class="badge bg-emerald text-white fw-bold">Score: ${item.key}</span></td>
+        <td class="font-monospace fw-bold small text-primary">${item.data.id || 'N/A'}</td>
+        <td class="small fw-bold text-heading">${item.data.title || 'Untitled Case'}</td>
+        <td class="small ">${item.data.sector || 'General'}</td>
+        <td><span class="badge-priority ${item.data.severity || 'Medium'}" style="font-size:0.65rem;">${item.data.severity || 'Medium'}</span></td>
+        <td><span class="badge bg-subtle  border small">${item.data.status || 'Pending'}</span></td>
+        <td style="width: 80px;">
+          <button class="btn btn-outline-danger btn-xs py-0 px-2" onclick="quickDeleteBST(${item.key})" title="Delete from BST">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // 5. Graph Traversal Controller
+  function runP2GraphTraversal(type) {
+    const startVertex = document.getElementById('p2GraphStartVertex').value;
+
+    fetch('/api/dsa/graph/traverse', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: type, start_vertex: startVertex })
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('p2GraphRouteHeading').textContent =
+            `TRAVERSAL ROUTE (${data.traversal_type} FROM ${data.start_vertex.toUpperCase()})`;
+          document.getElementById('p2GraphAlgoBadge').textContent = `${data.traversal_type} TRAVERSAL`;
+          document.getElementById('p2GraphAlgoBadge').className =
+            `badge ${data.traversal_type === 'BFS' ? 'bg-primary' : 'bg-violet'} text-white`;
+
+          // Render Path
+          const pathContainer = document.getElementById('p2GraphPathContainer');
+          pathContainer.innerHTML = data.path.map((node, idx) => `
+          <span class="graph-chip active-visited">${node}</span>
+          ${idx < data.path.length - 1 ? '<i class="fas fa-arrow-right  small"></i>' : ''}
+        `).join('');
+
+          // Render Step Trace
+          const traceTbody = document.getElementById('p2TraceTableBody');
+          if (data.trace && data.trace.length > 0) {
+            traceTbody.innerHTML = data.trace.map(t => `
+            <tr>
+              <td><span class="algo-step-badge">${t.step}</span></td>
+              <td class="fw-bold text-primary">${t.current || t.visited}</td>
+              <td class=" small">${t.enqueued ? `Enqueued: [${t.enqueued.join(', ') || 'None'}] | Queue: [${(t.queue_state || []).join(', ')}]` : `Path so far: [${t.path_so_far.join(' &rarr; ')}]`}</td>
+            </tr>
+          `).join('');
+          }
+        }
+      })
+      .catch(err => console.error(err));
+  }
+</script>
+{% endblock %}

@@ -6,18 +6,22 @@
 <div class="container py-5">
   <!-- TRACKER SEARCH HEADER -->
   <div class="text-center mb-5">
-    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1.5 rounded-pill mb-2 fw-bold">REAL-TIME SURVEILLANCE</span>
+    <span
+      class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1.5 rounded-pill mb-2 fw-bold">REAL-TIME
+      SURVEILLANCE</span>
     <h2 class="fw-bold brand-font text-heading">Public &amp; Whistleblower Case Tracker</h2>
-    <p class="text-muted mx-auto" style="max-width: 600px;">
-      Enter your unique Complaint Reference ID (e.g. <code>CCMS-2026-6775</code>) or phone number to view live milestones and officer investigation actions.
+    <p class=" mx-auto" style="max-width: 600px;">
+      Enter your unique Complaint Reference ID (e.g. <code>CCMS-2026-6775</code>) or phone number to view live
+      milestones and officer investigation actions.
     </p>
 
     <!-- Search Form -->
     <div class="mx-auto mt-4" style="max-width: 540px;">
       <form action="{{ url_for('track_complaint') }}" method="GET" class="d-flex gap-2">
         <div class="input-group">
-          <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-search"></i></span>
-          <input type="text" name="id" class="form-control border-start-0" value="{{ query_id or '' }}" placeholder="Enter Complaint ID (CCMS-YYYY-XXXX) or Phone..." required>
+          <span class="input-group-text bg-subtle border-end-0 "><i class="fas fa-search"></i></span>
+          <input type="text" name="id" class="form-control border-start-0" value="{{ query_id or '' }}"
+            placeholder="Enter Complaint ID (CCMS-YYYY-XXXX) or Phone..." required>
         </div>
         <button type="submit" class="btn btn-brand px-4 text-nowrap">
           <i class="fas fa-radar me-1"></i> Track
@@ -27,167 +31,190 @@
   </div>
 
   {% if searched %}
-    {% if complaint %}
-      <div class="row g-4 justify-content-center">
-        <div class="col-lg-10">
-          <div class="ccms-card p-4 p-md-5 shadow-lg border-primary border-opacity-25">
-            <!-- Header with ID and Status -->
-            <div class="d-flex flex-wrap align-items-center justify-content-between pb-4 mb-4 border-bottom gap-3">
-              <div>
-                <span class="text-muted small text-uppercase fw-bold" style="letter-spacing:1px;">CASE DOSSIER</span>
-                <h3 class="fw-bold text-heading brand-font mb-1">{{ complaint.complaint_id }}</h3>
-                <div class="text-muted small">Filed on {{ complaint.incident_date }} &bull; Sector: <strong>{{ complaint.sector }}</strong></div>
-              </div>
-              <div class="d-flex align-items-center gap-2">
-                <span class="badge-priority {{ complaint.severity }}">{{ complaint.severity }} Priority</span>
-                <span class="badge-status {{ complaint.complaint_status }}">{{ complaint.complaint_status }}</span>
-                <button onclick="window.print()" class="btn btn-sm btn-outline-custom" title="Print Case Slip">
-                  <i class="fas fa-print me-1"></i> Print Receipt
-                </button>
-              </div>
-            </div>
-
-            <!-- Complaint Meta Details Grid -->
-            <div class="row g-3 mb-5">
-              <div class="col-md-4">
-                <div class="p-3 rounded bg-subtle border">
-                  <div class="text-muted small">Misconduct Category</div>
-                  <div class="fw-bold text-heading">{{ complaint.misconduct_category }}</div>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="p-3 rounded bg-subtle border">
-                  <div class="text-muted small">Incident Location</div>
-                  <div class="fw-bold text-heading text-truncate">{{ complaint.location }}</div>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="p-3 rounded bg-subtle border">
-                  <div class="text-muted small">Assigned Vigilance Officer</div>
-                  <div class="fw-bold text-primary text-truncate">{{ complaint.assigned_officer or 'Senior Inspector A. Verma, Anti-Corruption Bureau' }}</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Statement Description -->
-            <div class="mb-5">
-              <h5 class="fw-bold text-heading mb-2"><i class="fas fa-file-lines text-primary me-2"></i>Whistleblower Statement</h5>
-              <div class="p-3 rounded bg-subtle border text-body" style="white-space: pre-line; line-height: 1.7;">
-                {{ complaint.description }}
-              </div>
-            </div>
-
-            <!-- TIMELINE PROGRESSION STEPPER -->
-            <div class="mb-5">
-              <h5 class="fw-bold text-heading mb-4"><i class="fas fa-route text-emerald me-2"></i>Investigation Milestones</h5>
-              
-              <div class="timeline-stepper">
-                <!-- Step 1 -->
-                <div class="timeline-step completed">
-                  <div class="timeline-dot"><i class="fas fa-check"></i></div>
-                  <div>
-                    <div class="fw-bold text-heading">1. Encrypted Intake &amp; Identity Scrubbing</div>
-                    <p class="text-muted small mb-1">Complaint safely committed to AES-256 vault. Submitter IP and camera EXIF headers permanently purged.</p>
-                    <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:0.7rem;">Completed &bull; {{ complaint.incident_date }}</span>
-                  </div>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="timeline-step completed">
-                  <div class="timeline-dot"><i class="fas fa-check"></i></div>
-                  <div>
-                    <div class="fw-bold text-heading">2. Evidence Verification &amp; Priority Triage</div>
-                    <p class="text-muted small mb-1">Authenticity verified against digital tampering. Assigned priority score: <strong>{{ complaint.severity }}</strong>.</p>
-                    <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:0.7rem;">Completed &bull; Verified</span>
-                  </div>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="timeline-step {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}completed{% else %}active{% endif %}">
-                  <div class="timeline-dot"><i class="fas {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}fa-check{% else %}fa-magnifying-glass{% endif %}"></i></div>
-                  <div>
-                    <div class="fw-bold text-heading">3. Vigilance Officer Investigation</div>
-                    <p class="text-muted small mb-1">Officer {{ complaint.assigned_officer or 'Senior Inspector A. Verma' }} conducting formal fact-finding inquiries and gathering department records.</p>
-                    {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}
-                      <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:0.7rem;">Completed</span>
-                    {% else %}
-                      <span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size:0.7rem;">In Progress</span>
-                    {% endif %}
-                  </div>
-                </div>
-
-                <!-- Step 4 -->
-                <div class="timeline-step {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}completed{% else %}pending{% endif %}">
-                  <div class="timeline-dot"><i class="fas {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}fa-check{% else %}fa-gavel{% endif %}"></i></div>
-                  <div>
-                    <div class="fw-bold text-heading">4. Disciplinary Sanction &amp; Legal Closure</div>
-                    <p class="text-muted small mb-1">
-                      {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}
-                        Sanction executed. Disciplinary report published to vigilance audit archive.
-                      {% else %}
-                        Pending completion of active officer investigation findings.
-                      {% endif %}
-                    </p>
-                    {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}
-                      <span class="badge bg-success text-white" style="font-size:0.7rem;">Resolved &amp; Logged</span>
-                    {% else %}
-                      <span class="badge bg-subtle text-muted border" style="font-size:0.7rem;">Pending Verification</span>
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- EVIDENCE VAULT ATTACHMENTS -->
-            {% if complaint.evidence_file %}
-              <div class="mb-4">
-                <h5 class="fw-bold text-heading mb-3"><i class="fas fa-vault text-violet me-2"></i>Uploaded Evidence Files</h5>
-                <div class="row g-2">
-                  {% for file in complaint.evidence_file.split(',') %}
-                    {% if file.strip() %}
-                      <div class="col-md-6">
-                        <div class="p-2.5 rounded bg-subtle border d-flex align-items-center justify-content-between">
-                          <div class="d-flex align-items-center gap-2 overflow-hidden">
-                            <i class="fas fa-file-shield text-primary fs-4"></i>
-                            <div class="text-truncate small fw-semibold text-heading">{{ file.strip() }}</div>
-                          </div>
-                          <a href="{{ url_for('uploaded_file', filename=file.strip()) }}" target="_blank" class="btn btn-sm btn-outline-custom">
-                            <i class="fas fa-download"></i> View
-                          </a>
-                        </div>
-                      </div>
-                    {% endif %}
-                  {% endfor %}
-                </div>
-              </div>
-            {% endif %}
-
-            <!-- Feedback CTA if Resolved -->
-            {% if complaint.complaint_status == 'Resolved' %}
-              <div class="p-4 rounded bg-success-subtle border border-success-subtle text-center">
-                <h5 class="fw-bold text-success mb-1"><i class="fas fa-star text-warning me-1"></i> Case Successfully Resolved</h5>
-                <p class="text-muted small mb-3">Please rate your satisfaction with the vigilance investigation speed and confidentiality.</p>
-                <a href="{{ url_for('citizen_feedback') }}?id={{ complaint.complaint_id }}" class="btn btn-sm btn-brand">
-                  <i class="fas fa-comment-dots me-1"></i> Submit Citizen Feedback
-                </a>
-              </div>
-            {% endif %}
-
+  {% if complaint %}
+  <div class="row g-4 justify-content-center">
+    <div class="col-lg-10">
+      <div class="ccms-card p-4 p-md-5 shadow-lg border-primary border-opacity-25">
+        <!-- Header with ID and Status -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between pb-4 mb-4 border-bottom gap-3">
+          <div>
+            <span class=" small text-uppercase fw-bold" style="letter-spacing:1px;">CASE DOSSIER</span>
+            <h3 class="fw-bold text-heading brand-font mb-1">{{ complaint.complaint_id }}</h3>
+            <div class=" small">Filed on {{ complaint.incident_date }} &bull; Sector: <strong>{{ complaint.sector
+                }}</strong></div>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge-priority {{ complaint.severity }}">{{ complaint.severity }} Priority</span>
+            <span class="badge-status {{ complaint.complaint_status }}">{{ complaint.complaint_status }}</span>
+            <button onclick="window.print()" class="btn btn-sm btn-outline-custom" title="Print Case Slip">
+              <i class="fas fa-print me-1"></i> Print Receipt
+            </button>
           </div>
         </div>
-      </div>
-    {% else %}
-      <div class="text-center py-5">
-        <div class="stat-icon mx-auto mb-3" style="background: rgba(244,63,94,0.1); color: var(--accent-rose); width:64px; height:64px; font-size:1.8rem;">
-          <i class="fas fa-file-circle-xmark"></i>
+
+        <!-- Complaint Meta Details Grid -->
+        <div class="row g-3 mb-5">
+          <div class="col-md-4">
+            <div class="p-3 rounded bg-subtle border">
+              <div class=" small">Misconduct Category</div>
+              <div class="fw-bold text-heading">{{ complaint.misconduct_category }}</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 rounded bg-subtle border">
+              <div class=" small">Incident Location</div>
+              <div class="fw-bold text-heading text-truncate">{{ complaint.location }}</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 rounded bg-subtle border">
+              <div class=" small">Assigned Vigilance Officer</div>
+              <div class="fw-bold text-primary text-truncate">{{ complaint.assigned_officer or 'Senior Inspector A.
+                Verma, Anti-Corruption Bureau' }}</div>
+            </div>
+          </div>
         </div>
-        <h4 class="fw-bold text-heading mb-2">No Case Record Found</h4>
-        <p class="text-muted mx-auto mb-4" style="max-width: 460px;">
-          We could not locate any complaint with ID <code>{{ query_id }}</code>. Please verify your reference number and try again.
-        </p>
-        <a href="{{ url_for('track_complaint') }}" class="btn btn-outline-custom">Clear Search</a>
+
+        <!-- Statement Description -->
+        <div class="mb-5">
+          <h5 class="fw-bold text-heading mb-2"><i class="fas fa-file-lines text-primary me-2"></i>Whistleblower
+            Statement</h5>
+          <div class="p-3 rounded bg-subtle border text-body" style="white-space: pre-line; line-height: 1.7;">
+            {{ complaint.description }}
+          </div>
+        </div>
+
+        <!-- TIMELINE PROGRESSION STEPPER -->
+        <div class="mb-5">
+          <h5 class="fw-bold text-heading mb-4"><i class="fas fa-route text-emerald me-2"></i>Investigation Milestones
+          </h5>
+
+          <div class="timeline-stepper">
+            <!-- Step 1 -->
+            <div class="timeline-step completed">
+              <div class="timeline-dot"><i class="fas fa-check"></i></div>
+              <div>
+                <div class="fw-bold text-heading">1. Encrypted Intake &amp; Identity Scrubbing</div>
+                <p class=" small mb-1">Complaint safely committed to AES-256 vault. Submitter IP and camera EXIF headers
+                  permanently purged.</p>
+                <span class="badge bg-success-subtle text-success border border-success-subtle"
+                  style="font-size:0.7rem;">Completed &bull; {{ complaint.incident_date }}</span>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="timeline-step completed">
+              <div class="timeline-dot"><i class="fas fa-check"></i></div>
+              <div>
+                <div class="fw-bold text-heading">2. Evidence Verification &amp; Priority Triage</div>
+                <p class=" small mb-1">Authenticity verified against digital tampering. Assigned priority score:
+                  <strong>{{ complaint.severity }}</strong>.</p>
+                <span class="badge bg-success-subtle text-success border border-success-subtle"
+                  style="font-size:0.7rem;">Completed &bull; Verified</span>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div
+              class="timeline-step {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}completed{% else %}active{% endif %}">
+              <div class="timeline-dot"><i
+                  class="fas {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}fa-check{% else %}fa-magnifying-glass{% endif %}"></i>
+              </div>
+              <div>
+                <div class="fw-bold text-heading">3. Vigilance Officer Investigation</div>
+                <p class=" small mb-1">Officer {{ complaint.assigned_officer or 'Senior Inspector A. Verma' }}
+                  conducting formal fact-finding inquiries and gathering department records.</p>
+                {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle"
+                  style="font-size:0.7rem;">Completed</span>
+                {% else %}
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle"
+                  style="font-size:0.7rem;">In Progress</span>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div
+              class="timeline-step {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}completed{% else %}pending{% endif %}">
+              <div class="timeline-dot"><i
+                  class="fas {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}fa-check{% else %}fa-gavel{% endif %}"></i>
+              </div>
+              <div>
+                <div class="fw-bold text-heading">4. Disciplinary Sanction &amp; Legal Closure</div>
+                <p class=" small mb-1">
+                  {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}
+                  Sanction executed. Disciplinary report published to vigilance audit archive.
+                  {% else %}
+                  Pending completion of active officer investigation findings.
+                  {% endif %}
+                </p>
+                {% if complaint.complaint_status == 'Resolved' or complaint.complaint_status == 'Closed' %}
+                <span class="badge bg-success text-white" style="font-size:0.7rem;">Resolved &amp; Logged</span>
+                {% else %}
+                <span class="badge bg-subtle  border" style="font-size:0.7rem;">Pending Verification</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EVIDENCE VAULT ATTACHMENTS -->
+        {% if complaint.evidence_file %}
+        <div class="mb-4">
+          <h5 class="fw-bold text-heading mb-3"><i class="fas fa-vault text-violet me-2"></i>Uploaded Evidence Files
+          </h5>
+          <div class="row g-2">
+            {% for file in complaint.evidence_file.split(',') %}
+            {% if file.strip() %}
+            <div class="col-md-6">
+              <div class="p-2.5 rounded bg-subtle border d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2 overflow-hidden">
+                  <i class="fas fa-file-shield text-primary fs-4"></i>
+                  <div class="text-truncate small fw-semibold text-heading">{{ file.strip() }}</div>
+                </div>
+                <a href="{{ url_for('uploaded_file', filename=file.strip()) }}" target="_blank"
+                  class="btn btn-sm btn-outline-custom">
+                  <i class="fas fa-download"></i> View
+                </a>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Feedback CTA if Resolved -->
+        {% if complaint.complaint_status == 'Resolved' %}
+        <div class="p-4 rounded bg-success-subtle border border-success-subtle text-center">
+          <h5 class="fw-bold text-success mb-1"><i class="fas fa-star text-warning me-1"></i> Case Successfully Resolved
+          </h5>
+          <p class=" small mb-3">Please rate your satisfaction with the vigilance investigation speed and
+            confidentiality.</p>
+          <a href="{{ url_for('citizen_feedback') }}?id={{ complaint.complaint_id }}" class="btn btn-sm btn-brand">
+            <i class="fas fa-comment-dots me-1"></i> Submit Citizen Feedback
+          </a>
+        </div>
+        {% endif %}
+
       </div>
-    {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <div class="stat-icon mx-auto mb-3"
+      style="background: rgba(244,63,94,0.1); color: var(--accent-rose); width:64px; height:64px; font-size:1.8rem;">
+      <i class="fas fa-file-circle-xmark"></i>
+    </div>
+    <h4 class="fw-bold text-heading mb-2">No Case Record Found</h4>
+    <p class=" mx-auto mb-4" style="max-width: 460px;">
+      We could not locate any complaint with ID <code>{{ query_id }}</code>. Please verify your reference number and try
+      again.
+    </p>
+    <a href="{{ url_for('track_complaint') }}" class="btn btn-outline-custom">Clear Search</a>
+  </div>
+  {% endif %}
   {% endif %}
 </div>
 {% endblock %}

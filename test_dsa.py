@@ -289,5 +289,29 @@ class TestGraphAndTraversals(unittest.TestCase):
         self.assertGreater(len(trace), 0)
 
 
+class TestDatasetBuilders(unittest.TestCase):
+    def test_dataset_tree_and_bst(self):
+        from dsa import build_dataset_vigilance_tree, build_dataset_complaints_bst, build_dataset_escalation_graph
+        depts = [
+            {"dept_id": "DEPT-01", "name": "Police & Law Enforcement", "head": "Comm. Rao", "total_cases": 42, "risk_level": "High"},
+            {"dept_id": "DEPT-03", "name": "Municipality & Public Works", "head": "Eng. Gupta", "total_cases": 51, "risk_level": "High"}
+        ]
+        tree = build_dataset_vigilance_tree(depts)
+        self.assertIsNotNone(tree.root)
+        self.assertEqual(tree.root.value, "Central Vigilance Directorate (HQ)")
+
+        complaints = [
+            {"complaint_id": "CCMS-001", "complaint_title": "Bribe", "severity": "Critical", "sector": "Police"},
+            {"complaint_id": "CCMS-002", "complaint_title": "Embezzlement", "severity": "Medium", "sector": "PWD"}
+        ]
+        bst = build_dataset_complaints_bst(complaints)
+        self.assertEqual(bst.size(), 2)
+        self.assertIsNotNone(bst.find_min())
+        self.assertIsNotNone(bst.find_max())
+
+        graph = build_dataset_escalation_graph(depts)
+        self.assertIn("Police & Law Enforcement", graph.get_vertices())
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -4,27 +4,31 @@
 {% block page_heading %}Vigilance AI Priority Investigation Queue{% endblock %}
 
 {% block content %}
-<div class="ccms-card p-4 mb-4 glass-panel border-danger border-opacity-25" style="background: linear-gradient(135deg, rgba(244,63,94,0.08) 0%, rgba(245,158,11,0.05) 100%);">
+<div class="ccms-card p-4 mb-4 glass-panel border-danger border-opacity-25"
+  style="background: linear-gradient(135deg, rgba(244,63,94,0.08) 0%, rgba(245,158,11,0.05) 100%);">
   <div class="row align-items-center g-3">
     <div class="col-md-8">
       <div class="d-flex align-items-center gap-2 mb-2">
         <span class="badge bg-danger text-white fw-bold px-2.5 py-1 rounded-pill small">
           <i class="fas fa-bolt me-1"></i> HEURISTIC PRIORITY RANKING
         </span>
-        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1 rounded-pill small fw-bold">
+        <span
+          class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1 rounded-pill small fw-bold">
           SLA Triage Active
         </span>
       </div>
       <h3 class="fw-bold text-heading brand-font mb-1">Ranked Urgent Investigation Queue</h3>
-      <p class="text-muted small mb-0">
-        Cases are sorted by urgency weight: bribery magnitude, severity level, public health/safety risk, and remaining SLA hours.
+      <p class=" small mb-0">
+        Cases are sorted by urgency weight: bribery magnitude, severity level, public health/safety risk, and remaining
+        SLA hours.
       </p>
     </div>
     <div class="col-md-4 text-md-end">
       {% if prioritized_cases %}
-        <a href="{{ url_for('officer_investigation', case_id=prioritized_cases[0].complaint_id) }}" class="btn btn-brand btn-lg" style="background: var(--gradient-danger);">
-          <i class="fas fa-bolt me-1"></i> Launch #1 Urgent Case
-        </a>
+      <a href="{{ url_for('officer_investigation', case_id=prioritized_cases[0].complaint_id) }}"
+        class="btn btn-brand btn-lg" style="background: var(--gradient-danger);">
+        <i class="fas fa-bolt me-1"></i> Launch #1 Urgent Case
+      </a>
       {% endif %}
     </div>
   </div>
@@ -33,44 +37,48 @@
 <!-- QUEUE ITEMS -->
 <div class="row g-3">
   {% for c in prioritized_cases %}
-    <div class="col-12">
-      <div class="ccms-card p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4 {% if loop.first %}border-danger border-opacity-50 shadow-md{% endif %}">
-        <div class="d-flex align-items-start gap-3">
-          <div class="user-avatar-circle flex-shrink-0" style="background: {% if c.severity == 'Critical' %}var(--gradient-danger){% elif c.severity == 'High' %}var(--gradient-gold){% else %}var(--gradient-cyber){% endif %}; width:48px; height:48px; font-size:1.2rem;">
-            #{{ loop.index }}
+  <div class="col-12">
+    <div
+      class="ccms-card p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4 {% if loop.first %}border-danger border-opacity-50 shadow-md{% endif %}">
+      <div class="d-flex align-items-start gap-3">
+        <div class="user-avatar-circle flex-shrink-0"
+          style="background: {% if c.severity == 'Critical' %}var(--gradient-danger){% elif c.severity == 'High' %}var(--gradient-gold){% else %}var(--gradient-cyber){% endif %}; width:48px; height:48px; font-size:1.2rem;">
+          #{{ loop.index }}
+        </div>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="badge-priority {{ c.severity }}">{{ c.severity }} Urgency</span>
+            <span class="fw-bold text-cyan brand-font">{{ c.complaint_id }}</span>
+            <span class="badge bg-subtle  border">{{ c.sector }}</span>
           </div>
-          <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-              <span class="badge-priority {{ c.severity }}">{{ c.severity }} Urgency</span>
-              <span class="fw-bold text-cyan brand-font">{{ c.complaint_id }}</span>
-              <span class="badge bg-subtle text-muted border">{{ c.sector }}</span>
-            </div>
-            <h5 class="fw-bold text-heading mb-1">{{ c.complaint_title }}</h5>
-            <p class="text-muted small mb-2 text-truncate" style="max-width: 600px;">{{ c.description }}</p>
-            <div class="d-flex flex-wrap align-items-center gap-3 text-muted small">
-              <span><i class="fas fa-location-dot text-danger me-1"></i> {{ c.location }}</span> &bull;
-              <span><i class="fas fa-calendar text-primary me-1"></i> Incident: {{ c.incident_date }}</span> &bull;
-              <span><i class="fas fa-vault text-violet me-1"></i> Evidence Attached: {{ 'Yes' if c.evidence_file else 'No' }}</span>
-            </div>
+          <h5 class="fw-bold text-heading mb-1">{{ c.complaint_title }}</h5>
+          <p class=" small mb-2 text-truncate" style="max-width: 600px;">{{ c.description }}</p>
+          <div class="d-flex flex-wrap align-items-center gap-3  small">
+            <span><i class="fas fa-location-dot text-danger me-1"></i> {{ c.location }}</span> &bull;
+            <span><i class="fas fa-calendar text-primary me-1"></i> Incident: {{ c.incident_date }}</span> &bull;
+            <span><i class="fas fa-vault text-violet me-1"></i> Evidence Attached: {{ 'Yes' if c.evidence_file else 'No'
+              }}</span>
           </div>
         </div>
+      </div>
 
-        <div class="d-flex flex-md-column align-items-end justify-content-between gap-2 flex-shrink-0">
-          <span class="badge-status {{ c.complaint_status }}">{{ c.complaint_status }}</span>
-          <a href="{{ url_for('officer_investigation', case_id=c.complaint_id) }}" class="btn btn-sm btn-brand" style="background:var(--gradient-cyber);">
-            <i class="fas fa-microscope me-1"></i> Take Action
-          </a>
-        </div>
+      <div class="d-flex flex-md-column align-items-end justify-content-between gap-2 flex-shrink-0">
+        <span class="badge-status {{ c.complaint_status }}">{{ c.complaint_status }}</span>
+        <a href="{{ url_for('officer_investigation', case_id=c.complaint_id) }}" class="btn btn-sm btn-brand"
+          style="background:var(--gradient-cyber);">
+          <i class="fas fa-microscope me-1"></i> Take Action
+        </a>
       </div>
     </div>
+  </div>
   {% else %}
-    <div class="col-12 text-center py-5">
-      <div class="stat-icon mx-auto mb-3" style="background: rgba(16,185,129,0.1); color: var(--accent-emerald);">
-        <i class="fas fa-circle-check"></i>
-      </div>
-      <h5 class="fw-bold text-heading mb-1">Queue is Fully Cleared!</h5>
-      <p class="text-muted small mb-0">No urgent pending investigation cases currently require triage.</p>
+  <div class="col-12 text-center py-5">
+    <div class="stat-icon mx-auto mb-3" style="background: rgba(16,185,129,0.1); color: var(--accent-emerald);">
+      <i class="fas fa-circle-check"></i>
     </div>
+    <h5 class="fw-bold text-heading mb-1">Queue is Fully Cleared!</h5>
+    <p class=" small mb-0">No urgent pending investigation cases currently require triage.</p>
+  </div>
   {% endfor %}
 </div>
 {% endblock %}

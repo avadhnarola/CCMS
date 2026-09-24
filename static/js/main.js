@@ -165,7 +165,7 @@ function renderFilePreviews(files, container) {
         <i class="fas ${iconClass} fs-5"></i>
         <div class="text-truncate">
           <div class="fw-bold text-heading text-truncate">${file.name}</div>
-          <span class="text-muted" style="font-size:0.75rem;">${sizeKB} KB</span>
+          <span class="" style="font-size:0.75rem;">${sizeKB} KB</span>
         </div>
       </div>
       <span class="badge bg-success-subtle text-success border border-success-subtle">Ready</span>

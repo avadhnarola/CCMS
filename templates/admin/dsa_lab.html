@@ -186,7 +186,7 @@
           &bull; Zero Server Setup</span>
       </div>
       <h3 class="fw-bold text-heading brand-font mb-1">Data Structures &amp; Algorithms Laboratory</h3>
-      <p class="text-muted small mb-0">
+      <p class=" small mb-0">
         Hands-on interactive laboratory covering <strong>Phase 1: Linear Structures</strong> (Linked List, Stack, Queue,
         Infix-Postfix Expressions, Iterative vs Recursive Efficiency) and <strong>Phase 2: Structured Data
           Representations</strong> (Hierarchical Binary Tree, 4 Tree Traversals, Binary Search Tree [BST] with O(log N)
@@ -234,7 +234,7 @@
             <h5 class="fw-bold text-heading mb-0"><i class="fas fa-link text-primary me-2"></i>Singly Linked List Data
               Storage</h5>
           </div>
-          <p class="text-muted small mb-0 mt-1">
+          <p class=" small mb-0 mt-1">
             Dynamic sequential memory chaining with node pointers (<code>Node.data</code> &amp; <code>Node.next</code>).
           </p>
         </div>
@@ -284,9 +284,9 @@
       <!-- Linked List Visual Track -->
       <div class="p-3 rounded bg-subtle border">
         <div class="d-flex align-items-center justify-content-between mb-2">
-          <div class="small fw-bold text-muted font-monospace"><i
-              class="fas fa-arrows-split-up-and-left text-primary me-1"></i> HEAD POINTER &bull; MEMORY TRACE</div>
-          <div class="small text-muted">Traversal Direction: <strong>Head &rarr; Next &rarr; Tail &rarr; NULL</strong>
+          <div class="small fw-bold  font-monospace"><i class="fas fa-arrows-split-up-and-left text-primary me-1"></i>
+            HEAD POINTER &bull; MEMORY TRACE</div>
+          <div class="small ">Traversal Direction: <strong>Head &rarr; Next &rarr; Tail &rarr; NULL</strong>
           </div>
         </div>
 
@@ -300,7 +300,7 @@
             </div>
             <div class="fw-bold text-heading text-truncate small">{{ node.data.id if node.data.id else 'Case Node' }}
             </div>
-            <div class="text-muted small text-truncate" style="font-size:0.75rem;">{{ node.data.title if node.data.title
+            <div class=" small text-truncate" style="font-size:0.75rem;">{{ node.data.title if node.data.title
               else 'Complaint Record' }}</div>
             <div class="text-primary mt-1 font-monospace" style="font-size:0.7rem;">
               <span>next &rarr; </span><strong>{{ 'Node #' ~ (node.index + 1) if node.has_next else 'NULL (0x0)'
@@ -311,7 +311,7 @@
           <div class="ll-arrow"><i class="fas fa-arrow-right"></i></div>
           {% endif %}
           {% else %}
-          <div class="text-muted small p-3">Linked list is empty. Add nodes using the buttons above.</div>
+          <div class=" small p-3">Linked list is empty. Add nodes using the buttons above.</div>
           {% endfor %}
           <div class="ll-arrow"><i class="fas fa-arrow-right"></i></div>
           <div class="ll-null-box">NULL</div>
@@ -331,7 +331,7 @@
                 <h5 class="fw-bold text-heading mb-0"><i class="fas fa-layer-group text-violet me-2"></i>Stack (LIFO)
                 </h5>
               </div>
-              <div class="text-muted small mt-1">Node-based Stack &bull; Top pointer &bull; O(1) Push / Pop / Peek</div>
+              <div class=" small mt-1">Node-based Stack &bull; Top pointer &bull; O(1) Push / Pop / Peek</div>
             </div>
             <span class="badge bg-violet-subtle text-violet border" id="stackSizeBadge">Size: {{ stack_size }}</span>
           </div>
@@ -352,17 +352,17 @@
             <div class="stack-item {% if loop.first %}top-item{% endif %}">
               <div class="d-flex align-items-center justify-content-between">
                 <span class="fw-bold small text-heading">{{ item.action }}</span>
-                <span class="badge bg-subtle text-muted border font-monospace" style="font-size:0.65rem;">{{ item.time
+                <span class="badge bg-subtle  border font-monospace" style="font-size:0.65rem;">{{ item.time
                   if item.time else 'Now' }}</span>
               </div>
-              <div class="text-muted small text-truncate" style="font-size:0.75rem;">{{ item.details }}</div>
+              <div class=" small text-truncate" style="font-size:0.75rem;">{{ item.details }}</div>
               {% if loop.first %}
               <div class="text-violet fw-bold mt-1 font-monospace" style="font-size:0.68rem;"><i
                   class="fas fa-arrow-down me-1"></i> TOP POINTER</div>
               {% endif %}
             </div>
             {% else %}
-            <div class="text-center text-muted small py-4">Stack is currently empty.</div>
+            <div class="text-center  small py-4">Stack is currently empty.</div>
             {% endfor %}
           </div>
         </div>
@@ -378,7 +378,7 @@
                 <h5 class="fw-bold text-heading mb-0"><i
                     class="fas fa-arrows-left-right-to-line text-cyan me-2"></i>Queue (FIFO)</h5>
               </div>
-              <div class="text-muted small mt-1">Node-based Queue &bull; Front/Rear pointers &bull; O(1) Enqueue /
+              <div class=" small mt-1">Node-based Queue &bull; Front/Rear pointers &bull; O(1) Enqueue /
                 Dequeue</div>
             </div>
             <span class="badge bg-cyan-subtle text-cyan border" id="queueSizeBadge">Size: {{ queue_size }}</span>
@@ -405,10 +405,10 @@
                 {% if loop.last %}<span class="badge bg-primary" style="font-size:0.6rem;">REAR</span>{% endif %}
               </div>
               <div class="fw-bold text-heading small text-truncate">{{ item.id }}</div>
-              <div class="text-muted small text-truncate" style="font-size:0.72rem;">{{ item.title }}</div>
+              <div class=" small text-truncate" style="font-size:0.72rem;">{{ item.title }}</div>
             </div>
             {% else %}
-            <div class="text-center text-muted small py-4 w-100">Queue is currently empty.</div>
+            <div class="text-center  small py-4 w-100">Queue is currently empty.</div>
             {% endfor %}
           </div>
         </div>
@@ -424,7 +424,7 @@
             <h5 class="fw-bold text-heading mb-0"><i class="fas fa-square-root-variable text-amber me-2"></i>Stack
               Expression Handling (Infix &rarr; Postfix &amp; Evaluation)</h5>
           </div>
-          <p class="text-muted small mb-0 mt-1">
+          <p class=" small mb-0 mt-1">
             Using Stack to convert arithmetic formulas to Postfix notation (Reverse Polish Notation) and compute results
             step-by-step.
           </p>
@@ -456,13 +456,13 @@
       <div class="row g-3" id="exprResultsArea">
         <div class="col-md-4">
           <div class="p-3 rounded bg-subtle border h-100">
-            <div class="text-muted small fw-bold mb-1">INFIX INPUT</div>
+            <div class=" small fw-bold mb-1">INFIX INPUT</div>
             <div class="font-monospace text-heading fw-bold" id="resInfix">( 5000 * 2 ) + ( 15 * 100 ) - 500</div>
           </div>
         </div>
         <div class="col-md-5">
           <div class="p-3 rounded bg-subtle border h-100">
-            <div class="text-muted small fw-bold mb-1">POSTFIX NOTATION (RPN)</div>
+            <div class=" small fw-bold mb-1">POSTFIX NOTATION (RPN)</div>
             <div class="font-monospace text-primary fw-bold" id="resPostfix">5000 2 * 15 100 * + 500 -</div>
           </div>
         </div>
@@ -501,7 +501,7 @@
                           </thead>
                           <tbody id="infixTraceTbody">
                             <tr>
-                              <td colspan="3" class="text-center text-muted">Click 'Evaluate Stack' to generate trace.
+                              <td colspan="3" class="text-center ">Click 'Evaluate Stack' to generate trace.
                               </td>
                             </tr>
                           </tbody>
@@ -523,7 +523,7 @@
                           </thead>
                           <tbody id="evalTraceTbody">
                             <tr>
-                              <td colspan="3" class="text-center text-muted">Click 'Evaluate Stack' to generate trace.
+                              <td colspan="3" class="text-center ">Click 'Evaluate Stack' to generate trace.
                               </td>
                             </tr>
                           </tbody>
@@ -548,7 +548,7 @@
             <h5 class="fw-bold text-heading mb-0"><i class="fas fa-gauge-high text-danger me-2"></i>Efficiency Concepts:
               Iterative vs. Recursive Benchmarking</h5>
           </div>
-          <p class="text-muted small mb-0 mt-1">
+          <p class=" small mb-0 mt-1">
             Comparing Execution Time, Step Counts, and Call Stack Frame Space Complexity between Iterative loops and
             Recursive invocations.
           </p>
@@ -589,15 +589,15 @@
             <h5 class="fw-bold text-heading mb-1" id="iterResultTitle">Found at index 50</h5>
             <div class="d-flex flex-column gap-2 mt-3 small">
               <div class="d-flex justify-content-between border-bottom pb-1">
-                <span class="text-muted">Time Complexity:</span>
+                <span class="">Time Complexity:</span>
                 <strong class="text-primary font-monospace" id="iterTimeComp">O(log N)</strong>
               </div>
               <div class="d-flex justify-content-between border-bottom pb-1">
-                <span class="text-muted">Space Complexity:</span>
+                <span class="">Space Complexity:</span>
                 <strong class="text-success font-monospace" id="iterSpaceComp">O(1) [Constant Memory]</strong>
               </div>
               <div class="d-flex justify-content-between">
-                <span class="text-muted">Loop Steps:</span>
+                <span class="">Loop Steps:</span>
                 <strong class="text-heading font-monospace" id="iterSteps">7 steps</strong>
               </div>
             </div>
@@ -615,15 +615,15 @@
             <h5 class="fw-bold text-heading mb-1" id="recResultTitle">Found at index 50</h5>
             <div class="d-flex flex-column gap-2 mt-3 small">
               <div class="d-flex justify-content-between border-bottom pb-1">
-                <span class="text-muted">Time Complexity:</span>
+                <span class="">Time Complexity:</span>
                 <strong class="text-danger font-monospace" id="recTimeComp">O(log N)</strong>
               </div>
               <div class="d-flex justify-content-between border-bottom pb-1">
-                <span class="text-muted">Space Complexity:</span>
+                <span class="">Space Complexity:</span>
                 <strong class="text-warning font-monospace" id="recSpaceComp">O(log N) [Call Stack Frames]</strong>
               </div>
               <div class="d-flex justify-content-between">
-                <span class="text-muted">Call Stack Depth:</span>
+                <span class="">Call Stack Depth:</span>
                 <strong class="text-heading font-monospace" id="recSteps">7 stack frames</strong>
               </div>
             </div>
@@ -658,7 +658,7 @@
             <h5 class="fw-bold text-heading mb-0"><i class="fas fa-sitemap text-primary me-2"></i>Binary Tree:
               Hierarchical Vigilance Command &amp; Traversals</h5>
           </div>
-          <p class="text-muted small mb-0 mt-1">
+          <p class=" small mb-0 mt-1">
             Hierarchical representation of Central Vigilance Directorate chain-of-command with Inorder, Preorder,
             Postorder, and Level-Order (BFS) traversals.
           </p>
@@ -687,7 +687,7 @@
 
       <!-- Live Traversal Display -->
       <div class="p-3 rounded bg-subtle border mb-4">
-        <div class="small fw-bold text-muted mb-1" id="treeTraversalTitle">ACTIVE TRAVERSAL OUTPUT (INORDER)</div>
+        <div class="small fw-bold  mb-1" id="treeTraversalTitle">ACTIVE TRAVERSAL OUTPUT (INORDER)</div>
         <div class="font-monospace fw-bold text-primary fs-6" id="treeTraversalSequence">
           {{ tree_traversals.inorder | join(' &rarr; ') }}
         </div>
@@ -705,7 +705,7 @@
               }}</span>
             <span class="badge bg-primary text-white" style="font-size:0.65rem;">ROOT NODE</span>
           </div>
-          <div class="text-muted small" style="font-size:0.75rem;">Role: {{ tree_dict.data.role if tree_dict.data else
+          <div class=" small" style="font-size:0.75rem;">Role: {{ tree_dict.data.role if tree_dict.data else
             'Head' }}</div>
         </div>
 
@@ -717,7 +717,7 @@
               <div class="tree-node-card mb-2">
                 <div class="fw-bold small text-heading"><i class="fas fa-folder-tree text-violet me-1"></i> {{
                   tree_dict.left.value }}</div>
-                <div class="text-muted small" style="font-size:0.72rem;">{{ tree_dict.left.data.role if
+                <div class=" small" style="font-size:0.72rem;">{{ tree_dict.left.data.role if
                   tree_dict.left.data else 'Left Branch' }}</div>
               </div>
               <div class="tree-branch-line">
@@ -740,7 +740,7 @@
               <div class="tree-node-card mb-2">
                 <div class="fw-bold small text-heading"><i class="fas fa-folder-tree text-cyan me-1"></i> {{
                   tree_dict.right.value }}</div>
-                <div class="text-muted small" style="font-size:0.72rem;">{{ tree_dict.right.data.role if
+                <div class=" small" style="font-size:0.72rem;">{{ tree_dict.right.data.role if
                   tree_dict.right.data else 'Right Branch' }}</div>
               </div>
               <div class="tree-branch-line">
@@ -771,16 +771,16 @@
             <h5 class="fw-bold text-heading mb-0"><i class="fas fa-tree text-emerald me-2"></i>Binary Search Tree (BST)
               Indexed Case Storage</h5>
           </div>
-          <p class="text-muted small mb-0 mt-1">
+          <p class=" small mb-0 mt-1">
             Efficient keyed data storage and fast O(log N) lookup organized by numerical <strong>Risk Score</strong>
             (Left &lt; Root &lt; Right).
           </p>
         </div>
         <div class="d-flex gap-2">
           <span class="badge bg-emerald-subtle text-emerald border" id="bstSizeBadge">Size: {{ bst_size }} Cases</span>
-          <span class="badge bg-subtle text-muted border" id="bstMinBadge">Min Risk: {{ bst_min if bst_min else 'N/A'
+          <span class="badge bg-subtle  border" id="bstMinBadge">Min Risk: {{ bst_min if bst_min else 'N/A'
             }}</span>
-          <span class="badge bg-subtle text-muted border" id="bstMaxBadge">Max Risk: {{ bst_max if bst_max else 'N/A'
+          <span class="badge bg-subtle  border" id="bstMaxBadge">Max Risk: {{ bst_max if bst_max else 'N/A'
             }}</span>
         </div>
       </div>
@@ -834,14 +834,14 @@
               <td><span class="badge bg-emerald text-white fw-bold">Score: {{ item.key }}</span></td>
               <td class="font-monospace fw-bold small">{{ item.data.id }}</td>
               <td class="small">{{ item.data.title }}</td>
-              <td class="small text-muted">{{ item.data.sector }}</td>
+              <td class="small ">{{ item.data.sector }}</td>
               <td><span class="badge-priority {{ item.data.severity if item.data.severity else 'Medium' }}"
                   style="font-size:0.65rem;">{{ item.data.severity }}</span></td>
-              <td><span class="badge bg-subtle text-muted border small">{{ item.data.status }}</span></td>
+              <td><span class="badge bg-subtle  border small">{{ item.data.status }}</span></td>
             </tr>
             {% else %}
             <tr>
-              <td colspan="6" class="text-center text-muted">BST is currently empty.</td>
+              <td colspan="6" class="text-center ">BST is currently empty.</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -858,7 +858,7 @@
             <h5 class="fw-bold text-heading mb-0"><i class="fas fa-circle-nodes text-violet me-2"></i>Escalation Graph
               (Adjacency List) &amp; BFS/DFS Traversals</h5>
           </div>
-          <p class="text-muted small mb-0 mt-1">
+          <p class=" small mb-0 mt-1">
             Network graph of CCMS investigation desks with <strong>Breadth-First Search (BFS)</strong> and
             <strong>Depth-First Search (DFS)</strong> routing.
           </p>
@@ -888,7 +888,7 @@
           </div>
         </div>
         <div class="col-md-3">
-          <div class="small text-muted p-2 rounded bg-subtle border">
+          <div class="small  p-2 rounded bg-subtle border">
             <strong>Graph Type:</strong> Undirected Adjacency List
           </div>
         </div>
@@ -897,25 +897,25 @@
       <!-- Live Traversal Route Box -->
       <div class="p-3 rounded bg-subtle border mb-4">
         <div class="d-flex align-items-center justify-content-between mb-2">
-          <span class="small fw-bold text-muted font-monospace" id="graphRouteHeading">TRAVERSAL ROUTE (BFS FROM CITIZEN
+          <span class="small fw-bold  font-monospace" id="graphRouteHeading">TRAVERSAL ROUTE (BFS FROM CITIZEN
             FRONT DESK)</span>
           <span class="badge bg-primary text-white" id="graphAlgoBadge">BFS</span>
         </div>
         <div class="d-flex flex-wrap align-items-center gap-2" id="graphPathContainer">
           <span class="graph-node-chip visited-step">Citizen Front Desk</span>
-          <i class="fas fa-arrow-right text-muted small"></i>
+          <i class="fas fa-arrow-right  small"></i>
           <span class="graph-node-chip visited-step">Triage &amp; Verification Desk</span>
-          <i class="fas fa-arrow-right text-muted small"></i>
+          <i class="fas fa-arrow-right  small"></i>
           <span class="graph-node-chip visited-step">Special Investigation Bureau</span>
-          <i class="fas fa-arrow-right text-muted small"></i>
+          <i class="fas fa-arrow-right  small"></i>
           <span class="graph-node-chip visited-step">Forensic Audit Cell</span>
-          <i class="fas fa-arrow-right text-muted small"></i>
+          <i class="fas fa-arrow-right  small"></i>
           <span class="graph-node-chip visited-step">Field Inspection Unit</span>
-          <i class="fas fa-arrow-right text-muted small"></i>
+          <i class="fas fa-arrow-right  small"></i>
           <span class="graph-node-chip visited-step">Legal Prosecution Wing</span>
-          <i class="fas fa-arrow-right text-muted small"></i>
+          <i class="fas fa-arrow-right  small"></i>
           <span class="graph-node-chip visited-step">Central Vigilance Directorate</span>
-          <i class="fas fa-arrow-right text-muted small"></i>
+          <i class="fas fa-arrow-right  small"></i>
           <span class="graph-node-chip visited-step">Disciplinary Tribunal</span>
         </div>
       </div>
@@ -939,7 +939,7 @@
               <td>
                 <div class="d-flex flex-wrap gap-1">
                   {% for n in neighbors %}
-                  <span class="badge bg-subtle text-muted border font-monospace" style="font-size:0.75rem;">{{ n
+                  <span class="badge bg-subtle  border font-monospace" style="font-size:0.75rem;">{{ n
                     }}</span>
                   {% endfor %}
                 </div>
@@ -967,7 +967,7 @@
     if (!track) return;
 
     if (!nodes || nodes.length === 0) {
-      track.innerHTML = '<div class="text-muted small p-3">Linked list is empty. Add nodes using the buttons above.</div><div class="ll-arrow"><i class="fas fa-arrow-right"></i></div><div class="ll-null-box">NULL</div>';
+      track.innerHTML = '<div class=" small p-3">Linked list is empty. Add nodes using the buttons above.</div><div class="ll-arrow"><i class="fas fa-arrow-right"></i></div><div class="ll-null-box">NULL</div>';
       return;
     }
 
@@ -982,7 +982,7 @@
           <span class="badge-priority ${sev}" style="font-size:0.65rem;">${sev}</span>
         </div>
         <div class="fw-bold text-heading text-truncate small">${node.data.id || 'Case Node'}</div>
-        <div class="text-muted small text-truncate" style="font-size:0.75rem;">${node.data.title || 'Record'}</div>
+        <div class=" small text-truncate" style="font-size:0.75rem;">${node.data.title || 'Record'}</div>
         <div class="text-primary mt-1 font-monospace" style="font-size:0.7rem;">
           <span>next &rarr; </span><strong>${nextText}</strong>
         </div>
@@ -1070,7 +1070,7 @@
     if (!container) return;
 
     if (!items || items.length === 0) {
-      container.innerHTML = '<div class="text-center text-muted small py-4">Stack is currently empty.</div>';
+      container.innerHTML = '<div class="text-center  small py-4">Stack is currently empty.</div>';
       return;
     }
 
@@ -1081,9 +1081,9 @@
       <div class="stack-item ${isTop ? 'top-item' : ''}">
         <div class="d-flex align-items-center justify-content-between">
           <span class="fw-bold small text-heading">${item.action}</span>
-          <span class="badge bg-subtle text-muted border font-monospace" style="font-size:0.65rem;">${item.time || 'Now'}</span>
+          <span class="badge bg-subtle  border font-monospace" style="font-size:0.65rem;">${item.time || 'Now'}</span>
         </div>
-        <div class="text-muted small text-truncate" style="font-size:0.75rem;">${item.details || ''}</div>
+        <div class=" small text-truncate" style="font-size:0.75rem;">${item.details || ''}</div>
         ${isTop ? '<div class="text-violet fw-bold mt-1 font-monospace" style="font-size:0.68rem;"><i class="fas fa-arrow-down me-1"></i> TOP POINTER</div>' : ''}
       </div>
     `;
@@ -1123,7 +1123,7 @@
     if (!container) return;
 
     if (!items || items.length === 0) {
-      container.innerHTML = '<div class="text-center text-muted small py-4 w-100">Queue is currently empty.</div>';
+      container.innerHTML = '<div class="text-center  small py-4 w-100">Queue is currently empty.</div>';
       return;
     }
 
@@ -1141,7 +1141,7 @@
           ${isRear ? '<span class="badge bg-primary" style="font-size:0.6rem;">REAR</span>' : ''}
         </div>
         <div class="fw-bold text-heading small text-truncate">${item.id}</div>
-        <div class="text-muted small text-truncate" style="font-size:0.72rem;">${item.title}</div>
+        <div class=" small text-truncate" style="font-size:0.72rem;">${item.title}</div>
       </div>
     `;
     });
@@ -1294,7 +1294,7 @@
 
     const tbody = document.getElementById('bstTableBody');
     if (!records || records.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">BST is currently empty.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center ">BST is currently empty.</td></tr>';
       return;
     }
 
@@ -1307,9 +1307,9 @@
         <td><span class="badge bg-emerald text-white fw-bold">Score: ${item.key}</span></td>
         <td class="font-monospace fw-bold small">${c.id || 'N/A'}</td>
         <td class="small">${c.title || 'Record'}</td>
-        <td class="small text-muted">${c.sector || 'General'}</td>
+        <td class="small ">${c.sector || 'General'}</td>
         <td><span class="badge-priority ${sev}" style="font-size:0.65rem;">${sev}</span></td>
-        <td><span class="badge bg-subtle text-muted border small">${c.status || 'Pending'}</span></td>
+        <td><span class="badge bg-subtle  border small">${c.status || 'Pending'}</span></td>
       </tr>
     `;
     });
@@ -1408,7 +1408,7 @@
       data.path.forEach((node, idx) => {
         html += `<span class="graph-node-chip visited-step">${node}</span>`;
         if (idx < data.path.length - 1) {
-          html += `<i class="fas fa-arrow-right text-muted small"></i>`;
+          html += `<i class="fas fa-arrow-right  small"></i>`;
         }
       });
       container.innerHTML = html;

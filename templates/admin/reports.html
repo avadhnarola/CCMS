@@ -7,14 +7,15 @@
 <div class="row g-4 mb-4">
   <div class="col-lg-5">
     <div class="ccms-card p-4 shadow-sm h-100">
-      <h5 class="fw-bold text-heading mb-3"><i class="fas fa-filter text-primary me-2"></i>Generate Custom Audit Dossier</h5>
+      <h5 class="fw-bold text-heading mb-3"><i class="fas fa-filter text-primary me-2"></i>Generate Custom Audit Dossier
+      </h5>
       <form action="{{ url_for('admin_reports') }}" method="GET">
         <div class="mb-3">
           <label class="form-label">Department Scope</label>
           <select name="dept" class="form-select">
             <option value="all">All Monitored Departments</option>
             {% for dept in departments %}
-              <option value="{{ dept.name }}">{{ dept.name }}</option>
+            <option value="{{ dept.name }}">{{ dept.name }}</option>
             {% endfor %}
           </select>
         </div>
@@ -55,37 +56,40 @@
   <div class="col-lg-7">
     <div class="ccms-card p-4 shadow-sm h-100">
       <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
-        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-file-invoice text-emerald me-2"></i>Audit Report Output</h5>
+        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-file-invoice text-emerald me-2"></i>Audit Report Output
+        </h5>
         <span class="badge bg-primary-subtle text-primary border">{{ report_cases|length }} Matching Cases</span>
       </div>
 
       {% if report_cases %}
-        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-          <table class="table-custom">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Sector</th>
-                <th>Severity</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for c in report_cases %}
-                <tr>
-                  <td><span class="fw-bold text-primary brand-font">{{ c.complaint_id }}</span></td>
-                  <td><div class="text-truncate" style="max-width: 180px;">{{ c.complaint_title }}</div></td>
-                  <td><span class="small text-muted">{{ c.sector }}</span></td>
-                  <td><span class="badge-priority {{ c.severity }}">{{ c.severity }}</span></td>
-                  <td><span class="badge-status {{ c.complaint_status }}">{{ c.complaint_status }}</span></td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Sector</th>
+              <th>Severity</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in report_cases %}
+            <tr>
+              <td><span class="fw-bold text-primary brand-font">{{ c.complaint_id }}</span></td>
+              <td>
+                <div class="text-truncate" style="max-width: 180px;">{{ c.complaint_title }}</div>
+              </td>
+              <td><span class="small ">{{ c.sector }}</span></td>
+              <td><span class="badge-priority {{ c.severity }}">{{ c.severity }}</span></td>
+              <td><span class="badge-status {{ c.complaint_status }}">{{ c.complaint_status }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
       {% else %}
-        <p class="text-muted small py-4 text-center">No cases found matching the selected timeframe and criteria.</p>
+      <p class=" small py-4 text-center">No cases found matching the selected timeframe and criteria.</p>
       {% endif %}
     </div>
   </div>

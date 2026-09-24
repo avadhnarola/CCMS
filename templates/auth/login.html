@@ -13,32 +13,37 @@
           <h2 class="brand-font fw-bold text-primary mb-0">CCMS</h2>
         </a>
 
-        <div class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill mb-3 fw-bold" style="font-size:0.7rem; letter-spacing:1px;">
+        <div
+          class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill mb-3 fw-bold"
+          style="font-size:0.7rem; letter-spacing:1px;">
           <i class="fas fa-shield-halved me-1"></i> CITIZEN WHISTLEBLOWER LOGIN
         </div>
 
         <h4 class="fw-bold text-heading mb-1">Access Your Dashboard</h4>
-        <p class="text-muted small mb-4">Zero-Knowledge Authentication Protocol</p>
+        <p class=" small mb-4">Zero-Knowledge Authentication Protocol</p>
 
         <!-- Form -->
         <form action="{{ url_for('citizen_login') }}" method="POST" class="text-start">
           <div class="mb-3">
             <label class="form-label">Registered Email or Mobile Number</label>
             <div class="input-group">
-              <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-user"></i></span>
-              <input type="text" name="email_or_phone" class="form-control border-start-0" placeholder="e.g. citizen@gmail.com or 9601833510" required>
+              <span class="input-group-text bg-subtle border-end-0 "><i class="fas fa-user"></i></span>
+              <input type="text" name="email_or_phone" class="form-control border-start-0"
+                placeholder="e.g. citizen@gmail.com or 9601833510" required>
             </div>
           </div>
 
           <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center">
               <label class="form-label">Password</label>
-              <a href="#" class="text-muted small text-decoration-none hover-primary">Forgot?</a>
+              <a href="#" class=" small text-decoration-none hover-primary">Forgot?</a>
             </div>
             <div class="input-group">
-              <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-key"></i></span>
-              <input type="password" id="loginPassword" name="password" class="form-control border-start-0 border-end-0" placeholder="Enter password" required>
-              <button type="button" class="input-group-text bg-subtle border-start-0 text-muted" onclick="togglePasswordVisibility('loginPassword', this)">
+              <span class="input-group-text bg-subtle border-end-0 "><i class="fas fa-key"></i></span>
+              <input type="password" id="loginPassword" name="password" class="form-control border-start-0 border-end-0"
+                placeholder="Enter password" required>
+              <button type="button" class="input-group-text bg-subtle border-start-0 "
+                onclick="togglePasswordVisibility('loginPassword', this)">
                 <i class="fas fa-eye"></i>
               </button>
             </div>
@@ -47,7 +52,7 @@
           <div class="d-flex align-items-center justify-content-between mb-4">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="rememberMe" checked>
-              <label class="form-check-label small text-muted" for="rememberMe">Remember session</label>
+              <label class="form-check-label small " for="rememberMe">Remember session</label>
             </div>
           </div>
 
@@ -55,14 +60,15 @@
             <i class="fas fa-lock me-1"></i> Secure Citizen Sign In
           </button>
 
-          <div class="text-center text-muted small">
+          <div class="text-center  small">
             Don't have a whistleblower account?
-            <a href="{{ url_for('citizen_register') }}" class="text-primary fw-bold text-decoration-none">Register Now</a>
+            <a href="{{ url_for('citizen_register') }}" class="text-primary fw-bold text-decoration-none">Register
+              Now</a>
           </div>
         </form>
 
         <!-- Bottom Security Note -->
-        <div class="mt-4 pt-3 border-top text-muted small d-flex align-items-center justify-content-center gap-1">
+        <div class="mt-4 pt-3 border-top  small d-flex align-items-center justify-content-center gap-1">
           <i class="fas fa-lock text-emerald"></i>
           <span>Protected by AES-256 GCM Architecture</span>
         </div>
@@ -70,9 +76,11 @@
 
       <!-- Quick Switch to Officer or Admin Portal -->
       <div class="text-center mt-3 d-flex justify-content-center gap-3 small">
-        <a href="{{ url_for('officer_login') }}" class="text-muted text-decoration-none"><i class="fas fa-shield me-1 text-cyan"></i> Officer Login</a>
-        <span class="text-muted">&bull;</span>
-        <a href="{{ url_for('admin_login') }}" class="text-muted text-decoration-none"><i class="fas fa-user-shield me-1 text-violet"></i> Admin Console</a>
+        <a href="{{ url_for('officer_login') }}" class=" text-decoration-none"><i
+            class="fas fa-shield me-1 text-cyan"></i> Officer Login</a>
+        <span class="">&bull;</span>
+        <a href="{{ url_for('admin_login') }}" class=" text-decoration-none"><i
+            class="fas fa-user-shield me-1 text-violet"></i> Admin Console</a>
       </div>
     </div>
   </div>
@@ -81,16 +89,16 @@
 
 {% block extra_js %}
 <script>
-function togglePasswordVisibility(fieldId, btn) {
-  const input = document.getElementById(fieldId);
-  const icon = btn.querySelector('i');
-  if (input.type === 'password') {
-    input.type = 'text';
-    icon.className = 'fas fa-eye-slash';
-  } else {
-    input.type = 'password';
-    icon.className = 'fas fa-eye';
+  function togglePasswordVisibility(fieldId, btn) {
+    const input = document.getElementById(fieldId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.className = 'fas fa-eye-slash';
+    } else {
+      input.type = 'password';
+      icon.className = 'fas fa-eye';
+    }
   }
-}
 </script>
 {% endblock %}

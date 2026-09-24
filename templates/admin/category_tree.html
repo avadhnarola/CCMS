@@ -1,0 +1,374 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Binary Tree Category Classifier | CCMS{% endblock %}
+{% block page_heading %}Hierarchical Category Classifier (Binary Tree){% endblock %}
+
+{% block extra_css %}
+<style>
+  .tree-container {
+    padding: 2rem 1rem;
+    overflow-x: auto;
+    text-align: center;
+  }
+
+  .tree-node-card {
+    display: inline-block;
+    padding: 0.85rem 1.25rem;
+    border-radius: 0.75rem;
+    background: var(--bg-surface, #ffffff);
+    border: 2px solid rgba(124, 58, 237, 0.3);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    min-width: 140px;
+  }
+
+  .tree-node-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(124, 58, 237, 0.2);
+    border-color: #7c3aed;
+  }
+
+  .tree-node-card.active-selected {
+    border-color: #2563eb;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+  }
+
+  .node-root {
+    border-color: #7c3aed;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.12));
+  }
+
+  .node-branch {
+    border-color: #06b6d4;
+  }
+
+  .node-leaf {
+    border-color: #10b981;
+  }
+
+  .branch-svg {
+    width: 100%;
+    height: 48px;
+    display: block;
+  }
+
+  .tree-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1rem;
+  }
+
+  .pill-inorder {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .pill-preorder {
+    background: #7c3aed;
+    color: white;
+  }
+
+  .pill-postorder {
+    background: #f59e0b;
+    color: black;
+  }
+
+  .pill-level {
+    background: #10b981;
+    color: white;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+  <!-- HERO BANNER -->
+  <div class="ccms-card p-4 mb-4 glass-panel border-primary border-opacity-25"
+    style="background: linear-gradient(135deg, rgba(124,58,237,0.08) 0%, rgba(6,182,212,0.08) 100%);">
+    <div class="row align-items-center g-3">
+      <div class="col-lg-8">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+          <span class="badge bg-primary text-white rounded-pill px-3 py-1">DSA Phase 2 &bull; CLO 2</span>
+          <span class="badge bg-emerald-subtle text-emerald border rounded-pill px-3 py-1">Binary Tree Hierarchy
+            Form</span>
+        </div>
+        <h3 class="fw-bold text-heading brand-font mb-1">
+          <i class="fas fa-sitemap text-violet me-2"></i>Complaint Category Binary Tree Form
+        </h3>
+        <p class=" small mb-0">
+          Visual Binary Tree structure classifying corruption complaints. Select any node in the hierarchy to instantly
+          autofill the categorization form or lodge a classified complaint.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <a href="{{ url_for('admin_categories') }}" class="btn btn-outline-custom btn-sm me-2">
+          <i class="fas fa-list me-1"></i> List View
+        </a>
+        <a href="{{ url_for('admin_phase2') }}" class="btn btn-brand btn-sm">
+          <i class="fas fa-network-wired me-1"></i> Phase 2 Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- LEFT: INTERACTIVE BINARY TREE VISUALIZATION -->
+    <div class="col-xl-7">
+      <div class="ccms-card p-4 shadow-sm h-100">
+        <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
+          <h5 class="fw-bold text-heading mb-0">
+            <i class="fas fa-diagram-project text-cyan me-2"></i>Category Binary Tree Structure
+          </h5>
+          <span class="badge bg-subtle  border">Height: 3 &bull; Nodes: 7</span>
+        </div>
+
+        <!-- THE BINARY TREE DIAGRAM -->
+        <div class="tree-container">
+
+          <!-- LEVEL 0: ROOT NODE (CORRUPTION) -->
+          <div class="d-flex justify-content-center mb-1">
+            <div class="tree-node-card node-root active-selected" id="node-CORRUPTION"
+              onclick="selectTreeNode('CORRUPTION', 'CAT-ROOT', 'Master Root', 'Systemic', 'Central Vigilance Directorate (HQ)', 'Master classification taxonomy covering all forms of public corruption and official misconduct.')">
+              <span class="tree-badge bg-primary text-white mb-1 d-inline-block">ROOT NODE</span>
+              <div class="fw-bold text-primary fs-6"><i class="fas fa-shield-halved me-1"></i> CORRUPTION</div>
+              <div class="" style="font-size:0.7rem;">Super Directorate</div>
+            </div>
+          </div>
+
+          <!-- LEVEL 0 -> 1 BRANCH LINES -->
+          <div class="d-flex justify-content-center">
+            <svg class="branch-svg" viewBox="0 0 600 48" preserveAspectRatio="none">
+              <!-- Left connector: (300,0) to (150,48) -->
+              <line x1="300" y1="0" x2="150" y2="48" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="4,2" />
+              <!-- Right connector: (300,0) to (450,48) -->
+              <line x1="300" y1="0" x2="450" y2="48" stroke="#06b6d4" stroke-width="2.5" stroke-dasharray="4,2" />
+            </svg>
+          </div>
+
+          <!-- LEVEL 1: LEFT (BRIBERY) & RIGHT (FRAUD) -->
+          <div class="row g-2 justify-content-center mb-1">
+            <div class="col-6 text-center">
+              <div class="tree-node-card node-branch" id="node-BRIBERY"
+                onclick="selectTreeNode('BRIBERY', 'CAT-BRB', 'Left Branch', 'Critical', 'Police, Transport & Land Revenue', 'Corrupt exchange, solicitation, or reception of illegal financial gratification for official acts.')">
+                <span class="tree-badge text-white mb-1 d-inline-block" style="background:#7c3aed;">LEFT BRANCH</span>
+                <div class="fw-bold text-heading fs-6"><i class="fas fa-hand-holding-dollar text-violet me-1"></i>
+                  BRIBERY</div>
+                <div class="" style="font-size:0.7rem;">Solicitation &amp; Greed</div>
+              </div>
+            </div>
+            <div class="col-6 text-center">
+              <div class="tree-node-card node-branch" id="node-FRAUD"
+                onclick="selectTreeNode('FRAUD', 'CAT-FRD', 'Right Branch', 'Critical', 'Public Works & Municipal Corporation', 'Intentional deception, embezzlement, or falsification resulting in wrongful loss to the public treasury.')">
+                <span class="tree-badge text-white mb-1 d-inline-block" style="background:#06b6d4;">RIGHT BRANCH</span>
+                <div class="fw-bold text-heading fs-6"><i class="fas fa-file-invoice-dollar text-cyan me-1"></i> FRAUD
+                </div>
+                <div class="" style="font-size:0.7rem;">Deception &amp; Siphon</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LEVEL 1 -> 2 BRANCH LINES -->
+          <div class="row g-2 justify-content-center">
+            <div class="col-6">
+              <svg class="branch-svg" viewBox="0 0 300 48" preserveAspectRatio="none">
+                <line x1="150" y1="0" x2="75" y2="48" stroke="#10b981" stroke-width="2" />
+                <line x1="150" y1="0" x2="225" y2="48" stroke="#10b981" stroke-width="2" />
+              </svg>
+            </div>
+            <div class="col-6">
+              <svg class="branch-svg" viewBox="0 0 300 48" preserveAspectRatio="none">
+                <line x1="150" y1="0" x2="75" y2="48" stroke="#10b981" stroke-width="2" />
+                <line x1="150" y1="0" x2="225" y2="48" stroke="#10b981" stroke-width="2" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- LEVEL 2: LEAF CATEGORIES -->
+          <div class="row g-2 justify-content-center">
+            <!-- Left-Left: DEMAND -->
+            <div class="col-3 text-center">
+              <div class="tree-node-card node-leaf p-2" id="node-DEMAND"
+                onclick="selectTreeNode('DEMAND', 'CAT-BRB-DEM', 'Leaf (Left-Left)', 'Critical', 'Anti-Extortion & Police Oversight Wing', 'Active solicitation, coercion, or extortion of bribes/kickbacks from citizens prior to service delivery.')">
+                <span class="tree-badge bg-emerald text-white mb-1 d-inline-block">LEAF</span>
+                <div class="fw-bold small text-heading"><i class="fas fa-gavel text-danger me-1"></i> DEMAND</div>
+                <div class="" style="font-size:0.65rem;">Extortion</div>
+              </div>
+            </div>
+            <!-- Left-Right: ACCEPT -->
+            <div class="col-3 text-center">
+              <div class="tree-node-card node-leaf p-2" id="node-ACCEPT"
+                onclick="selectTreeNode('ACCEPT', 'CAT-BRB-ACC', 'Leaf (Left-Right)', 'High', 'Central Triage & Verification Desk', 'Voluntary receipt or taking of illicit kickbacks, speed money, or covert gifts by a public officer.')">
+                <span class="tree-badge bg-emerald text-white mb-1 d-inline-block">LEAF</span>
+                <div class="fw-bold small text-heading"><i class="fas fa-money-bill-transfer text-warning me-1"></i>
+                  ACCEPT</div>
+                <div class="" style="font-size:0.65rem;">Taking Bribe</div>
+              </div>
+            </div>
+            <!-- Right-Left: FINANCIAL -->
+            <div class="col-3 text-center">
+              <div class="tree-node-card node-leaf p-2" id="node-FINANCIAL"
+                onclick="selectTreeNode('FINANCIAL', 'CAT-FRD-FIN', 'Leaf (Right-Left)', 'Critical', 'Public Procurement Audit Cell', 'Treasury fund embezzlement, procurement tender rigging, ghost beneficiary billing, and siphon schemes.')">
+                <span class="tree-badge bg-emerald text-white mb-1 d-inline-block">LEAF</span>
+                <div class="fw-bold small text-heading"><i class="fas fa-sack-dollar text-primary me-1"></i> FINANCIAL
+                </div>
+                <div class="" style="font-size:0.65rem;">Embezzlement</div>
+              </div>
+            </div>
+            <!-- Right-Right: DOCUMENT -->
+            <div class="col-3 text-center">
+              <div class="tree-node-card node-leaf p-2" id="node-DOCUMENT"
+                onclick="selectTreeNode('DOCUMENT', 'CAT-FRD-DOC', 'Leaf (Right-Right)', 'High', 'Land Records Intelligence Unit', 'Forgery of official certificates, title deeds, falsified audit registers, and identity manipulation.')">
+                <span class="tree-badge bg-emerald text-white mb-1 d-inline-block">LEAF</span>
+                <div class="fw-bold small text-heading"><i class="fas fa-file-signature text-info me-1"></i> DOCUMENT
+                </div>
+                <div class="" style="font-size:0.65rem;">Forgery</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- TREE TRAVERSALS ACCORDION / BAR -->
+        <div class="p-3 rounded bg-subtle border mt-4">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="small fw-bold text-uppercase" style="letter-spacing:0.5px;">
+              <i class="fas fa-route text-primary me-1"></i> Category Tree Traversals:
+            </span>
+          </div>
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <button class="btn btn-xs btn-outline-primary" onclick="showCatTraversal('inorder')">Inorder (L &rarr; Root
+              &rarr; R)</button>
+            <button class="btn btn-xs btn-outline-primary" onclick="showCatTraversal('preorder')">Preorder (Root
+              &rarr; L &rarr; R)</button>
+            <button class="btn btn-xs btn-outline-primary" onclick="showCatTraversal('postorder')">Postorder
+              (L &rarr; R &rarr; Root)</button>
+            <button class="btn btn-xs btn-outline-success" onclick="showCatTraversal('level_order')">Level-Order
+              (BFS)</button>
+          </div>
+          <div class="font-monospace small fw-bold text-primary p-2 bg-surface rounded border" id="catTraversalSeq">
+            DEMAND &rarr; BRIBERY &rarr; ACCEPT &rarr; CORRUPTION &rarr; FINANCIAL &rarr; FRAUD &rarr; DOCUMENT
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: CLASSIFICATION & COMPLAINT FORM -->
+    <div class="col-xl-5">
+      <div class="ccms-card p-4 shadow-sm h-100">
+        <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
+          <h5 class="fw-bold text-heading mb-0">
+            <i class="fas fa-clipboard-check text-emerald me-2"></i>Classification Action Form
+          </h5>
+          <span class="badge bg-emerald-subtle text-emerald border" id="activeNodeBadge">CORRUPTION</span>
+        </div>
+
+        <form action="{{ url_for('admin_category_tree_action') }}" method="POST">
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-heading">Selected Binary Tree Node</label>
+            <div class="input-group">
+              <span class="input-group-text bg-subtle"><i class="fas fa-code-branch"></i></span>
+              <input type="text" id="formNodeName" name="node_name" class="form-control fw-bold text-primary"
+                value="CORRUPTION" readonly>
+              <input type="text" id="formNodeCode" name="node_code" class="form-control font-monospace"
+                style="max-width: 120px;" value="CAT-ROOT" readonly>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-heading">Hierarchy Level</label>
+              <input type="text" id="formNodeLevel" class="form-control form-control-sm" value="Master Root (Level 0)"
+                readonly>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-heading">Default Severity</label>
+              <select name="severity" id="formNodeSeverity" class="form-select form-select-sm">
+                <option value="Critical">Critical</option>
+                <option value="High" selected>High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-heading">Jurisdictional Directorate</label>
+            <input type="text" id="formNodeDept" name="dept" class="form-control form-control-sm"
+              value="Central Vigilance Directorate (HQ)">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-heading">Category Description &amp; Scope</label>
+            <textarea id="formNodeDesc" name="description" class="form-control form-control-sm"
+              rows="3">Master classification taxonomy covering all forms of public corruption and official misconduct.</textarea>
+          </div>
+
+          <div class="p-3 rounded bg-subtle border mb-4">
+            <div class="small fw-bold text-heading mb-1"><i class="fas fa-bolt text-warning me-1"></i> Quick Action
+              Options:</div>
+            <div class="form-check mb-1">
+              <input class="form-check-input" type="radio" name="action_type" id="act_register"
+                value="register_category" checked>
+              <label class="form-check-label small" for="act_register">
+                Add / Synchronize this node with standard reporting categories
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="action_type" id="act_sample"
+                value="generate_sample_case">
+              <label class="form-check-label small" for="act_sample">
+                Generate sample verified complaint under this binary tree branch
+              </label>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-custom btn-sm" onclick="location.reload();">Reset</button>
+            <button type="submit" class="btn btn-brand btn-sm">
+              <i class="fas fa-paper-plane me-1"></i> Submit Classification
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const catTraversals = {
+    'inorder': ['DEMAND', 'BRIBERY', 'ACCEPT', 'CORRUPTION', 'FINANCIAL', 'FRAUD', 'DOCUMENT'],
+    'preorder': ['CORRUPTION', 'BRIBERY', 'DEMAND', 'ACCEPT', 'FRAUD', 'FINANCIAL', 'DOCUMENT'],
+    'postorder': ['DEMAND', 'ACCEPT', 'BRIBERY', 'FINANCIAL', 'DOCUMENT', 'FRAUD', 'CORRUPTION'],
+    'level_order': ['CORRUPTION', 'BRIBERY', 'FRAUD', 'DEMAND', 'ACCEPT', 'FINANCIAL', 'DOCUMENT']
+  };
+
+  function selectTreeNode(name, code, level, severity, dept, desc) {
+    document.querySelectorAll('.tree-node-card').forEach(el => el.classList.remove('active-selected'));
+    const target = document.getElementById(`node-${name}`);
+    if (target) target.classList.add('active-selected');
+
+    document.getElementById('activeNodeBadge').textContent = name;
+    document.getElementById('formNodeName').value = name;
+    document.getElementById('formNodeCode').value = code;
+    document.getElementById('formNodeLevel').value = level;
+    document.getElementById('formNodeSeverity').value = severity;
+    document.getElementById('formNodeDept').value = dept;
+    document.getElementById('formNodeDesc').value = desc;
+  }
+
+  function showCatTraversal(type) {
+    const seq = catTraversals[type] || [];
+    document.getElementById('catTraversalSeq').innerHTML = seq.map((item, i) => `
+      <span class="badge ${item === document.getElementById('formNodeName').value ? 'bg-primary' : 'bg-subtle text-heading'} border">${i + 1}. ${item}</span>
+    `).join(' &rarr; ');
+  }
+</script>
+{% endblock %}

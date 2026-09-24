@@ -20,25 +20,26 @@
         </div>
 
         <h4 class="fw-bold text-heading mb-1">Master Control Console</h4>
-        <p class="text-muted small mb-4">Root Level Governance &amp; Vigilance Administration</p>
+        <p class=" small mb-4">Root Level Governance &amp; Vigilance Administration</p>
 
         <!-- Admin Login Form -->
         <form action="{{ url_for('admin_login') }}" method="POST" class="text-start">
           <div class="mb-3">
             <label class="form-label">Admin Email</label>
             <div class="input-group">
-              <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
-              <input type="email" name="email" class="form-control border-start-0" placeholder="admin@ccms.gov.in" value="admin@ccms.gov.in" required>
+              <span class="input-group-text bg-subtle border-end-0 "><i class="fas fa-envelope"></i></span>
+              <input type="email" name="email" class="form-control border-start-0" placeholder="admin@ccms.gov.in"
+                value="admin@ccms.gov.in" required>
             </div>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Master Key</label>
             <div class="input-group">
-              <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-key"></i></span>
+              <span class="input-group-text bg-subtle border-end-0 "><i class="fas fa-key"></i></span>
               <input type="password" id="adminPwd" name="password" class="form-control border-start-0 border-end-0"
                 placeholder="Enter master key" value="admin123" required>
-              <button type="button" class="input-group-text bg-subtle border-start-0 text-muted"
+              <button type="button" class="input-group-text bg-subtle border-start-0 "
                 onclick="toggleAdminPwd('adminPwd', this)">
                 <i class="fas fa-eye"></i>
               </button>
@@ -51,7 +52,7 @@
           </button>
         </form>
 
-        <div class="p-3 rounded bg-subtle border text-start small text-muted">
+        <div class="p-3 rounded bg-subtle border text-start small ">
           <div class="fw-bold text-heading mb-1"><i class="fas fa-circle-info text-primary me-1"></i> Admin Credentials:
           </div>
           <div>Email: <code>admin@ccms.gov.in.com</code></div>

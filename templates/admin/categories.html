@@ -8,36 +8,42 @@
   <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-3">
     <div>
       <h5 class="fw-bold text-heading mb-0"><i class="fas fa-tags text-amber me-2"></i>Reportable Misconduct Types</h5>
-      <span class="text-muted small">Standardized corruption taxonomy and reporting classifications</span>
+      <span class=" small">Standardized corruption taxonomy and reporting classifications</span>
     </div>
 
-    <button type="button" class="btn btn-brand btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-      <i class="fas fa-plus me-1"></i> Add Misconduct Type
-    </button>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('admin_category_tree') }}" class="btn btn-outline-brand btn-sm">
+        <i class="fas fa-sitemap me-1"></i> Binary Tree Form
+      </a>
+      <button type="button" class="btn btn-brand btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+        <i class="fas fa-plus me-1"></i> Add Misconduct Type
+      </button>
+    </div>
   </div>
 
   <div class="row g-3">
     {% for cat in categories %}
-      <div class="col-md-6 col-lg-4">
-        <div class="ccms-card p-4 h-100 d-flex flex-column justify-content-between">
-          <div>
-            <div class="d-flex align-items-center justify-content-between mb-3">
-              <div class="stat-icon" style="background: var(--bg-subtle); color: var(--primary);">
-                <i class="fas {{ cat.icon }}"></i>
-              </div>
-              <span class="badge bg-subtle text-muted border">{{ cat.dept }}</span>
+    <div class="col-md-6 col-lg-4">
+      <div class="ccms-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="stat-icon" style="background: var(--bg-subtle); color: var(--primary);">
+              <i class="fas {{ cat.icon }}"></i>
             </div>
-            <h5 class="fw-bold text-heading mb-1">{{ cat.name }}</h5>
-            <p class="text-muted small mb-3">{{ cat.description }}</p>
+            <span class="badge bg-subtle  border">{{ cat.dept }}</span>
           </div>
-
-          <form action="{{ url_for('admin_delete_category', category_id=cat.category_id) }}" method="POST" onsubmit="return confirm('Remove this category?');" class="text-end border-top pt-2">
-            <button type="submit" class="btn btn-sm btn-outline-danger">
-              <i class="fas fa-trash-can me-1"></i> Delete
-            </button>
-          </form>
+          <h5 class="fw-bold text-heading mb-1">{{ cat.name }}</h5>
+          <p class=" small mb-3">{{ cat.description }}</p>
         </div>
+
+        <form action="{{ url_for('admin_delete_category', category_id=cat.category_id) }}" method="POST"
+          onsubmit="return confirm('Remove this category?');" class="text-end border-top pt-2">
+          <button type="submit" class="btn btn-sm btn-outline-danger">
+            <i class="fas fa-trash-can me-1"></i> Delete
+          </button>
+        </form>
       </div>
+    </div>
     {% endfor %}
   </div>
 </div>
@@ -54,14 +60,15 @@
         <div class="modal-body text-start">
           <div class="mb-3">
             <label class="form-label">Category Name</label>
-            <input type="text" name="name" class="form-control" placeholder="e.g. Subsidy Embezzlement &amp; Diversion" required>
+            <input type="text" name="name" class="form-control" placeholder="e.g. Subsidy Embezzlement &amp; Diversion"
+              required>
           </div>
           <div class="row g-3 mb-3">
             <div class="col-md-6">
               <label class="form-label">Primary Department</label>
               <select name="dept" class="form-select" required>
                 {% for dept in departments %}
-                  <option value="{{ dept.name }}">{{ dept.name }}</option>
+                <option value="{{ dept.name }}">{{ dept.name }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -72,7 +79,8 @@
           </div>
           <div class="mb-3">
             <label class="form-label">Description &amp; Criteria</label>
-            <textarea name="description" class="form-control" rows="3" placeholder="Brief criteria for classifying complaints under this tag..." required></textarea>
+            <textarea name="description" class="form-control" rows="3"
+              placeholder="Brief criteria for classifying complaints under this tag..." required></textarea>
           </div>
         </div>
         <div class="modal-footer border-top">

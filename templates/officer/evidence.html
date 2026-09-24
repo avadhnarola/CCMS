@@ -7,56 +7,63 @@
 <div class="ccms-card p-4 shadow-sm mb-4">
   <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-4 border-bottom gap-3">
     <div>
-      <h5 class="fw-bold text-heading mb-0"><i class="fas fa-folder-tree text-cyan me-2"></i>Investigation Evidence Vault</h5>
-      <span class="text-muted small">Forensic media files, voice recordings, receipts, and documents submitted with complaints</span>
+      <h5 class="fw-bold text-heading mb-0"><i class="fas fa-folder-tree text-cyan me-2"></i>Investigation Evidence
+        Vault</h5>
+      <span class=" small">Forensic media files, voice recordings, receipts, and documents submitted with
+        complaints</span>
     </div>
   </div>
 
   {% if evidence_items %}
-    <div class="row g-3">
-      {% for item in evidence_items %}
-        <div class="col-md-6 col-lg-4">
-          <div class="ccms-card p-3 h-100 d-flex flex-column justify-content-between">
-            <div>
-              <div class="d-flex align-items-center justify-content-between mb-3">
-                <div class="stat-icon" style="background: var(--bg-subtle);">
-                  {% if 'jpg' in item.filename.lower() or 'png' in item.filename.lower() or 'jpeg' in item.filename.lower() %}
-                    <i class="fas fa-file-image text-primary"></i>
-                  {% elif 'mp3' in item.filename.lower() or 'wav' in item.filename.lower() or 'm4a' in item.filename.lower() %}
-                    <i class="fas fa-file-audio text-warning"></i>
-                  {% elif 'mp4' in item.filename.lower() or 'mov' in item.filename.lower() %}
-                    <i class="fas fa-file-video text-danger"></i>
-                  {% else %}
-                    <i class="fas fa-file-pdf text-danger"></i>
-                  {% endif %}
-                </div>
-                <span class="badge bg-cyan text-dark fw-bold" style="background:#06b6d4;">{{ item.complaint_id }}</span>
-              </div>
-
-              <h6 class="fw-bold text-heading text-truncate mb-1" title="{{ item.filename }}">{{ item.filename }}</h6>
-              <div class="text-muted small mb-3">Incident: {{ item.date }}</div>
+  <div class="row g-3">
+    {% for item in evidence_items %}
+    <div class="col-md-6 col-lg-4">
+      <div class="ccms-card p-3 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="stat-icon" style="background: var(--bg-subtle);">
+              {% if 'jpg' in item.filename.lower() or 'png' in item.filename.lower() or 'jpeg' in item.filename.lower()
+              %}
+              <i class="fas fa-file-image text-primary"></i>
+              {% elif 'mp3' in item.filename.lower() or 'wav' in item.filename.lower() or 'm4a' in item.filename.lower()
+              %}
+              <i class="fas fa-file-audio text-warning"></i>
+              {% elif 'mp4' in item.filename.lower() or 'mov' in item.filename.lower() %}
+              <i class="fas fa-file-video text-danger"></i>
+              {% else %}
+              <i class="fas fa-file-pdf text-danger"></i>
+              {% endif %}
             </div>
-
-            <div class="pt-2 border-top d-flex align-items-center justify-content-between">
-              <a href="{{ url_for('officer_investigation', case_id=item.complaint_id) }}" class="small text-cyan text-decoration-none">
-                <i class="fas fa-microscope me-1"></i> View Case
-              </a>
-              <a href="{{ url_for('uploaded_file', filename=item.filename) }}" target="_blank" class="btn btn-sm btn-outline-custom">
-                <i class="fas fa-download me-1"></i> Download
-              </a>
-            </div>
+            <span class="badge bg-cyan text-dark fw-bold" style="background:#06b6d4;">{{ item.complaint_id }}</span>
           </div>
+
+          <h6 class="fw-bold text-heading text-truncate mb-1" title="{{ item.filename }}">{{ item.filename }}</h6>
+          <div class=" small mb-3">Incident: {{ item.date }}</div>
         </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="text-center py-5">
-      <div class="stat-icon mx-auto mb-3" style="background: rgba(6,182,212,0.1); color: var(--accent-cyan);">
-        <i class="fas fa-folder-open"></i>
+
+        <div class="pt-2 border-top d-flex align-items-center justify-content-between">
+          <a href="{{ url_for('officer_investigation', case_id=item.complaint_id) }}"
+            class="small text-cyan text-decoration-none">
+            <i class="fas fa-microscope me-1"></i> View Case
+          </a>
+          <a href="{{ url_for('uploaded_file', filename=item.filename) }}" target="_blank"
+            class="btn btn-sm btn-outline-custom">
+            <i class="fas fa-download me-1"></i> Download
+          </a>
+        </div>
       </div>
-      <h5 class="fw-bold text-heading mb-1">No Evidence Files Available</h5>
-      <p class="text-muted small mb-0">Attached evidence files for your assigned cases will appear here for forensic examination.</p>
     </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <div class="stat-icon mx-auto mb-3" style="background: rgba(6,182,212,0.1); color: var(--accent-cyan);">
+      <i class="fas fa-folder-open"></i>
+    </div>
+    <h5 class="fw-bold text-heading mb-1">No Evidence Files Available</h5>
+    <p class=" small mb-0">Attached evidence files for your assigned cases will appear here for forensic examination.
+    </p>
+  </div>
   {% endif %}
 </div>
 {% endblock %}

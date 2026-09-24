@@ -7,75 +7,76 @@
 <div class="ccms-card p-4 shadow-sm mb-4">
   <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-3">
     <div>
-      <h5 class="fw-bold text-heading mb-0"><i class="fas fa-users text-info me-2"></i>Citizen Whistleblower Accounts</h5>
-      <span class="text-muted small">Registered citizen accounts in MySQL database <code>ccms.users</code></span>
+      <h5 class="fw-bold text-heading mb-0"><i class="fas fa-users text-info me-2"></i>Citizen Whistleblower Accounts
+      </h5>
+      <span class=" small">Registered citizen accounts in MySQL database <code>ccms.users</code></span>
     </div>
 
     <div class="input-group input-group-sm" style="width: 220px;">
-      <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-search"></i></span>
+      <span class="input-group-text bg-subtle border-end-0 "><i class="fas fa-search"></i></span>
       <input type="text" id="searchCitizensBox" class="form-control border-start-0" placeholder="Filter citizens...">
     </div>
   </div>
 
   {% if citizens %}
-    <div class="table-responsive">
-      <table class="table-custom" id="adminCitizensTable">
-        <thead>
-          <tr>
-            <th>User ID</th>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Mobile Number</th>
-            <th>Address</th>
-            <th>Account Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for u in citizens %}
-            <tr>
-              <td><span class="fw-bold text-primary brand-font">#{{ u.id }}</span></td>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <div class="user-avatar-circle" style="width:32px; height:32px; font-size:0.75rem;">
-                    {{ u.full_name[:1]|upper }}
-                  </div>
-                  <div class="fw-semibold text-heading">{{ u.full_name }}</div>
-                </div>
-              </td>
-              <td><span class="small text-muted">{{ u.email }}</span></td>
-              <td><span class="small text-muted">{{ u.mobile_number }}</span></td>
-              <td><span class="small text-muted">{{ u.address or 'N/A' }}</span></td>
-              <td>
-                <span class="badge bg-success-subtle text-success border border-success-subtle">
-                  <i class="fas fa-check-circle me-1"></i> Active Verified
-                </span>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+  <div class="table-responsive">
+    <table class="table-custom" id="adminCitizensTable">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Mobile Number</th>
+          <th>Address</th>
+          <th>Account Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in citizens %}
+        <tr>
+          <td><span class="fw-bold text-primary brand-font">#{{ u.id }}</span></td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="user-avatar-circle" style="width:32px; height:32px; font-size:0.75rem;">
+                {{ u.full_name[:1]|upper }}
+              </div>
+              <div class="fw-semibold text-heading">{{ u.full_name }}</div>
+            </div>
+          </td>
+          <td><span class="small ">{{ u.email }}</span></td>
+          <td><span class="small ">{{ u.mobile_number }}</span></td>
+          <td><span class="small ">{{ u.address or 'N/A' }}</span></td>
+          <td>
+            <span class="badge bg-success-subtle text-success border border-success-subtle">
+              <i class="fas fa-check-circle me-1"></i> Active Verified
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
   {% else %}
-    <div class="text-center py-5">
-      <div class="stat-icon mx-auto mb-3" style="background: rgba(37,99,235,0.1); color: var(--primary);">
-        <i class="fas fa-users"></i>
-      </div>
-      <h5 class="fw-bold text-heading mb-1">No Registered Citizens</h5>
-      <p class="text-muted small mb-0">Citizens who register through the whistleblower portal will appear here.</p>
+  <div class="text-center py-5">
+    <div class="stat-icon mx-auto mb-3" style="background: rgba(37,99,235,0.1); color: var(--primary);">
+      <i class="fas fa-users"></i>
     </div>
+    <h5 class="fw-bold text-heading mb-1">No Registered Citizens</h5>
+    <p class=" small mb-0">Citizens who register through the whistleblower portal will appear here.</p>
+  </div>
   {% endif %}
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-document.getElementById('searchCitizensBox')?.addEventListener('keyup', function() {
-  const query = this.value.toLowerCase();
-  const rows = document.querySelectorAll('#adminCitizensTable tbody tr');
-  rows.forEach(row => {
-    const text = row.textContent.toLowerCase();
-    row.style.display = text.includes(query) ? '' : 'none';
+  document.getElementById('searchCitizensBox')?.addEventListener('keyup', function () {
+    const query = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#adminCitizensTable tbody tr');
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(query) ? '' : 'none';
+    });
   });
-});
 </script>
 {% endblock %}

@@ -10,17 +10,18 @@
       <h5 class="fw-bold text-heading mb-0">
         <i class="fas fa-folder-tree me-2" style="color: var(--primary);"></i>Global Complaints Inventory
       </h5>
-      <span class="text-muted small">Centralized supervisory oversight across all municipal, police, and revenue complaints</span>
+      <span class=" small">Centralized supervisory oversight across all municipal, police, and revenue complaints</span>
     </div>
 
     <div class="d-flex flex-wrap align-items-center gap-2">
       <!-- Search input -->
       <div class="input-group input-group-sm" style="width: 220px;">
-        <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-search"></i></span>
+        <span class="input-group-text bg-subtle border-end-0 "><i class="fas fa-search"></i></span>
         <input type="text" id="adminSearchComplaints" class="form-control border-start-0" placeholder="Filter cases...">
       </div>
 
-      <a href="{{ url_for('admin_assignment') }}" class="btn btn-sm btn-brand" style="background:var(--gradient-brand);">
+      <a href="{{ url_for('admin_assignment') }}" class="btn btn-sm btn-brand"
+        style="background:var(--gradient-brand);">
         <i class="fas fa-wand-magic-sparkles me-1"></i> Greedy Auto-Assign
       </a>
     </div>
@@ -49,13 +50,13 @@
           </td>
           <td>
             <div class="fw-semibold text-heading text-truncate" style="max-width: 200px;">{{ c.complaint_title }}</div>
-            <span class="text-muted small">{{ c.incident_date }}</span>
+            <span class=" small">{{ c.incident_date }}</span>
           </td>
           <td>
-            <span class="small text-muted">{{ c.sector }}</span>
+            <span class="small ">{{ c.sector }}</span>
           </td>
           <td>
-            <span class="badge bg-subtle text-muted border">{{ c.misconduct_category }}</span>
+            <span class="badge bg-subtle  border">{{ c.misconduct_category }}</span>
           </td>
           <td>
             <span class="badge-priority {{ c.severity }}">{{ c.severity }}</span>
@@ -72,14 +73,10 @@
                 class="btn btn-sm btn-outline-custom" title="View Dossier">
                 <i class="fas fa-eye"></i>
               </a>
-              <button type="button" 
-                      class="btn btn-sm btn-outline-custom assign-officer-btn" 
-                      title="Assign Officer"
-                      data-complaint-id="{{ c.complaint_id }}"
-                      data-complaint-title="{{ c.complaint_title }}"
-                      data-complaint-sector="{{ c.sector }}"
-                      data-complaint-severity="{{ c.severity }}"
-                      data-current-officer="{{ c.assigned_officer or '' }}">
+              <button type="button" class="btn btn-sm btn-outline-custom assign-officer-btn" title="Assign Officer"
+                data-complaint-id="{{ c.complaint_id }}" data-complaint-title="{{ c.complaint_title }}"
+                data-complaint-sector="{{ c.sector }}" data-complaint-severity="{{ c.severity }}"
+                data-current-officer="{{ c.assigned_officer or '' }}">
                 <i class="fas fa-user-plus"></i>
               </button>
               <form action="{{ url_for('admin_delete_complaint', complaint_id=c.complaint_id) }}" method="POST"
@@ -102,13 +99,14 @@
       <i class="fas fa-folder-open"></i>
     </div>
     <h5 class="fw-bold text-heading mb-1">No Complaints in System</h5>
-    <p class="text-muted small mb-0">Complaints submitted by citizens will appear here for administrative routing and audit.</p>
+    <p class=" small mb-0">Complaints submitted by citizens will appear here for administrative routing and audit.</p>
   </div>
   {% endif %}
 </div>
 
 <!-- Dedicated Dynamic Modal for Assigning Officer -->
-<div class="modal fade" id="assignOfficerModal" tabindex="-1" aria-labelledby="assignOfficerModalLabel" aria-hidden="true">
+<div class="modal fade" id="assignOfficerModal" tabindex="-1" aria-labelledby="assignOfficerModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
     <div class="modal-content assign-officer-modal">
       <div class="modal-header">
@@ -116,7 +114,7 @@
           <h5 class="modal-title fw-bold mb-0" id="assignOfficerModalLabel">
             <i class="fas fa-user-shield me-2" style="color: var(--primary);"></i>Assign Vigilance Officer
           </h5>
-          <span class="small text-muted" id="modalCaseIdText"></span>
+          <span class="small " id="modalCaseIdText"></span>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>

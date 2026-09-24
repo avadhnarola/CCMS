@@ -21,7 +21,7 @@
       </div>
       <h3 class="fw-bold text-heading brand-font mb-1">Welcome back, {{ session.get('full_name', 'Whistleblower') }}
       </h3>
-      <p class="text-muted small mb-0">
+      <p class=" small mb-0">
         Your submitted complaints are monitored 24/7 by the Anti-Corruption Bureau vigilance matrix. Track case
         progression or submit fresh evidence securely below.
       </p>
@@ -90,7 +90,7 @@
   <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-3">
     <div>
       <h5 class="fw-bold text-heading mb-0"><i class="fas fa-list-check text-primary me-2"></i>My Recent Complaints</h5>
-      <span class="text-muted small">Real-time status updates and vigilance actions</span>
+      <span class=" small">Real-time status updates and vigilance actions</span>
     </div>
     <div class="d-flex align-items-center gap-2">
       <input type="text" id="searchComplaintsInput" class="form-control form-control-sm"
@@ -122,13 +122,13 @@
           <td>
             <div class="fw-semibold text-heading text-truncate" style="max-width: 260px;">{{ item.complaint_title }}
             </div>
-            <span class="text-muted small">{{ item.sector }}</span>
+            <span class=" small">{{ item.sector }}</span>
           </td>
           <td>
-            <span class="badge bg-subtle text-muted border">{{ item.misconduct_category }}</span>
+            <span class="badge bg-subtle  border">{{ item.misconduct_category }}</span>
           </td>
           <td>
-            <span class="small text-muted">{{ item.incident_date }}</span>
+            <span class="small ">{{ item.incident_date }}</span>
           </td>
           <td>
             <span class="badge-priority {{ item.severity }}">{{ item.severity }}</span>
@@ -153,7 +153,7 @@
       <i class="fas fa-folder-plus"></i>
     </div>
     <h5 class="fw-bold text-heading mb-1">No Complaints Logged Yet</h5>
-    <p class="text-muted small mx-auto mb-4" style="max-width: 400px;">
+    <p class=" small mx-auto mb-4" style="max-width: 400px;">
       You haven't filed any corruption grievances. If you have observed bribery or public fraud, submit your first
       encrypted complaint.
     </p>
@@ -172,7 +172,7 @@
         <i class="fas fa-vault"></i>
       </div>
       <h6 class="fw-bold text-heading mb-2">Evidence Vault</h6>
-      <p class="text-muted small mb-3">Inspect encrypted media, audio recordings, invoices, and documents attached to
+      <p class=" small mb-3">Inspect encrypted media, audio recordings, invoices, and documents attached to
         your cases.</p>
       <a href="{{ url_for('citizen_evidence') }}" class="btn btn-sm btn-outline-custom w-100">Access Vault</a>
     </div>
@@ -184,7 +184,7 @@
         <i class="fas fa-star"></i>
       </div>
       <h6 class="fw-bold text-heading mb-2">Resolution Feedback</h6>
-      <p class="text-muted small mb-3">Rate completed vigilance investigations to help improve Anti-Corruption Bureau
+      <p class=" small mb-3">Rate completed vigilance investigations to help improve Anti-Corruption Bureau
         integrity.</p>
       <a href="{{ url_for('citizen_feedback') }}" class="btn btn-sm btn-outline-custom w-100">Submit Feedback</a>
     </div>
@@ -196,7 +196,7 @@
         <i class="fas fa-scale-balanced"></i>
       </div>
       <h6 class="fw-bold text-heading mb-2">Whistleblower Rights</h6>
-      <p class="text-muted small mb-3">Learn about statutory legal immunity, confidentiality protocols, and physical
+      <p class=" small mb-3">Learn about statutory legal immunity, confidentiality protocols, and physical
         protection guarantees.</p>
       <a href="{{ url_for('help_faq') }}" class="btn btn-sm btn-outline-custom w-100">Read Charter</a>
     </div>
