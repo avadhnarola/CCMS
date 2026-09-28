@@ -20,7 +20,7 @@
         </span>
       </div>
       <h3 class="fw-bold text-heading brand-font mb-1">{{ session.get('full_name', 'Inspector A. Verma') }}</h3>
-      <p class=" small mb-0">
+      <p class="text-muted small mb-0">
         Anti-Corruption Bureau Desk &bull; Assigned Sector: <strong>{{ session.get('department', 'Land Registration &
           Revenue') }}</strong> &bull; Badge: <strong>{{ session.get('badge_id', 'ACB-IND-4402') }}</strong>
       </p>
@@ -90,7 +90,7 @@
     <div>
       <h5 class="fw-bold text-heading mb-0"><i class="fas fa-magnifying-glass text-cyan me-2"></i>Active Case
         Investigations</h5>
-      <span class=" small">Assigned corruption cases awaiting evidence verification or final resolution</span>
+      <span class="text-muted small">Assigned corruption cases awaiting evidence verification or final resolution</span>
     </div>
     <div class="d-flex align-items-center gap-2">
       <a href="{{ url_for('officer_assigned_cases') }}" class="btn btn-sm btn-outline-custom">View Full Roster</a>
@@ -119,13 +119,13 @@
           </td>
           <td>
             <div class="fw-semibold text-heading text-truncate" style="max-width: 250px;">{{ c.complaint_title }}</div>
-            <span class=" small">{{ c.location }}</span>
+            <span class="text-muted small">{{ c.location }}</span>
           </td>
           <td>
-            <span class="badge bg-subtle  border">{{ c.misconduct_category }}</span>
+            <span class="badge bg-subtle text-muted border">{{ c.misconduct_category }}</span>
           </td>
           <td>
-            <span class="small ">{{ c.incident_date }}</span>
+            <span class="small text-muted">{{ c.incident_date }}</span>
           </td>
           <td>
             <span class="badge-priority {{ c.severity }}">{{ c.severity }}</span>
@@ -150,7 +150,7 @@
       <i class="fas fa-folder-open"></i>
     </div>
     <h5 class="fw-bold text-heading mb-1">No Active Cases Assigned</h5>
-    <p class=" small mb-0">Check the unassigned complaints queue or request case dispatches from Super Admin.
+    <p class="text-muted small mb-0">Check the unassigned complaints queue or request case dispatches from Super Admin.
     </p>
   </div>
   {% endif %}

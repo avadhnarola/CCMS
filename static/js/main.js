@@ -3,16 +3,17 @@
    UNIFIED CLIENT SCRIPT & INTERACTION ENGINE (MAIN.JS)
 ============================================================ */
 
-// 1. Theme Management (Light / Dark mode)
+// 1. Theme Management (Light  ↔  Dark Green)
 function initTheme() {
   const savedTheme = localStorage.getItem('ccms_theme') || 'light';
-  applyTheme(savedTheme);
+  // Only allow 'light' or 'dark-green' — reject any other value
+  const safeTheme = savedTheme === 'dark-green' ? 'dark-green' : 'light';
+  applyTheme(safeTheme);
 
-  const toggleBtns = document.querySelectorAll('.theme-toggle-btn');
-  toggleBtns.forEach(btn => {
+  document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      const newTheme = currentTheme === 'dark-green' ? 'light' : 'dark-green';
       applyTheme(newTheme);
       localStorage.setItem('ccms_theme', newTheme);
     });
@@ -23,12 +24,12 @@ function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   const icons = document.querySelectorAll('.theme-toggle-btn i');
   icons.forEach(icon => {
-    if (theme === 'dark') {
-      icon.className = 'fas fa-sun';
-      icon.style.color = '#f59e0b';
+    if (theme === 'dark-green') {
+      icon.className = 'fas fa-leaf';
+      icon.style.color = '#34d399';
     } else {
-      icon.className = 'fas fa-moon';
-      icon.style.color = '';
+      icon.className = 'fas fa-sun';
+      icon.style.color = '#d97706';
     }
   });
 }
@@ -165,7 +166,7 @@ function renderFilePreviews(files, container) {
         <i class="fas ${iconClass} fs-5"></i>
         <div class="text-truncate">
           <div class="fw-bold text-heading text-truncate">${file.name}</div>
-          <span class="" style="font-size:0.75rem;">${sizeKB} KB</span>
+          <span class="text-muted" style="font-size:0.75rem;">${sizeKB} KB</span>
         </div>
       </div>
       <span class="badge bg-success-subtle text-success border border-success-subtle">Ready</span>

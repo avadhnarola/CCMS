@@ -9,13 +9,13 @@
     <div>
       <h5 class="fw-bold text-heading mb-0"><i class="fas fa-briefcase text-cyan me-2"></i>Investigation Case Dossiers
       </h5>
-      <span class=" small">Anti-Corruption Bureau active cases assigned to your badge</span>
+      <span class="text-muted small">Anti-Corruption Bureau active cases assigned to your badge</span>
     </div>
 
     <div class="d-flex flex-wrap align-items-center gap-2">
       <!-- Search input -->
       <div class="input-group input-group-sm" style="width: 240px;">
-        <span class="input-group-text bg-subtle border-end-0 "><i class="fas fa-search"></i></span>
+        <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-search"></i></span>
         <input type="text" id="officerSearchBox" class="form-control border-start-0"
           placeholder="Filter by ID, category...">
       </div>
@@ -48,13 +48,13 @@
           </td>
           <td>
             <div class="fw-semibold text-heading text-truncate" style="max-width: 250px;">{{ c.complaint_title }}</div>
-            <span class=" small">{{ c.location }}</span>
+            <span class="text-muted small">{{ c.location }}</span>
           </td>
           <td>
-            <span class="badge bg-subtle  border">{{ c.misconduct_category }}</span>
+            <span class="badge bg-subtle text-muted border">{{ c.misconduct_category }}</span>
           </td>
           <td>
-            <span class="small ">{{ c.incident_date }}</span>
+            <span class="small text-muted">{{ c.incident_date }}</span>
           </td>
           <td>
             <span class="badge-priority {{ c.severity }}">{{ c.severity }}</span>
@@ -79,7 +79,7 @@
       <i class="fas fa-folder-open"></i>
     </div>
     <h5 class="fw-bold text-heading mb-1">No Cases Assigned</h5>
-    <p class=" small mb-0">You do not currently have any active corruption cases assigned to your badge.</p>
+    <p class="text-muted small mb-0">You do not currently have any active corruption cases assigned to your badge.</p>
   </div>
   {% endif %}
 </div>

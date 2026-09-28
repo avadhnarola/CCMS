@@ -90,6 +90,10 @@
           class="sidebar-link {% if active_page == 'category_tree' %}active{% endif %}">
           <i class="fas fa-sitemap" style="color:#10b981;"></i> <span>Category Binary Tree</span>
         </a>
+        <a href="{{ url_for('admin_department_graph') }}"
+          class="sidebar-link {% if active_page == 'department_graph' %}active{% endif %}">
+          <i class="fas fa-project-diagram" style="color:#38bdf8;"></i> <span>Department Graph &amp; BFS</span>
+        </a>
         <a href="{{ url_for('admin_phase2') }}" class="sidebar-link {% if active_page == 'phase2' %}active{% endif %}">
           <i class="fas fa-network-wired" style="color:#06b6d4;"></i> <span>Phase 2: Structured Data</span>
         </a>
@@ -119,7 +123,7 @@
             Engine</span>
           <span class="badge bg-success" style="font-size:0.65rem;">Online</span>
         </div>
-        <div class=" mt-1" style="font-size:0.7rem;">CCMS Core Vigilance Node</div>
+        <div class="text-white-50 mt-1" style="font-size:0.7rem;">CCMS Core Vigilance Node</div>
       </div>
     </aside>
 

@@ -18,7 +18,7 @@
         </span>
       </div>
       <h3 class="fw-bold text-heading brand-font mb-1">Ranked Urgent Investigation Queue</h3>
-      <p class=" small mb-0">
+      <p class="text-muted small mb-0">
         Cases are sorted by urgency weight: bribery magnitude, severity level, public health/safety risk, and remaining
         SLA hours.
       </p>
@@ -49,11 +49,11 @@
           <div class="d-flex align-items-center gap-2 mb-1">
             <span class="badge-priority {{ c.severity }}">{{ c.severity }} Urgency</span>
             <span class="fw-bold text-cyan brand-font">{{ c.complaint_id }}</span>
-            <span class="badge bg-subtle  border">{{ c.sector }}</span>
+            <span class="badge bg-subtle text-muted border">{{ c.sector }}</span>
           </div>
           <h5 class="fw-bold text-heading mb-1">{{ c.complaint_title }}</h5>
-          <p class=" small mb-2 text-truncate" style="max-width: 600px;">{{ c.description }}</p>
-          <div class="d-flex flex-wrap align-items-center gap-3  small">
+          <p class="text-muted small mb-2 text-truncate" style="max-width: 600px;">{{ c.description }}</p>
+          <div class="d-flex flex-wrap align-items-center gap-3 text-muted small">
             <span><i class="fas fa-location-dot text-danger me-1"></i> {{ c.location }}</span> &bull;
             <span><i class="fas fa-calendar text-primary me-1"></i> Incident: {{ c.incident_date }}</span> &bull;
             <span><i class="fas fa-vault text-violet me-1"></i> Evidence Attached: {{ 'Yes' if c.evidence_file else 'No'
@@ -77,7 +77,7 @@
       <i class="fas fa-circle-check"></i>
     </div>
     <h5 class="fw-bold text-heading mb-1">Queue is Fully Cleared!</h5>
-    <p class=" small mb-0">No urgent pending investigation cases currently require triage.</p>
+    <p class="text-muted small mb-0">No urgent pending investigation cases currently require triage.</p>
   </div>
   {% endfor %}
 </div>

@@ -1105,6 +1105,71 @@ def admin_category_tree_action():
         return redirect(url_for("admin_category_tree"))
 
 
+@app.route("/admin/department-graph")
+@role_required("admin")
+def admin_department_graph():
+    """
+    Renders the Department, Officer & Complaint Graph Network and BFS Module (Phase 2):
+    DEPARTMENT
+       |
+       |---- Officer
+       |        |
+       |        +---- Complaint
+       |
+       +---- Complaint
+    """
+    departments = db.query_db("SELECT * FROM departments ORDER BY total_cases DESC") or STATIC_DEPARTMENTS
+    officers = db.query_db("SELECT * FROM officers ORDER BY active_cases DESC") or STATIC_OFFICERS
+    complaints = db.query_db("SELECT * FROM complaints ORDER BY created_at DESC") or STATIC_COMPLAINTS
+
+    # Build 3-tier Adjacency List dynamically
+    graph_data = {}
+    for d in departments:
+        dept_name = d.get("name", "")
+        if dept_name and dept_name not in graph_data:
+            graph_data[dept_name] = []
+
+    for off in officers:
+        dept_name = off.get("department", "")
+        off_name = off.get("name", "")
+        if dept_name not in graph_data:
+            graph_data[dept_name] = []
+        if off_name and off_name not in graph_data[dept_name]:
+            graph_data[dept_name].append(off_name)
+        if off_name and off_name not in graph_data:
+            graph_data[off_name] = []
+
+    for c in complaints:
+        cid = c.get("complaint_id", c.get("id", ""))
+        officer = c.get("assigned_officer")
+        dept = c.get("sector", c.get("department", ""))
+        if officer and officer in graph_data:
+            if cid not in graph_data[officer]:
+                graph_data[officer].append(cid)
+        elif dept and dept in graph_data:
+            if cid not in graph_data[dept]:
+                graph_data[dept].append(cid)
+        if cid and cid not in graph_data:
+            graph_data[cid] = []
+
+    return render_template(
+        "admin/department_graph.html",
+        active_page="department_graph",
+        graph_data=graph_data,
+        departments=departments,
+        officers=officers,
+        complaints=complaints
+    )
+
+
+@app.route("/admin/department-graph/action", methods=["POST"])
+@role_required("admin")
+def admin_department_graph_action():
+    node_name = request.form.get("node_name", "Land Registration & Revenue")
+    flash(f"BFS Analysis executed successfully starting from [{node_name}].", "success")
+    return redirect(url_for("admin_department_graph"))
+
+
 @app.route("/admin/reports")
 @role_required("admin")
 def admin_reports():

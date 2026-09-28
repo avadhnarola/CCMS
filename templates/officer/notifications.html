@@ -9,7 +9,7 @@
     <div>
       <h5 class="fw-bold text-heading mb-0"><i class="fas fa-bell text-warning me-2"></i>Investigation Alerts &amp;
         Dispatches</h5>
-      <span class=" small">High-priority case assignments and vigilance headquarters broadcasts</span>
+      <span class="text-muted small">High-priority case assignments and vigilance headquarters broadcasts</span>
     </div>
   </div>
 
@@ -24,9 +24,9 @@
       <div class="flex-grow-1">
         <div class="d-flex align-items-center justify-content-between mb-1">
           <h6 class="fw-bold text-heading mb-0">{{ notif.title }}</h6>
-          <span class="" style="font-size:0.75rem;">{{ notif.created_at }}</span>
+          <span class="text-muted" style="font-size:0.75rem;">{{ notif.created_at }}</span>
         </div>
-        <p class=" small mb-0">{{ notif.message }}</p>
+        <p class="text-muted small mb-0">{{ notif.message }}</p>
       </div>
     </div>
     {% endfor %}
@@ -37,7 +37,7 @@
       <i class="fas fa-bell-slash"></i>
     </div>
     <h5 class="fw-bold text-heading mb-1">No Pending Alerts</h5>
-    <p class=" small mb-0">All high-priority case notifications have been acknowledged.</p>
+    <p class="text-muted small mb-0">All high-priority case notifications have been acknowledged.</p>
   </div>
   {% endif %}
 </div>

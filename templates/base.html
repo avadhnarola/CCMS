@@ -58,7 +58,10 @@
         </ul>
 
         <div class="d-flex align-items-center gap-2">
-          <!-- Language Selector -->
+          <!-- Theme Toggle -->
+          <button class="theme-toggle-btn me-1" title="Toggle Light / Dark Green Theme">
+            <i class="fas fa-moon"></i>
+          </button>
 
 
           {% if session.get('user_id') %}
@@ -119,11 +122,11 @@
             <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="32" class="rounded">
             <h5 class="brand-font mb-0 text-primary">CCMS</h5>
           </div>
-          <p class=" small">
+          <p class="text-muted small">
             Corruption Complaint Management System (CCMS) is an end-to-end encrypted vigilance command network designed
             to empower whistleblowers and eradicate corruption across public institutions.
           </p>
-          <div class="d-flex gap-2  small">
+          <div class="d-flex gap-2 text-muted small">
             <span><i class="fas fa-shield-alt text-success me-1"></i> AES-256 GCM</span> &bull;
             <span><i class="fas fa-user-secret text-info me-1"></i> 100% Anonymous</span> &bull;
             <span><i class="fas fa-gavel text-warning me-1"></i> CVC Compliant</span>
@@ -133,13 +136,13 @@
         <div class="col-6 col-lg-2">
           <h6 class="fw-bold text-heading mb-3">Portals</h6>
           <ul class="list-unstyled small d-flex flex-column gap-2">
-            <li><a href="{{ url_for('citizen_login') }}" class=" text-decoration-none hover-primary">Citizen Portal</a>
+            <li><a href="{{ url_for('citizen_login') }}" class="text-muted text-decoration-none hover-primary">Citizen Portal</a>
             </li>
-            <li><a href="{{ url_for('officer_login') }}" class=" text-decoration-none hover-primary">Officer Command</a>
+            <li><a href="{{ url_for('officer_login') }}" class="text-muted text-decoration-none hover-primary">Officer Command</a>
             </li>
-            <li><a href="{{ url_for('admin_login') }}" class=" text-decoration-none hover-primary">Super Admin
+            <li><a href="{{ url_for('admin_login') }}" class="text-muted text-decoration-none hover-primary">Super Admin
                 Console</a></li>
-            <li><a href="{{ url_for('track_complaint') }}" class=" text-decoration-none hover-primary">Track Case</a>
+            <li><a href="{{ url_for('track_complaint') }}" class="text-muted text-decoration-none hover-primary">Track Case</a>
             </li>
           </ul>
         </div>
@@ -147,13 +150,13 @@
         <div class="col-6 col-lg-2">
           <h6 class="fw-bold text-heading mb-3">Legal &amp; Rights</h6>
           <ul class="list-unstyled small d-flex flex-column gap-2">
-            <li><a href="{{ url_for('help_faq') }}" class=" text-decoration-none hover-primary">Whistleblower Rights</a>
+            <li><a href="{{ url_for('help_faq') }}" class="text-muted text-decoration-none hover-primary">Whistleblower Rights</a>
             </li>
-            <li><a href="{{ url_for('help_faq') }}" class=" text-decoration-none hover-primary">Evidence Guidelines</a>
+            <li><a href="{{ url_for('help_faq') }}" class="text-muted text-decoration-none hover-primary">Evidence Guidelines</a>
             </li>
-            <li><a href="{{ url_for('help_faq') }}" class=" text-decoration-none hover-primary">Zero-Knowledge Proof</a>
+            <li><a href="{{ url_for('help_faq') }}" class="text-muted text-decoration-none hover-primary">Zero-Knowledge Proof</a>
             </li>
-            <li><a href="{{ url_for('contact') }}" class=" text-decoration-none hover-primary">Emergency Contact</a>
+            <li><a href="{{ url_for('contact') }}" class="text-muted text-decoration-none hover-primary">Emergency Contact</a>
             </li>
           </ul>
         </div>
@@ -165,15 +168,15 @@
               <i class="fas fa-phone-volume text-danger fs-4"></i>
               <div>
                 <div class="fw-bold text-heading" style="font-family: var(--font-brand);">1800-11-CCMS</div>
-                <div class="" style="font-size:0.75rem;">Toll-Free &bull; Anonymous Wire</div>
+                <div class="text-muted" style="font-size:0.75rem;">Toll-Free &bull; Anonymous Wire</div>
               </div>
             </div>
-            <div class="small  mt-2">Email: whistleblower@ccms.gov.in</div>
+            <div class="small text-muted mt-2">Email: whistleblower@ccms.gov.in</div>
           </div>
         </div>
       </div>
 
-      <div class="border-top mt-4 pt-4 text-center  small">
+      <div class="border-top mt-4 pt-4 text-center text-muted small">
         &copy; 2026 CCMS - Corruption Complaint Management System. All Rights Reserved. Powered by Python &amp; MySQL.
       </div>
     </div>

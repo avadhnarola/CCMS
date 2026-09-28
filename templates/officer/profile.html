@@ -22,16 +22,16 @@
 
         <div class="p-3 rounded text-start small border border-secondary border-opacity-25"
           style="background: rgba(255,255,255,0.03);">
-          <div class="">Official Badge ID</div>
+          <div class="text-white-50">Official Badge ID</div>
           <div class="fw-bold text-cyan brand-font mb-2">{{ officer.badge_id or 'ACB-IND-4402' }}</div>
 
-          <div class="">Assigned Vigilance Sector</div>
+          <div class="text-white-50">Assigned Vigilance Sector</div>
           <div class="fw-bold text-white mb-2">{{ officer.department }}</div>
 
-          <div class="">Official Dispatch Mail</div>
+          <div class="text-white-50">Official Dispatch Mail</div>
           <div class="fw-bold text-white text-truncate mb-2">{{ officer.email }}</div>
 
-          <div class="">Secure Hotline</div>
+          <div class="text-white-50">Secure Hotline</div>
           <div class="fw-bold text-white">{{ officer.phone }}</div>
         </div>
       </div>
@@ -60,7 +60,7 @@
           <button type="submit" class="btn btn-cyber">Update Officer Credentials</button>
         </form>
 
-        <div class="mt-4 p-3 rounded bg-subtle border small ">
+        <div class="mt-4 p-3 rounded bg-subtle border small text-muted">
           <div class="fw-bold text-heading mb-1"><i class="fas fa-lock text-emerald me-1"></i> Vigilance Clearance Level
           </div>
           <div>Level 3 Forensic Authority &bull; Disciplinary Inquest Powers Active</div>

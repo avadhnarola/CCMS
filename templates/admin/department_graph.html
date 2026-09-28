@@ -1,0 +1,617 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Graph Representation &amp; BFS | CCMS{% endblock %}
+{% block page_heading %}CCMS Jurisdictional Network (Graph &amp; BFS Representation){% endblock %}
+
+{% block extra_css %}
+<style>
+  .graph-visual-wrapper {
+    background: var(--bg-surface, #ffffff);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    position: relative;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .graph-svg-container {
+    width: 100%;
+    max-width: 580px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .graph-edge {
+    stroke: rgba(167, 139, 250, 0.4);
+    stroke-width: 2.5;
+    transition: all 0.3s ease;
+  }
+
+  .graph-edge.edge-active {
+    stroke: #38bdf8;
+    stroke-width: 4;
+    stroke-dasharray: 6, 3;
+    animation: edgeDash 1s linear infinite;
+  }
+
+  @keyframes edgeDash {
+    to {
+      stroke-dashoffset: -18;
+    }
+  }
+
+  .graph-node-circle {
+    fill: #ede9fe;
+    stroke: #8b5cf6;
+    stroke-width: 3;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-bs-theme="dark"] .graph-node-circle,
+  .dark-mode .graph-node-circle {
+    fill: rgba(139, 92, 246, 0.22);
+    stroke: #a78bfa;
+  }
+
+  .graph-node-circle:hover {
+    fill: #8b5cf6;
+    stroke: #38bdf8;
+    stroke-width: 4;
+    transform: scale(1.1);
+    transform-origin: center;
+    filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.6));
+  }
+
+  .graph-node-circle.active-node {
+    fill: #38bdf8 !important;
+    stroke: #ffffff !important;
+    stroke-width: 4;
+    filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.8));
+  }
+
+  .graph-node-circle.bfs-visited {
+    fill: #10b981 !important;
+    stroke: #34d399 !important;
+    animation: bfsPulseGlow 1.2s infinite alternate;
+  }
+
+  @keyframes bfsPulseGlow {
+    0% {
+      filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.6));
+    }
+    100% {
+      filter: drop-shadow(0 0 18px rgba(16, 185, 129, 0.9));
+    }
+  }
+
+  .graph-node-label {
+    font-size: 11px;
+    font-weight: 700;
+    fill: var(--text-heading, #1e293b);
+    text-anchor: middle;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  [data-bs-theme="dark"] .graph-node-label,
+  .dark-mode .graph-node-label {
+    fill: #f1f5f9;
+  }
+
+  .node-sublabel {
+    font-size: 9px;
+    fill: var(--text-muted, #64748b);
+    text-anchor: middle;
+    pointer-events: none;
+  }
+
+  .badge-hub {
+    background: linear-gradient(135deg, #7c3aed, #06b6d4);
+    color: white;
+    font-weight: 700;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+  <!-- HERO BANNER -->
+  <div class="ccms-card p-4 mb-4 glass-panel border-primary border-opacity-25"
+    style="background: linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(6,182,212,0.1) 100%);">
+    <div class="row align-items-center g-3">
+      <div class="col-lg-8">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+          <span class="badge bg-primary text-white rounded-pill px-3 py-1">DSA Phase 2 &bull; CLO 2</span>
+          <span class="badge badge-hub rounded-pill px-3 py-1">Symmetrical Network Graph</span>
+        </div>
+        <h3 class="fw-bold text-heading brand-font mb-1">
+          <i class="fas fa-circle-nodes text-violet me-2"></i>Graph &amp; BFS Network Representation
+        </h3>
+        <p class="small mb-0 text-muted">
+          Symmetrical Graph Representation of CCMS Jurisdictional Network. Click any circular node to inspect adjacent edges,
+          or run Breadth-First Search (BFS) to traverse the network level-by-level.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <a href="{{ url_for('admin_category_tree') }}" class="btn btn-outline-custom btn-sm me-2">
+          <i class="fas fa-sitemap me-1"></i> Category Tree
+        </a>
+        <a href="{{ url_for('admin_phase2') }}" class="btn btn-brand btn-sm">
+          <i class="fas fa-network-wired me-1"></i> Phase 2 Overview
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- LEFT: EXACT SVG GRAPH VISUALIZATION -->
+    <div class="col-xl-7">
+      <div class="graph-visual-wrapper h-100">
+        <div class="d-flex align-items-center justify-content-between pb-2 mb-3 border-bottom">
+          <div>
+            <h5 class="fw-bold text-heading mb-0">
+              <i class="fas fa-diagram-project text-cyan me-2"></i>Graph Topology
+            </h5>
+            <small class="text-muted">9 Interconnected Network Hubs</small>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-xs btn-outline-info" onclick="runGraphBFS('Citizen Intake Portal')">
+              <i class="fas fa-play me-1"></i> BFS (From Bottom)
+            </button>
+            <button class="btn btn-xs btn-outline-primary" onclick="runGraphBFS('Central Vigilance Directorate')">
+              <i class="fas fa-play me-1"></i> BFS (From Top)
+            </button>
+          </div>
+        </div>
+
+        <!-- DYNAMIC SEARCH BAR -->
+        <div class="input-group input-group-sm mb-3 shadow-sm">
+          <span class="input-group-text bg-subtle"><i class="fas fa-search text-cyan"></i></span>
+          <input type="text" id="graphSearchInput" class="form-control font-monospace"
+            placeholder="Search hub / dept (e.g. Police, Revenue, Portal, Vigilance, CCMS-2026-1038)..."
+            oninput="handleGraphSearch(this.value)">
+          <button class="btn btn-outline-cyan" type="button" onclick="handleGraphSearch(document.getElementById('graphSearchInput').value)">Search</button>
+        </div>
+
+        <!-- SVG GRAPH CANVAS MATCHING USER IMAGE -->
+        <div class="text-center py-2">
+          <svg class="graph-svg-container" viewBox="0 0 500 490">
+            <defs>
+              <filter id="nodeGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="glow" />
+                <feComposite in="SourceGraphic" in2="glow" operator="over" />
+              </filter>
+            </defs>
+
+            <!-- GRAPH EDGES (LINES) -->
+            <!-- 1. Bottom to Bottom-Left -->
+            <line id="edge-Portal-Police" x1="250" y1="425" x2="95" y2="345" class="graph-edge" />
+            <!-- 2. Bottom-Left to Mid-Left -->
+            <line id="edge-Police-Field" x1="95" y1="345" x2="95" y2="205" class="graph-edge" />
+            <!-- 3. Mid-Left to Top-Left -->
+            <line id="edge-Field-SIB" x1="95" y1="205" x2="185" y2="85" class="graph-edge" />
+            <!-- 4. Bottom to Inner-Left -->
+            <line id="edge-Portal-Revenue" x1="250" y1="425" x2="215" y2="265" class="graph-edge" />
+            <!-- 5. Inner-Left to Top-Left -->
+            <line id="edge-Revenue-SIB" x1="215" y1="265" x2="185" y2="85" class="graph-edge" />
+            <!-- 6. TOP HORIZONTAL BRIDGE: Top-Left to Top-Right -->
+            <line id="edge-SIB-CVD" x1="185" y1="85" x2="315" y2="85" class="graph-edge" style="stroke-width: 3.5;" />
+            <!-- 7. Bottom to Inner-Right -->
+            <line id="edge-Portal-Health" x1="250" y1="425" x2="285" y2="265" class="graph-edge" />
+            <!-- 8. Inner-Right to Top-Right -->
+            <line id="edge-Health-CVD" x1="285" y1="265" x2="315" y2="85" class="graph-edge" />
+            <!-- 9. Top-Right to Mid-Right -->
+            <line id="edge-CVD-Audit" x1="315" y1="85" x2="405" y2="205" class="graph-edge" />
+            <!-- 10. Mid-Right to Bottom-Right -->
+            <line id="edge-Audit-PWD" x1="405" y1="205" x2="405" y2="345" class="graph-edge" />
+            <!-- 11. Bottom-Right to Bottom -->
+            <line id="edge-PWD-Portal" x1="405" y1="345" x2="250" y2="425" class="graph-edge" />
+
+            <!-- GRAPH CIRCULAR VERTICES (NODES) -->
+            <!-- 1. BOTTOM CENTER NODE: Citizen Intake Portal -->
+            <g id="nodeGroup-Citizen-Intake-Portal" onclick="selectGraphVertex('Citizen Intake Portal')">
+              <circle id="circle-Citizen-Intake-Portal" cx="250" cy="425" r="28" class="graph-node-circle active-node" />
+              <text x="250" y="429" class="graph-node-label" style="font-size:10px;">Portal</text>
+              <text x="250" y="470" class="node-sublabel fw-bold">Citizen Intake</text>
+            </g>
+
+            <!-- 2. BOTTOM-LEFT NODE: Police & Law Enforcement -->
+            <g id="nodeGroup-Police---Law-Enforcement" onclick="selectGraphVertex('Police & Law Enforcement')">
+              <circle id="circle-Police---Law-Enforcement" cx="95" cy="345" r="26" class="graph-node-circle" />
+              <text x="95" y="349" class="graph-node-label">Police</text>
+              <text x="95" y="386" class="node-sublabel">Enforcement</text>
+            </g>
+
+            <!-- 3. MID-LEFT NODE: Field & Forensic Unit -->
+            <g id="nodeGroup-Field---Forensic-Unit" onclick="selectGraphVertex('Field & Forensic Unit')">
+              <circle id="circle-Field---Forensic-Unit" cx="95" cy="205" r="26" class="graph-node-circle" />
+              <text x="95" y="209" class="graph-node-label">Field</text>
+              <text x="95" y="170" class="node-sublabel">Inspection</text>
+            </g>
+
+            <!-- 4. TOP-LEFT NODE: Special Investigation Bureau -->
+            <g id="nodeGroup-Special-Investigation-Bureau" onclick="selectGraphVertex('Special Investigation Bureau')">
+              <circle id="circle-Special-Investigation-Bureau" cx="185" cy="85" r="28" class="graph-node-circle" />
+              <text x="185" y="89" class="graph-node-label">SIB</text>
+              <text x="185" y="48" class="node-sublabel fw-bold">Investigation Bureau</text>
+            </g>
+
+            <!-- 5. TOP-RIGHT NODE: Central Vigilance Directorate -->
+            <g id="nodeGroup-Central-Vigilance-Directorate" onclick="selectGraphVertex('Central Vigilance Directorate')">
+              <circle id="circle-Central-Vigilance-Directorate" cx="315" cy="85" r="28" class="graph-node-circle" />
+              <text x="315" y="89" class="graph-node-label">HQ</text>
+              <text x="315" y="48" class="node-sublabel fw-bold">Central Vigilance</text>
+            </g>
+
+            <!-- 6. INNER-LEFT NODE: Land Registration & Revenue -->
+            <g id="nodeGroup-Land-Registration---Revenue" onclick="selectGraphVertex('Land Registration & Revenue')">
+              <circle id="circle-Land-Registration---Revenue" cx="215" cy="265" r="26" class="graph-node-circle" />
+              <text x="215" y="269" class="graph-node-label">Revenue</text>
+              <text x="215" y="306" class="node-sublabel">Land Records</text>
+            </g>
+
+            <!-- 7. INNER-RIGHT NODE: Healthcare & Supplies -->
+            <g id="nodeGroup-Healthcare---Supplies" onclick="selectGraphVertex('Healthcare & Supplies')">
+              <circle id="circle-Healthcare---Supplies" cx="285" cy="265" r="26" class="graph-node-circle" />
+              <text x="285" y="269" class="graph-node-label">Health</text>
+              <text x="285" y="306" class="node-sublabel">Medical Supplies</text>
+            </g>
+
+            <!-- 8. MID-RIGHT NODE: Procurement & Audit Wing -->
+            <g id="nodeGroup-Procurement---Audit-Wing" onclick="selectGraphVertex('Procurement & Audit Wing')">
+              <circle id="circle-Procurement---Audit-Wing" cx="405" cy="205" r="26" class="graph-node-circle" />
+              <text x="405" y="209" class="graph-node-label">Audit</text>
+              <text x="405" y="170" class="node-sublabel">Forensic Wing</text>
+            </g>
+
+            <!-- 9. BOTTOM-RIGHT NODE: Municipality & Public Works -->
+            <g id="nodeGroup-Municipality---Public-Works" onclick="selectGraphVertex('Municipality & Public Works')">
+              <circle id="circle-Municipality---Public-Works" cx="405" cy="345" r="26" class="graph-node-circle" />
+              <text x="405" y="349" class="graph-node-label">PWD</text>
+              <text x="405" y="386" class="node-sublabel">Public Works</text>
+            </g>
+          </svg>
+        </div>
+
+        <!-- BFS LIVE SEQUENCER BAR -->
+        <div class="p-3 rounded bg-subtle border mt-2">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+            <span class="small fw-bold text-uppercase" style="letter-spacing:0.5px;">
+              <i class="fas fa-route text-cyan me-1"></i> Live BFS Traversal Sequence:
+            </span>
+            <span class="badge bg-emerald-subtle text-emerald border" id="bfsStatusBadge">Interactive</span>
+          </div>
+
+          <div class="p-2 bg-surface rounded border mb-2 font-monospace small" id="graphBfsSeq">
+            <span class="text-cyan fw-bold">Citizen Intake Portal</span> &rarr;
+            <span class="text-violet fw-bold">Police &amp; Law Enforcement</span> &rarr;
+            <span class="text-violet fw-bold">Land Registration &amp; Revenue</span> &rarr;
+            <span class="text-violet fw-bold">Healthcare &amp; Supplies</span> &rarr;
+            <span class="text-violet fw-bold">Municipality &amp; Public Works</span> &rarr;
+            <span class="text-warning fw-bold">Field &amp; Forensic Unit</span> &rarr;
+            <span class="text-warning fw-bold">Special Investigation Bureau</span> &rarr;
+            <span class="text-warning fw-bold">Central Vigilance Directorate</span>
+          </div>
+
+          <div class="d-flex flex-wrap align-items-center justify-content-between small text-muted">
+            <span id="graphBfsQueue">Queue: [ Ready ]</span>
+            <span id="graphBfsLevel">Exploration: Level 0 (Origin) &rarr; Level 1 (Direct) &rarr; Level 2 (Wings) &rarr; Level 3 (HQ)</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: NODE INSPECTOR & ADJACENCY MATRIX -->
+    <div class="col-xl-5">
+      <div class="ccms-card p-4 shadow-sm h-100">
+        <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
+          <h5 class="fw-bold text-heading mb-0">
+            <i class="fas fa-circle-info text-cyan me-2"></i>Vertex Details &amp; Neighbors
+          </h5>
+          <span class="badge badge-hub" id="vertexTypeBadge">STARTING HUB</span>
+        </div>
+
+        <!-- SELECTED VERTEX DETAILS -->
+        <div class="p-3 rounded bg-subtle border mb-4">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h6 class="fw-bold mb-0 text-heading fs-6" id="vertexTitle">Citizen Intake Portal</h6>
+            <span class="badge bg-info text-dark" id="vertexLevelBadge">Level 0 Hub</span>
+          </div>
+          <p class="small text-muted mb-2" id="vertexDesc">
+            Public portal intake desk receiving and routing citizen corruption reports.
+          </p>
+          <div class="small">
+            <strong class="text-heading">Connected Adjacent Hubs in Graph:</strong>
+            <div class="d-flex flex-wrap gap-1 mt-1" id="vertexNeighbors">
+              <span class="badge bg-primary">Police &amp; Law Enforcement</span>
+              <span class="badge bg-primary">Land Registration &amp; Revenue</span>
+              <span class="badge bg-primary">Healthcare &amp; Supplies</span>
+              <span class="badge bg-primary">Municipality &amp; Public Works</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADJACENCY LIST MATRIX -->
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <h6 class="fw-bold text-heading mb-0"><i class="fas fa-list-check text-cyan me-1"></i> Graph Adjacency List</h6>
+          <small class="text-muted">9 Hubs &bull; 11 Edges</small>
+        </div>
+
+        <div class="table-responsive mb-4" style="max-height: 250px; overflow-y: auto;">
+          <table class="table table-sm table-hover align-middle border">
+            <thead class="bg-subtle sticky-top">
+              <tr class="small text-uppercase">
+                <th>Vertex (Hub)</th>
+                <th>Adjacent Neighbors</th>
+                <th>BFS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for node, neighbors in graph_data.items() %}
+              <tr style="cursor: pointer;" onclick="selectGraphVertex('{{ node }}')">
+                <td>
+                  <span class="badge bg-subtle border text-heading">{{ node }}</span>
+                </td>
+                <td>
+                  <small class="text-muted">{{ neighbors|join(', ') }}</small>
+                </td>
+                <td>
+                  <button class="btn btn-xs btn-outline-info" onclick="event.stopPropagation(); runGraphBFS('{{ node }}')">
+                    <i class="fas fa-play"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ACTION CONTROLS -->
+        <div class="p-3 rounded bg-subtle border mb-3">
+          <div class="small fw-bold text-heading mb-1"><i class="fas fa-bolt text-warning me-1"></i> Interactive BFS Simulation</div>
+          <p class="small text-muted mb-0">
+            Select any circular node on the graph canvas to trace adjacent escalation routes or run level-by-level BFS.
+          </p>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-custom btn-sm" onclick="location.reload();">Reset Canvas</button>
+          <button type="button" class="btn btn-brand btn-sm" onclick="runGraphBFS(document.getElementById('vertexTitle').textContent)">
+            <i class="fas fa-route me-1"></i> Traverse from Active Node
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const symmetricalGraphTopology = {
+    "Citizen Intake Portal": {
+      "type": "INTAKE HUB",
+      "level": "Level 0 (Bottom Origin)",
+      "desc": "Public portal intake desk receiving and routing citizen corruption reports.",
+      "neighbors": ["Police & Law Enforcement", "Land Registration & Revenue", "Healthcare & Supplies", "Municipality & Public Works"],
+      "bfs_sequence": [
+        "Citizen Intake Portal",
+        "Police & Law Enforcement",
+        "Land Registration & Revenue",
+        "Healthcare & Supplies",
+        "Municipality & Public Works",
+        "Field & Forensic Unit",
+        "Special Investigation Bureau",
+        "Central Vigilance Directorate",
+        "Procurement & Audit Wing"
+      ]
+    },
+    "Police & Law Enforcement": {
+      "type": "OPERATIONAL WING",
+      "level": "Level 1 (Left Outer)",
+      "desc": "State law enforcement wing handling police corruption and extortion complaints.",
+      "neighbors": ["Citizen Intake Portal", "Field & Forensic Unit"],
+      "bfs_sequence": [
+        "Police & Law Enforcement",
+        "Citizen Intake Portal",
+        "Field & Forensic Unit",
+        "Land Registration & Revenue",
+        "Healthcare & Supplies",
+        "Municipality & Public Works",
+        "Special Investigation Bureau",
+        "Central Vigilance Directorate",
+        "Procurement & Audit Wing"
+      ]
+    },
+    "Field & Forensic Unit": {
+      "type": "FORENSIC WING",
+      "level": "Level 2 (Mid Left)",
+      "desc": "On-ground surveillance, sting operations, and electronic evidence forensic analysis cell.",
+      "neighbors": ["Police & Law Enforcement", "Special Investigation Bureau"],
+      "bfs_sequence": [
+        "Field & Forensic Unit",
+        "Police & Law Enforcement",
+        "Special Investigation Bureau",
+        "Citizen Intake Portal",
+        "Land Registration & Revenue",
+        "Central Vigilance Directorate",
+        "Healthcare & Supplies",
+        "Municipality & Public Works",
+        "Procurement & Audit Wing"
+      ]
+    },
+    "Special Investigation Bureau": {
+      "type": "COMMAND BUREAU",
+      "level": "Level 3 (Top Left)",
+      "desc": "Special bureau coordinating high-profile graft probes across western jurisdictions.",
+      "neighbors": ["Field & Forensic Unit", "Land Registration & Revenue", "Central Vigilance Directorate"],
+      "bfs_sequence": [
+        "Special Investigation Bureau",
+        "Field & Forensic Unit",
+        "Land Registration & Revenue",
+        "Central Vigilance Directorate",
+        "Police & Law Enforcement",
+        "Citizen Intake Portal",
+        "Healthcare & Supplies",
+        "Procurement & Audit Wing",
+        "Municipality & Public Works"
+      ]
+    },
+    "Central Vigilance Directorate": {
+      "type": "SUPREME HQ",
+      "level": "Level 3 (Top Right)",
+      "desc": "National apex integrity commission overseeing all tribunals and prosecution wings.",
+      "neighbors": ["Special Investigation Bureau", "Healthcare & Supplies", "Procurement & Audit Wing"],
+      "bfs_sequence": [
+        "Central Vigilance Directorate",
+        "Special Investigation Bureau",
+        "Healthcare & Supplies",
+        "Procurement & Audit Wing",
+        "Field & Forensic Unit",
+        "Land Registration & Revenue",
+        "Citizen Intake Portal",
+        "Municipality & Public Works",
+        "Police & Law Enforcement"
+      ]
+    },
+    "Healthcare & Supplies": {
+      "type": "OPERATIONAL WING",
+      "level": "Level 1 (Inner Right)",
+      "desc": "Medical procurement audit cell reviewing hospital supplies and tender kickbacks.",
+      "neighbors": ["Citizen Intake Portal", "Central Vigilance Directorate"],
+      "bfs_sequence": [
+        "Healthcare & Supplies",
+        "Citizen Intake Portal",
+        "Central Vigilance Directorate",
+        "Police & Law Enforcement",
+        "Land Registration & Revenue",
+        "Municipality & Public Works",
+        "Special Investigation Bureau",
+        "Procurement & Audit Wing",
+        "Field & Forensic Unit"
+      ]
+    },
+    "Procurement & Audit Wing": {
+      "type": "AUDIT WING",
+      "level": "Level 2 (Mid Right)",
+      "desc": "Treasury fund forensic auditing wing inspecting public works tenders and contractor bills.",
+      "neighbors": ["Central Vigilance Directorate", "Municipality & Public Works"],
+      "bfs_sequence": [
+        "Procurement & Audit Wing",
+        "Central Vigilance Directorate",
+        "Municipality & Public Works",
+        "Special Investigation Bureau",
+        "Healthcare & Supplies",
+        "Citizen Intake Portal",
+        "Field & Forensic Unit",
+        "Land Registration & Revenue",
+        "Police & Law Enforcement"
+      ]
+    },
+    "Municipality & Public Works": {
+      "type": "OPERATIONAL WING",
+      "level": "Level 1 (Right Outer)",
+      "desc": "Public works and municipal infrastructure integrity and building permit inspection unit.",
+      "neighbors": ["Citizen Intake Portal", "Procurement & Audit Wing"],
+      "bfs_sequence": [
+        "Municipality & Public Works",
+        "Citizen Intake Portal",
+        "Procurement & Audit Wing",
+        "Police & Law Enforcement",
+        "Land Registration & Revenue",
+        "Healthcare & Supplies",
+        "Central Vigilance Directorate",
+        "Field & Forensic Unit",
+        "Special Investigation Bureau"
+      ]
+    },
+    "Land Registration & Revenue": {
+      "type": "OPERATIONAL WING",
+      "level": "Level 1 (Inner Left)",
+      "desc": "Land registry and revenue integrity intelligence unit investigating deed scams.",
+      "neighbors": ["Citizen Intake Portal", "Special Investigation Bureau"],
+      "bfs_sequence": [
+        "Land Registration & Revenue",
+        "Citizen Intake Portal",
+        "Special Investigation Bureau",
+        "Police & Law Enforcement",
+        "Healthcare & Supplies",
+        "Municipality & Public Works",
+        "Field & Forensic Unit",
+        "Central Vigilance Directorate",
+        "Procurement & Audit Wing"
+      ]
+    }
+  };
+
+  function sanitizeSvgId(str) {
+    return (str || '').replace(/[^a-zA-Z0-9_-]/g, '-');
+  }
+
+  function selectGraphVertex(nodeName) {
+    document.querySelectorAll('.graph-node-circle').forEach(c => c.classList.remove('active-node', 'bfs-visited'));
+    document.querySelectorAll('.graph-edge').forEach(e => e.classList.remove('edge-active'));
+
+    const circle = document.getElementById(`circle-${sanitizeSvgId(nodeName)}`);
+    if (circle) circle.classList.add('active-node');
+
+    const data = symmetricalGraphTopology[nodeName] || {
+      type: "NETWORK HUB",
+      level: "Active Node",
+      desc: "Connected CCMS Jurisdictional Network Entity",
+      neighbors: []
+    };
+
+    document.getElementById('vertexTypeBadge').textContent = data.type;
+    document.getElementById('vertexTitle').textContent = nodeName;
+    document.getElementById('vertexLevelBadge').textContent = data.level;
+    document.getElementById('vertexDesc').textContent = data.desc;
+
+    const neighborsBox = document.getElementById('vertexNeighbors');
+    neighborsBox.innerHTML = (data.neighbors || []).map(nbr => `
+      <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">${nbr}</span>
+    `).join(' ');
+  }
+
+  function runGraphBFS(startNode) {
+    const data = symmetricalGraphTopology[startNode];
+    if (!data) return;
+
+    const seq = data.bfs_sequence;
+    document.querySelectorAll('.graph-node-circle').forEach(c => c.classList.remove('active-node', 'bfs-visited'));
+    document.querySelectorAll('.graph-edge').forEach(e => e.classList.remove('edge-active'));
+
+    document.getElementById('graphBfsSeq').innerHTML = seq.map((item, i) => `
+      <span class="${i === 0 ? 'text-cyan' : (i < 4 ? 'text-violet' : 'text-warning')} fw-bold">${item}</span>
+    `).join(' &rarr; ');
+
+    document.getElementById('graphBfsQueue').textContent = `Traversal: [ ${seq.join(' -> ')} ]`;
+    document.getElementById('bfsStatusBadge').textContent = `Traversing from ${startNode}`;
+
+    // Highlight edges and pulse nodes step-by-step
+    seq.forEach((node, idx) => {
+      setTimeout(() => {
+        const circle = document.getElementById(`circle-${sanitizeSvgId(node)}`);
+        if (circle) {
+          circle.classList.add('bfs-visited');
+        }
+      }, idx * 300);
+    });
+
+    selectGraphVertex(startNode);
+  }
+
+  function handleGraphSearch(query) {
+    const q = (query || '').trim().toUpperCase();
+    if (!q) return;
+
+    const match = Object.keys(symmetricalGraphTopology).find(k => k.toUpperCase().includes(q));
+    if (match) {
+      selectGraphVertex(match);
+    }
+  }
+</script>
+{% endblock %}

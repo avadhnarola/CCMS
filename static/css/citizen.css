@@ -34,9 +34,9 @@
   --clr-info: #0284c7;
   --clr-info-light: rgba(2, 132, 199, 0.1);
 
-  --text-heading: #0f172a;
-  --text-body: #334155;
-  --: #64748b;
+  --text-heading: #081c15;
+  --text-body: #1e332a;
+  --text-muted: #4b6358;
 
   --gradient-brand: linear-gradient(135deg, #06b6d4 0%, #4f46e5 100%);
   --gradient-card: linear-gradient(145deg, #ffffff, #f8fafc);
@@ -51,21 +51,22 @@
   --transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
-/* Dark Theme Overrides */
-[data-theme="dark"] {
-  --bg-main: #0b1329;
-  --bg-surface: #111c38;
-  --bg-subtle: #192648;
-  --bg-sidebar: #070d1e;
-  --text-sidebar: #64748b;
-  --text-sidebar-active: #38bdf8;
+/* Dark Green Vigilance Theme Overrides */
+[data-theme="dark"],
+[data-theme="dark-green"] {
+  --bg-main: #05130e;
+  --bg-surface: #0a1f18;
+  --bg-subtle: #14352b;
+  --bg-sidebar: #030c08;
+  --text-sidebar: #86efac;
+  --text-sidebar-active: #34d399;
 
-  --border-color: rgba(255, 255, 255, 0.1);
-  --border-hover: rgba(6, 182, 212, 0.3);
+  --border-color: rgba(52, 211, 153, 0.18);
+  --border-hover: rgba(52, 211, 153, 0.4);
 
-  --clr-primary: #38bdf8;
-  --clr-primary-hover: #0284c7;
-  --clr-primary-light: rgba(56, 189, 248, 0.12);
+  --clr-primary: #10b981;
+  --clr-primary-hover: #34d399;
+  --clr-primary-light: rgba(16, 185, 129, 0.15);
 
   --clr-accent: #a78bfa;
   --clr-accent-light: rgba(167, 139, 250, 0.12);
@@ -79,16 +80,16 @@
   --clr-danger: #f87171;
   --clr-danger-light: rgba(248, 113, 113, 0.15);
 
-  --text-heading: #f8fafc;
-  --text-body: #cbd5e1;
-  --: #94a3b8;
+  --text-heading: #f0fdf4;
+  --text-body: #d1fae5;
+  --text-muted: #86efac;
 
-  --gradient-brand: linear-gradient(135deg, #00d4ff 0%, #6366f1 100%);
-  --gradient-card: linear-gradient(145deg, #111c38, #162447);
+  --gradient-brand: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  --gradient-card: linear-gradient(145deg, #0e271f, #081a13);
 
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
-  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.4);
-  --shadow-hover: 0 15px 35px rgba(6, 182, 212, 0.2);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 15px 35px rgba(16, 185, 129, 0.25);
 }
 
 /* Global Reset & Typography */
@@ -335,7 +336,7 @@ a {
 
 .page-subtitle {
   font-size: 0.9rem;
-  color: var(--);
+  color: var(--text-muted);
   margin-top: 4px;
 }
 
@@ -393,7 +394,7 @@ a {
 .stat-label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--);
+  color: var(--text-muted);
   margin-top: 4px;
 }
 
@@ -499,7 +500,7 @@ a {
   align-items: center;
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--);
+  color: var(--text-muted);
   margin-bottom: 8px;
   font-family: monospace;
 }
@@ -776,7 +777,7 @@ a {
 }
 
 .swal2-html-container {
-  color: var(--) !important;
+  color: var(--text-muted) !important;
   font-size: 0.95rem !important;
   line-height: 1.6 !important;
 }
@@ -1102,7 +1103,7 @@ select option {
 
 .track-ref-label {
   font-size: 0.85rem;
-  color: var(--);
+  color: var(--text-muted);
   margin-bottom: 4px;
 }
 
@@ -1240,7 +1241,7 @@ select option {
 
 .timeline-desc {
   font-size: 0.88rem;
-  color: var(--);
+  color: var(--text-muted);
   line-height: 1.45;
   margin-bottom: 3px;
 }
@@ -1248,7 +1249,7 @@ select option {
 .timeline-meta {
   font-family: 'Inter', monospace, sans-serif;
   font-size: 0.8rem;
-  color: var(--);
+  color: var(--text-muted);
 }
 
 .quick-sample-badge {
@@ -1266,4 +1267,29 @@ select option {
   background: var(--clr-primary-light);
   color: var(--clr-primary);
   border-color: var(--clr-primary);
+}
+
+/* ============================================================
+   THEME SAFETY NET (Citizen Panel)
+   Block generic dark — only light / dark-green permitted.
+============================================================ */
+
+[data-theme="dark"]:not([data-theme="dark-green"]),
+[data-bs-theme="dark"],
+body.dark-mode {
+  --bg-main: #f8fafc !important;
+  --bg-surface: #ffffff !important;
+  --bg-subtle: #f1f5f9 !important;
+  --bg-sidebar: #0f172a !important;
+  --text-sidebar: #94a3b8 !important;
+  --text-sidebar-active: #ffffff !important;
+  --border-color: #e2e8f0 !important;
+  --border-hover: #cbd5e1 !important;
+  --text-heading: #081c15 !important;
+  --text-body: #1e332a !important;
+  --text-muted: #4b6358 !important;
+  --clr-primary: #0891b2 !important;
+  --clr-primary-hover: #0e7490 !important;
+  background-color: #f8fafc !important;
+  color: #1e332a !important;
 }

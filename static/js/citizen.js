@@ -271,17 +271,18 @@ function getStoredUser() {
 }
 
 // ============================================================
-// LIGHT / DARK THEME ENGINE
+// THEME ENGINE — Light  ↔  Dark Green
 // ============================================================
 function initTheme() {
   const savedTheme = localStorage.getItem("ccms_theme") || "light";
-  document.documentElement.setAttribute("data-theme", savedTheme);
-  updateThemeIcon(savedTheme);
+  const safeTheme = savedTheme === "dark-green" ? "dark-green" : "light";
+  document.documentElement.setAttribute("data-theme", safeTheme);
+  updateThemeIcon(safeTheme);
 }
 
 function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-  const newTheme = currentTheme === "light" ? "dark" : "light";
+  const newTheme = currentTheme === "dark-green" ? "light" : "dark-green";
   document.documentElement.setAttribute("data-theme", newTheme);
   localStorage.setItem("ccms_theme", newTheme);
   updateThemeIcon(newTheme);
@@ -290,12 +291,12 @@ function toggleTheme() {
 function updateThemeIcon(theme) {
   const btn = document.getElementById("themeToggleBtn");
   if (btn) {
-    if (theme === "dark") {
-      btn.innerHTML = '<i class="fas fa-sun text-warning"></i>';
+    if (theme === "dark-green") {
+      btn.innerHTML = '<i class="fas fa-leaf" style="color:#34d399"></i>';
       btn.setAttribute("title", "Switch to Light Theme");
     } else {
-      btn.innerHTML = '<i class="fas fa-moon text-primary"></i>';
-      btn.setAttribute("title", "Switch to Dark Theme");
+      btn.innerHTML = '<i class="fas fa-sun" style="color:#d97706"></i>';
+      btn.setAttribute("title", "Switch to Dark Green Theme");
     }
   }
 }

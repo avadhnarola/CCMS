@@ -20,7 +20,7 @@
           Zero-Tolerance Anti-Corruption Command System
         </h1>
 
-        <p class="lead  mb-4" data-i18n="hero_sub" style="font-size: 1.15rem; line-height: 1.8;">
+        <p class="lead text-muted mb-4" data-i18n="hero_sub" style="font-size: 1.15rem; line-height: 1.8;">
           Report corruption securely with military-grade AES-256 encryption. Track investigation progress in real time
           with complete whistleblower identity protection and legal immunity.
         </p>
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Trust Badges -->
-        <div class="d-flex flex-wrap align-items-center gap-4  small pt-2">
+        <div class="d-flex flex-wrap align-items-center gap-4 text-muted small pt-2">
           <div class="d-flex align-items-center gap-2">
             <i class="fas fa-check-double text-emerald fs-5"></i>
             <span>Central Vigilance Commission Standard</span>
@@ -57,7 +57,7 @@
               </div>
               <div>
                 <h6 class="fw-bold mb-0 text-heading">Live Case Tracker</h6>
-                <span class="" style="font-size:0.75rem;">Instant Verification Engine</span>
+                <span class="text-muted" style="font-size:0.75rem;">Instant Verification Engine</span>
               </div>
             </div>
             <span class="badge bg-success-subtle text-success border border-success-subtle"><i
@@ -67,7 +67,7 @@
           <form action="{{ url_for('track_complaint') }}" method="GET" class="mb-3">
             <label class="form-label small fw-bold text-heading">Enter Complaint Reference ID</label>
             <div class="input-group mb-2">
-              <span class="input-group-text bg-subtle border-end-0 "><i class="fas fa-hashtag"></i></span>
+              <span class="input-group-text bg-subtle border-end-0 text-muted"><i class="fas fa-hashtag"></i></span>
               <input type="text" name="id" class="form-control border-start-0" placeholder="e.g. CCMS-2026-6775"
                 required>
             </div>
@@ -77,15 +77,15 @@
           </form>
 
           <div class="p-3 rounded bg-subtle border">
-            <div class="d-flex align-items-center justify-content-between  small mb-1">
+            <div class="d-flex align-items-center justify-content-between text-muted small mb-1">
               <span>Security Protocol</span>
               <span class="fw-bold text-heading">SHA-256 Proof</span>
             </div>
-            <div class="d-flex align-items-center justify-content-between  small mb-1">
+            <div class="d-flex align-items-center justify-content-between text-muted small mb-1">
               <span>Avg. Vigilance Response</span>
               <span class="fw-bold text-emerald">&lt; 24 Hours</span>
             </div>
-            <div class="d-flex align-items-center justify-content-between  small">
+            <div class="d-flex align-items-center justify-content-between text-muted small">
               <span>Whistleblower Identity</span>
               <span class="fw-bold text-primary">100% Redacted</span>
             </div>
@@ -160,7 +160,7 @@
         class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1.5 rounded-pill mb-2 fw-bold">REPORTABLE
         MISCONDUCT</span>
       <h2 class="fw-bold brand-font text-heading">Public Sector Misconduct Categories</h2>
-      <p class=" mx-auto" style="max-width: 650px;">
+      <p class="text-muted mx-auto" style="max-width: 650px;">
         CCMS covers all classifications of administrative malpractice, illicit bribes, procurement fraud, and civil
         rights infringements.
       </p>
@@ -175,10 +175,10 @@
               <div class="stat-icon" style="background: var(--bg-subtle); color: var(--primary);">
                 <i class="fas {{ cat.icon }}"></i>
               </div>
-              <span class="badge bg-subtle  border">{{ cat.dept }}</span>
+              <span class="badge bg-subtle text-muted border">{{ cat.dept }}</span>
             </div>
             <h5 class="fw-bold text-heading mb-2">{{ cat.name }}</h5>
-            <p class=" small mb-3">{{ cat.description }}</p>
+            <p class="text-muted small mb-3">{{ cat.description }}</p>
           </div>
           <a href="{{ url_for('file_complaint') }}?category={{ cat.name }}"
             class="btn btn-sm btn-outline-custom w-100 text-center">
@@ -199,7 +199,7 @@
         class="badge bg-emerald-subtle text-success border border-success-subtle px-3 py-1.5 rounded-pill mb-2 fw-bold">IRONCLAD
         INTEGRITY</span>
       <h2 class="fw-bold brand-font text-heading">Military-Grade Whistleblower Protection</h2>
-      <p class=" mx-auto" style="max-width: 650px;">
+      <p class="text-muted mx-auto" style="max-width: 650px;">
         Designed from the ground up to prevent retaliation and guarantee complete anonymity for every reporting citizen.
       </p>
     </div>
@@ -211,7 +211,7 @@
             <i class="fas fa-lock"></i>
           </div>
           <h5 class="fw-bold text-heading mb-2">AES-256 GCM Vault</h5>
-          <p class=" small mb-0">Every statement and uploaded evidence file is encrypted using symmetric 256-bit
+          <p class="text-muted small mb-0">Every statement and uploaded evidence file is encrypted using symmetric 256-bit
             Galois/Counter Mode.</p>
         </div>
       </div>
@@ -222,7 +222,7 @@
             <i class="fas fa-user-secret"></i>
           </div>
           <h5 class="fw-bold text-heading mb-2">Metadata Scrubbing</h5>
-          <p class=" small mb-0">EXIF timestamps, geolocation coordinates, and submitter IP addresses are automatically
+          <p class="text-muted small mb-0">EXIF timestamps, geolocation coordinates, and submitter IP addresses are automatically
             purged upon intake.</p>
         </div>
       </div>
@@ -233,7 +233,7 @@
             <i class="fas fa-diagram-project"></i>
           </div>
           <h5 class="fw-bold text-heading mb-2">Greedy Auto-Assign</h5>
-          <p class=" small mb-0">Mathematical workload distribution prevents departmental cover-ups and accelerates
+          <p class="text-muted small mb-0">Mathematical workload distribution prevents departmental cover-ups and accelerates
             swift case assignment.</p>
         </div>
       </div>
@@ -244,7 +244,7 @@
             <i class="fas fa-scale-balanced"></i>
           </div>
           <h5 class="fw-bold text-heading mb-2">Statutory Protection</h5>
-          <p class=" small mb-0">Backed by the Whistleblowers Protection Act. Confidentiality breach is punishable by
+          <p class="text-muted small mb-0">Backed by the Whistleblowers Protection Act. Confidentiality breach is punishable by
             criminal indictment.</p>
         </div>
       </div>
@@ -279,7 +279,7 @@
             </div>
             <div>
               <div class="fw-bold text-heading">{{ item.complaint_title }}</div>
-              <div class=" small">
+              <div class="text-muted small">
                 <span>{{ item.sector }}</span> &bull; <span>{{ item.complaint_id }}</span>
               </div>
             </div>
@@ -301,7 +301,7 @@
           class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1.5 rounded-pill mb-2 fw-bold">DIRECT
           VIGILANCE DESK</span>
         <h2 class="fw-bold brand-font text-heading mb-3">Reach Our Central Vigilance Directorate</h2>
-        <p class=" mb-4">
+        <p class="text-muted mb-4">
           Need urgent protection or assistance regarding active extortion or harassment? Submit an encrypted inquiry to
           our senior vigilance inspectors immediately.
         </p>
@@ -312,7 +312,7 @@
                 class="fas fa-phone-volume"></i></div>
             <div>
               <div class="fw-bold text-heading">1800-11-CCMS (Toll-Free 24/7)</div>
-              <div class=" small">Priority Emergency Whistleblower Line</div>
+              <div class="text-muted small">Priority Emergency Whistleblower Line</div>
             </div>
           </div>
           <div class="d-flex align-items-center gap-3 p-3 rounded bg-subtle border">
@@ -320,7 +320,7 @@
                 class="fas fa-envelope-open-text"></i></div>
             <div>
               <div class="fw-bold text-heading">vigilance.director@ccms.gov.in</div>
-              <div class=" small">Encrypted PGP Key Available</div>
+              <div class="text-muted small">Encrypted PGP Key Available</div>
             </div>
           </div>
         </div>
