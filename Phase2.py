@@ -149,65 +149,41 @@ dynamic_search(bst, "CCMS-2026-9999")
 
 
 # =========================================================
-# 4. GRAPH - Symmetrical Network Representation
+# 4. GRAPH - Department -> Officers -> Complaints
 # =========================================================
-
-# Graph topology matching the symmetrical network representation:
 #
-#        (Top-Left) ------------- (Top-Right)
-#         /        \             /        \
-#     (Mid-Left) (Inner-Left) (Inner-Right) (Mid-Right)
-#        |             \     /             |
-#     (Bot-Left)       (Bottom)        (Bot-Right)
+# Structure:
+#   Department
+#       └─ Officer
+#             └─ Complaint ID
 #
-graph = {
-    "Citizen Intake Portal": [
-        "Police & Law Enforcement",
-        "Land Registration & Revenue",
-        "Healthcare & Supplies",
-        "Municipality & Public Works"
-    ],
-    "Police & Law Enforcement": [
-        "Citizen Intake Portal",
-        "Field & Forensic Unit"
-    ],
-    "Field & Forensic Unit": [
-        "Police & Law Enforcement",
-        "Special Investigation Bureau"
-    ],
-    "Land Registration & Revenue": [
-        "Citizen Intake Portal",
-        "Special Investigation Bureau"
-    ],
-    "Special Investigation Bureau": [
-        "Field & Forensic Unit",
-        "Land Registration & Revenue",
-        "Central Vigilance Directorate"
-    ],
-    "Central Vigilance Directorate": [
-        "Special Investigation Bureau",
-        "Healthcare & Supplies",
-        "Procurement & Audit Wing"
-    ],
-    "Healthcare & Supplies": [
-        "Citizen Intake Portal",
-        "Central Vigilance Directorate"
-    ],
-    "Procurement & Audit Wing": [
-        "Central Vigilance Directorate",
-        "Municipality & Public Works"
-    ],
-    "Municipality & Public Works": [
-        "Citizen Intake Portal",
-        "Procurement & Audit Wing"
-    ]
-}
 
-print("\n\n--- 4. GRAPH (ADJACENCY LIST) ---")
+graph = {}
+
+# Step 1 — add each department as a node
+for dept in STATIC_DEPARTMENTS:
+    graph[dept["name"]] = []
+
+# Step 2 — link departments to their officers
+for officer in STATIC_OFFICERS:
+    dept = officer["department"]
+    if dept in graph:
+        graph[dept].append(officer["name"])
+    graph[officer["name"]] = []       # officer node (children = complaints)
+
+# Step 3 — link officers to their assigned complaints
+for complaint in STATIC_COMPLAINTS:
+    officer_name = complaint.get("assigned_officer")
+    if officer_name and officer_name in graph:
+        graph[officer_name].append(complaint["complaint_id"])
+    if complaint["complaint_id"] not in graph:
+        graph[complaint["complaint_id"]] = []   # complaint is a leaf node
+
+print("\n\n--- 4. GRAPH (Department -> Officers -> Complaints) ---")
 for node, neighbors in graph.items():
-    print(f"{node}:")
+    print(f"  {node}")
     for n in neighbors:
-        print(f"    -> {n}")
+        print(f"    └─ {n}")
 
 
 # =========================================================
@@ -233,8 +209,8 @@ def bfs(graph, start):
 
 
 print("\n--- 5. BFS TRAVERSAL ---")
-print("BFS starting from 'Citizen Intake Portal':")
-bfs(graph, "Citizen Intake Portal")
+print("BFS from 'Land Registration & Revenue':")
+bfs(graph, "Land Registration & Revenue")
 
-print("\nBFS starting from 'Central Vigilance Directorate':")
-bfs(graph, "Central Vigilance Directorate")
+print("\nBFS from 'Police & Law Enforcement':")
+bfs(graph, "Police & Law Enforcement")

@@ -117,7 +117,7 @@
 
   <div class="row g-4">
     <!-- LEFT: INTERACTIVE BINARY TREE VISUALIZATION -->
-    <div class="col-xl-7">
+    <div class="col-xl-10">
       <div class="ccms-card p-4 shadow-sm h-100">
         <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
           <h5 class="fw-bold text-heading mb-0">
@@ -250,86 +250,6 @@
           </div>
         </div>
 
-      </div>
-    </div>
-
-    <!-- RIGHT: CLASSIFICATION & COMPLAINT FORM -->
-    <div class="col-xl-5">
-      <div class="ccms-card p-4 shadow-sm h-100">
-        <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
-          <h5 class="fw-bold text-heading mb-0">
-            <i class="fas fa-clipboard-check text-emerald me-2"></i>Classification Action Form
-          </h5>
-          <span class="badge bg-emerald-subtle text-emerald border" id="activeNodeBadge">CORRUPTION</span>
-        </div>
-
-        <form action="{{ url_for('admin_category_tree_action') }}" method="POST">
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-heading">Selected Binary Tree Node</label>
-            <div class="input-group">
-              <span class="input-group-text bg-subtle"><i class="fas fa-code-branch"></i></span>
-              <input type="text" id="formNodeName" name="node_name" class="form-control fw-bold text-primary"
-                value="CORRUPTION" readonly>
-              <input type="text" id="formNodeCode" name="node_code" class="form-control font-monospace"
-                style="max-width: 120px;" value="CAT-ROOT" readonly>
-            </div>
-          </div>
-
-          <div class="row g-3 mb-3">
-            <div class="col-md-6">
-              <label class="form-label small fw-bold text-heading">Hierarchy Level</label>
-              <input type="text" id="formNodeLevel" class="form-control form-control-sm" value="Master Root (Level 0)"
-                readonly>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small fw-bold text-heading">Default Severity</label>
-              <select name="severity" id="formNodeSeverity" class="form-select form-select-sm">
-                <option value="Critical">Critical</option>
-                <option value="High" selected>High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-heading">Jurisdictional Directorate</label>
-            <input type="text" id="formNodeDept" name="dept" class="form-control form-control-sm"
-              value="Central Vigilance Directorate (HQ)">
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-heading">Category Description &amp; Scope</label>
-            <textarea id="formNodeDesc" name="description" class="form-control form-control-sm"
-              rows="3">Master classification taxonomy covering all forms of public corruption and official misconduct.</textarea>
-          </div>
-
-          <div class="p-3 rounded bg-subtle border mb-4">
-            <div class="small fw-bold text-heading mb-1"><i class="fas fa-bolt text-warning me-1"></i> Quick Action
-              Options:</div>
-            <div class="form-check mb-1">
-              <input class="form-check-input" type="radio" name="action_type" id="act_register"
-                value="register_category" checked>
-              <label class="form-check-label small" for="act_register">
-                Add / Synchronize this node with standard reporting categories
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="action_type" id="act_sample"
-                value="generate_sample_case">
-              <label class="form-check-label small" for="act_sample">
-                Generate sample verified complaint under this binary tree branch
-              </label>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-between">
-            <button type="button" class="btn btn-outline-custom btn-sm" onclick="location.reload();">Reset</button>
-            <button type="submit" class="btn btn-brand btn-sm">
-              <i class="fas fa-paper-plane me-1"></i> Submit Classification
-            </button>
-          </div>
-        </form>
       </div>
     </div>
 

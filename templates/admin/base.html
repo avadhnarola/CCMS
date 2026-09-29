@@ -85,6 +85,7 @@
           <i class="fas fa-tags"></i> <span>Misconduct Types</span>
         </a>
 
+
         <div class="nav-section-title">DSA &amp; DATA STRUCTURES</div>
         <a href="{{ url_for('admin_category_tree') }}"
           class="sidebar-link {% if active_page == 'category_tree' %}active{% endif %}">
@@ -94,13 +95,7 @@
           class="sidebar-link {% if active_page == 'department_graph' %}active{% endif %}">
           <i class="fas fa-project-diagram" style="color:#38bdf8;"></i> <span>Department Graph &amp; BFS</span>
         </a>
-        <a href="{{ url_for('admin_phase2') }}" class="sidebar-link {% if active_page == 'phase2' %}active{% endif %}">
-          <i class="fas fa-network-wired" style="color:#06b6d4;"></i> <span>Phase 2: Structured Data</span>
-        </a>
-        <a href="{{ url_for('admin_dsa_lab') }}"
-          class="sidebar-link {% if active_page == 'dsa_lab' %}active{% endif %}">
-          <i class="fas fa-brain" style="color:#a78bfa;"></i> <span>DSA Intelligence Lab</span>
-        </a>
+
 
         <div class="nav-section-title">SETTINGS &amp; COMMS</div>
         <a href="{{ url_for('admin_notifications') }}"
