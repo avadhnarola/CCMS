@@ -149,42 +149,33 @@ dynamic_search(bst, "CCMS-2026-9999")
 
 
 # =========================================================
-# 4. GRAPH - Department -> Officers -> Complaints
+# GRAPH DATA
+# Department -> Officers -> Complaints
 # =========================================================
-#
-# Structure:
-#   Department
-#       └─ Officer
-#             └─ Complaint ID
-#
 
-graph = {}
+graph = {
 
-# Step 1 — add each department as a node
-for dept in STATIC_DEPARTMENTS:
-    graph[dept["name"]] = []
+    "Land Registration & Revenue": [
+        "Senior Inspector A.",
+        "Inspector M. Sharma"
+    ],
 
-# Step 2 — link departments to their officers
-for officer in STATIC_OFFICERS:
-    dept = officer["department"]
-    if dept in graph:
-        graph[dept].append(officer["name"])
-    graph[officer["name"]] = []       # officer node (children = complaints)
+    "Senior Inspector A.": [
+        "CCMS-2026-1848",
+        "CCMS-2026-1849"
+    ],
 
-# Step 3 — link officers to their assigned complaints
-for complaint in STATIC_COMPLAINTS:
-    officer_name = complaint.get("assigned_officer")
-    if officer_name and officer_name in graph:
-        graph[officer_name].append(complaint["complaint_id"])
-    if complaint["complaint_id"] not in graph:
-        graph[complaint["complaint_id"]] = []   # complaint is a leaf node
+    "Inspector M. Sharma": [
+        "CCMS-2026-4366",
+        "CCMS-2026-8632"
+    ],
 
-print("\n\n--- 4. GRAPH (Department -> Officers -> Complaints) ---")
-for node, neighbors in graph.items():
-    print(f"  {node}")
-    for n in neighbors:
-        print(f"    └─ {n}")
-
+    # Complaint nodes
+    "CCMS-2026-1848": [],
+    "CCMS-2026-1849": [],
+    "CCMS-2026-4366": [],
+    "CCMS-2026-8632": []
+}
 
 # =========================================================
 # 5. BFS TRAVERSAL (Level-by-Level Exploration)
@@ -211,6 +202,3 @@ def bfs(graph, start):
 print("\n--- 5. BFS TRAVERSAL ---")
 print("BFS from 'Land Registration & Revenue':")
 bfs(graph, "Land Registration & Revenue")
-
-print("\nBFS from 'Police & Law Enforcement':")
-bfs(graph, "Police & Law Enforcement")
