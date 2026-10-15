@@ -149,23 +149,94 @@
   {%- set off1_cases = complaints | selectattr("assigned_officer","equalto",off1.name) | list if off1 else [] -%}
 
   <style>
-    .tree-wrap{background:linear-gradient(145deg,#020d09 0%,#041510 40%,#061a14 100%);border:1px solid rgba(16,185,129,.2);border-radius:20px;padding:2rem;position:relative;overflow:hidden;}
-    .tree-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(5,150,105,.12) 0%,transparent 65%);pointer-events:none;}
-    .t-edge-main  {stroke:#10b981;stroke-width:2.5;fill:none;stroke-dasharray:8,4;animation:eFlow 1.8s linear infinite;transition:all 0.3s ease;}
-    .t-edge-br    {stroke:#0891b2;stroke-width:2;  fill:none;stroke-dasharray:6,4;animation:eFlow 1.4s linear infinite;transition:all 0.3s ease;}
-    .t-edge-gray  {stroke:#374151;stroke-width:1.8;fill:none;stroke-dasharray:5,4;animation:eFlow 2.5s linear infinite;transition:all 0.3s ease;}
-    @keyframes eFlow{to{stroke-dashoffset:-36;}}
-    @keyframes rootPulse{0%,100%{opacity:.9;}50%{opacity:1;}}
-    .t-root-anim{animation:rootPulse 3s ease-in-out infinite;}
-    .t-legend-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:5px 14px;font-size:.76rem;color:var(--text-body);}
+    .tree-wrap {
+      background: radial-gradient(circle at 50% 12%, rgba(16, 185, 129, 0.12) 0%, rgba(4, 21, 16, 0.96) 50%, #020b08 100%);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      border-radius: 24px;
+      padding: 2.25rem 2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+    .tree-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(rgba(52, 211, 153, 0.08) 1px, transparent 1px),
+        radial-gradient(ellipse at 50% 0%, rgba(16, 185, 129, 0.18) 0%, transparent 70%);
+      background-size: 28px 28px, 100% 100%;
+      pointer-events: none;
+    }
+    .t-edge-main {
+      stroke: #10b981;
+      stroke-width: 2.5;
+      fill: none;
+      stroke-dasharray: 8, 4;
+      animation: eFlow 1.8s linear infinite;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.5));
+    }
+    .t-edge-br {
+      stroke: #38bdf8;
+      stroke-width: 2.2;
+      fill: none;
+      stroke-dasharray: 6, 4;
+      animation: eFlow 1.4s linear infinite;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.5));
+    }
+    .t-edge-gray {
+      stroke: #475569;
+      stroke-width: 1.8;
+      fill: none;
+      stroke-dasharray: 5, 4;
+      animation: eFlow 2.5s linear infinite;
+      transition: all 0.3s ease;
+    }
+    @keyframes eFlow {
+      to { stroke-dashoffset: -36; }
+    }
+    @keyframes rootPulse {
+      0%, 100% { filter: drop-shadow(0 4px 18px rgba(16, 185, 129, 0.45)); }
+      50% { filter: drop-shadow(0 4px 28px rgba(16, 185, 129, 0.7)); }
+    }
+    .t-root-anim {
+      animation: rootPulse 3.5s ease-in-out infinite;
+    }
+    .t-node-interactive {
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+      transform-origin: center;
+    }
+    .t-node-interactive:hover {
+      filter: brightness(1.18) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.55));
+    }
+    .t-legend-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 6px 14px;
+      font-size: 0.76rem;
+      color: #e2e8f0;
+      transition: all 0.2s ease;
+    }
+    .t-legend-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
 
     /* Live Search Flow Glowing Effects */
     .tree-search-panel {
-      background: rgba(4, 21, 16, 0.88);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      border-radius: 14px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+      background: rgba(4, 21, 16, 0.92);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
     }
     .t-edge-traversing {
       stroke: #facc15 !important;
@@ -176,26 +247,26 @@
     }
     .t-edge-found {
       stroke: #34d399 !important;
-      stroke-width: 4px !important;
+      stroke-width: 4.5px !important;
       stroke-dasharray: 8, 4 !important;
-      filter: drop-shadow(0 0 8px #10b981) drop-shadow(0 0 18px rgba(52, 211, 153, 0.85)) !important;
+      filter: drop-shadow(0 0 8px #10b981) drop-shadow(0 0 20px rgba(52, 211, 153, 0.95)) !important;
       animation: eFlowLaser 1.2s linear infinite !important;
     }
     .t-node-inspecting {
       stroke: #facc15 !important;
       stroke-width: 3.5px !important;
-      filter: drop-shadow(0 0 14px rgba(250, 204, 21, 0.95)) !important;
+      filter: drop-shadow(0 0 14px rgba(250, 204, 21, 0.95)) drop-shadow(0 0 28px rgba(250, 204, 21, 0.5)) !important;
       animation: nodeInspectingPulse 0.7s ease-in-out infinite alternate !important;
     }
     .t-node-matched {
       stroke: #34d399 !important;
       stroke-width: 4.5px !important;
-      filter: drop-shadow(0 0 18px #10b981) drop-shadow(0 0 35px rgba(52, 211, 153, 0.95)) !important;
+      filter: drop-shadow(0 0 18px #10b981) drop-shadow(0 0 35px rgba(52, 211, 153, 0.95)) drop-shadow(0 0 50px rgba(16, 185, 129, 0.6)) !important;
       animation: nodeMatchedPulse 0.9s ease-in-out infinite alternate !important;
     }
     .t-dot-active {
       fill: #facc15 !important;
-      filter: drop-shadow(0 0 8px #facc15) !important;
+      filter: drop-shadow(0 0 10px #facc15) !important;
       r: 6.5px !important;
       transition: all 0.3s ease;
     }
@@ -207,33 +278,61 @@
       100% { opacity: 1; filter: drop-shadow(0 0 20px #facc15); }
     }
     @keyframes nodeMatchedPulse {
-      0% { filter: drop-shadow(0 0 10px #10b981); }
-      100% { filter: drop-shadow(0 0 28px #34d399) drop-shadow(0 0 45px rgba(16, 185, 129, 0.9)); }
+      0% { filter: drop-shadow(0 0 12px #10b981); }
+      100% { filter: drop-shadow(0 0 30px #34d399) drop-shadow(0 0 45px rgba(16, 185, 129, 0.9)); }
     }
     .step-pill {
       display: inline-flex;
       align-items: center;
       font-size: 0.73rem;
-      padding: 3px 10px;
-      border-radius: 14px;
+      padding: 5px 13px;
+      border-radius: 30px;
       background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       color: #94a3b8;
-      transition: all 0.3s ease;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+      gap: 5px;
     }
     .step-pill.active {
       background: rgba(250, 204, 21, 0.18);
       border-color: #facc15;
       color: #fde047;
       font-weight: 700;
-      box-shadow: 0 0 12px rgba(250, 204, 21, 0.4);
+      box-shadow: 0 0 14px rgba(250, 204, 21, 0.45), inset 0 1px 0 rgba(255,255,255,0.1);
     }
     .step-pill.completed {
       background: rgba(16, 185, 129, 0.22);
       border-color: #10b981;
       color: #6ee7b7;
       font-weight: 700;
-      box-shadow: 0 0 14px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    /* Arrow separator between traversal pills */
+    .t-arrow-sep {
+      display: inline-flex;
+      align-items: center;
+      color: #facc15;
+      font-size: 1rem;
+      font-weight: 900;
+      line-height: 1;
+      padding: 0 2px;
+      filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.8));
+      animation: arrowPulse 1s ease-in-out infinite alternate;
+      flex-shrink: 0;
+    }
+    .t-arrow-sep.found {
+      color: #34d399;
+      filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.85));
+      animation: arrowPulseGreen 1s ease-in-out infinite alternate;
+    }
+    @keyframes arrowPulse {
+      0%  { opacity: 0.65; transform: translateX(-2px); }
+      100%{ opacity: 1;    transform: translateX(2px); filter: drop-shadow(0 0 10px #facc15); }
+    }
+    @keyframes arrowPulseGreen {
+      0%  { opacity: 0.7; transform: translateX(-2px); }
+      100%{ opacity: 1;   transform: translateX(2px); filter: drop-shadow(0 0 10px #34d399); }
     }
   </style>
 
@@ -242,22 +341,22 @@
       <div>
         <h5 class="fw-bold mb-1" style="color:#f0fdf4;">
           <i class="fas fa-sitemap me-2" style="color:#10b981;"></i>
-          Hierarchical Graph
+          Hierarchical Graph Network
           <span style="color:#4b5563;font-weight:400;margin:0 6px;">—</span>
-          <span style="color:#6ee7b7;">Department</span>
-          <span style="color:#374151;"> &rarr; </span>
-          <span style="color:#7dd3fc;">Officers</span>
-          <span style="color:#374151;"> &rarr; </span>
-          <span style="color:#fb923c;">Complaints</span>
+          <span style="color:#34d399;font-weight:700;">Department</span>
+          <span style="color:#64748b;"> &rarr; </span>
+          <span style="color:#38bdf8;font-weight:700;">Officers</span>
+          <span style="color:#64748b;"> &rarr; </span>
+          <span style="color:#fb923c;font-weight:700;">Complaints</span>
         </h5>
       </div>
       <div class="d-flex flex-column align-items-end gap-1">
-        <span style="font-size:.75rem;color:#94a3b8;">{{ td_officers|length }} Officers &bull; {{ (off0_cases+off1_cases)|length }} Cases</span>
+        <span style="font-size:.75rem;color:#94a3b8;"><strong class="text-light">{{ td_officers|length }}</strong> Officers &bull; <strong class="text-light">{{ (off0_cases+off1_cases)|length }}</strong> Cases</span>
       </div>
     </div>
 
     <!-- SEARCH PANEL -->
-    <div class="tree-search-panel p-3   mb-4">
+    <div class="tree-search-panel p-3 mb-4">
       <div class="d-flex flex-wrap align-items-center gap-2">
         <label for="treeNodeSearchSelect" class="form-label mb-0 fw-semibold text-light small me-1">
           Search:
@@ -311,15 +410,15 @@
 
       <!-- Live Search Status & Step Tracer -->
       <div id="treeSearchStatusBox" class="mt-3 pt-2" style="border-top: 1px dashed rgba(16,185,129,0.25); display: none;">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <div class="d-flex flex-column gap-2">
           <div class="d-flex align-items-center gap-2">
             <span id="treeStatusSpinner" class="spinner-grow spinner-grow-sm text-warning" role="status"></span>
             <span id="treeStatusText" class="small fw-semibold text-warning">
               Searching...
             </span>
           </div>
-          <div id="treeTraversalSteps" class="small d-flex flex-wrap align-items-center gap-1">
-            <!-- Traversal step pills appear here -->
+          <div id="treeTraversalSteps" class="d-flex flex-wrap align-items-center" style="gap: 6px 4px; margin-top: 4px;">
+            <!-- Traversal step pills with → arrows appear here -->
           </div>
         </div>
       </div>
@@ -327,20 +426,88 @@
 
     <svg viewBox="0 0 840 480" style="width:100%;max-width:840px;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="gDept" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#064e3b"/><stop offset="100%" stop-color="#065f46"/></linearGradient>
-        <linearGradient id="gOff"  x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0c4a6e"/><stop offset="100%" stop-color="#075985"/></linearGradient>
-        <linearGradient id="gHigh" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#431407"/><stop offset="100%" stop-color="#7c2d12"/></linearGradient>
-        <linearGradient id="gCrit" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#450a0a"/><stop offset="100%" stop-color="#7f1d1d"/></linearGradient>
-        <linearGradient id="gMed"  x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1e3a5f"/><stop offset="100%" stop-color="#1e40af"/></linearGradient>
-        <filter id="fGreen" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur in="SourceGraphic" stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        <filter id="fCyan"  x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        <filter id="fLeaf"  x="-15%" y="-30%" width="130%" height="160%"><feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <!-- Department Gradient (Root) -->
+        <linearGradient id="gDept" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#022c22"/>
+          <stop offset="45%" stop-color="#064e3b"/>
+          <stop offset="100%" stop-color="#047857"/>
+        </linearGradient>
+        <linearGradient id="gDeptBadge" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="rgba(16,185,129,0.35)"/>
+          <stop offset="100%" stop-color="rgba(5,150,105,0.18)"/>
+        </linearGradient>
+
+        <!-- Officer Gradient (Level 1) -->
+        <linearGradient id="gOff" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#081e3a"/>
+          <stop offset="50%" stop-color="#0c4a6e"/>
+          <stop offset="100%" stop-color="#0284c7"/>
+        </linearGradient>
+        <radialGradient id="gOffAvatar" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#38bdf8"/>
+          <stop offset="100%" stop-color="#0369a1"/>
+        </radialGradient>
+
+        <!-- Complaint Gradients (Level 2 - Severity Tiers) -->
+        <!-- Critical: Deep Velvet Ruby & Crimson -->
+        <linearGradient id="gCrit" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#4c0519"/>
+          <stop offset="45%" stop-color="#881337"/>
+          <stop offset="100%" stop-color="#be123c"/>
+        </linearGradient>
+
+        <!-- High: Sunset Copper & Radiant Tangerine (Replaced muddy brown) -->
+        <linearGradient id="gHigh" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#451a03"/>
+          <stop offset="45%" stop-color="#9a3412"/>
+          <stop offset="100%" stop-color="#ea580c"/>
+        </linearGradient>
+
+        <!-- Medium: Royal Indigo & Electric Violet -->
+        <linearGradient id="gMed" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#1e1b4b"/>
+          <stop offset="45%" stop-color="#312e81"/>
+          <stop offset="100%" stop-color="#4f46e5"/>
+        </linearGradient>
+
+        <!-- Low: Oceanic Teal & Cyber Mint -->
+        <linearGradient id="gLow" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#042f2e"/>
+          <stop offset="45%" stop-color="#0f766e"/>
+          <stop offset="100%" stop-color="#0d9488"/>
+        </linearGradient>
+
+        <!-- Glass Specular Highlight Sheen -->
+        <linearGradient id="gGlassSheen" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#ffffff" stop-opacity="0.02"/>
+        </linearGradient>
+
+        <!-- Precision Drop Shadow Glow Filters -->
+        <filter id="fGlowDept" x="-20%" y="-30%" width="140%" height="160%">
+          <feDropShadow dx="0" dy="4" stdDeviation="9" flood-color="#10b981" flood-opacity="0.45"/>
+        </filter>
+        <filter id="fGlowOff" x="-20%" y="-30%" width="140%" height="160%">
+          <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#38bdf8" flood-opacity="0.45"/>
+        </filter>
+        <filter id="fGlowCrit" x="-20%" y="-30%" width="140%" height="160%">
+          <feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#f43f5e" flood-opacity="0.45"/>
+        </filter>
+        <filter id="fGlowHigh" x="-20%" y="-30%" width="140%" height="160%">
+          <feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#f97316" flood-opacity="0.45"/>
+        </filter>
+        <filter id="fGlowMed" x="-20%" y="-30%" width="140%" height="160%">
+          <feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#818cf8" flood-opacity="0.45"/>
+        </filter>
+        <filter id="fGlowLow" x="-20%" y="-30%" width="140%" height="160%">
+          <feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#2dd4bf" flood-opacity="0.45"/>
+        </filter>
       </defs>
 
       <!-- Edges root → officers -->
-      <polyline id="t-edge-root-off0" points="420,96 420,145 175,145 175,202" class="t-edge-main"/>
-      <polyline id="t-edge-root-off1" points="420,145 665,145 665,202"        class="t-edge-main"/>
-      <circle id="t-dot-root" cx="420" cy="145" r="5" fill="#10b981" opacity=".9"/>
+      <polyline id="t-edge-root-off0" points="420,98 420,145 175,145 175,202" class="t-edge-main"/>
+      <polyline id="t-edge-root-off1" points="420,145 665,145 665,202" class="t-edge-main"/>
+      <circle id="t-dot-root" cx="420" cy="145" r="5" fill="#34d399" opacity=".95" filter="drop-shadow(0 0 6px #10b981)"/>
 
       <!-- Edges off0 → complaints -->
       {% if off0_cases|length == 0 %}
@@ -348,9 +515,9 @@
       {% elif off0_cases|length == 1 %}
         <polyline id="t-edge-off0-c0" points="175,270 175,316 175,355" class="t-edge-br"/>
       {% else %}
-        <polyline id="t-edge-off0-c0" points="175,270 175,316 92,316 92,355"  class="t-edge-br"/>
-        <polyline id="t-edge-off0-c1" points="175,316 258,316 258,355"         class="t-edge-br"/>
-        <circle id="t-dot-off0" cx="175" cy="316" r="4" fill="#0891b2" opacity=".85"/>
+        <polyline id="t-edge-off0-c0" points="175,270 175,316 92,316 92,355" class="t-edge-br"/>
+        <polyline id="t-edge-off0-c1" points="175,316 258,316 258,355" class="t-edge-br"/>
+        <circle id="t-dot-off0" cx="175" cy="316" r="4.5" fill="#38bdf8" opacity=".95" filter="drop-shadow(0 0 6px #38bdf8)"/>
       {% endif %}
 
       <!-- Edges off1 → complaints -->
@@ -359,110 +526,123 @@
       {% elif off1_cases|length == 1 %}
         <polyline id="t-edge-off1-c0" points="665,270 665,316 665,355" class="t-edge-br"/>
       {% else %}
-        <polyline id="t-edge-off1-c0" points="665,270 665,316 582,316 582,355" class="t-edge-br"/>
-        <polyline id="t-edge-off1-c1" points="665,316 748,316 748,355"          class="t-edge-br"/>
-        <circle id="t-dot-off1" cx="665" cy="316" r="4" fill="#0891b2" opacity=".85"/>
+        <polyline id="t-edge-off1-c0" points="665,270 665,316 586,316 586,355" class="t-edge-br"/>
+        <polyline id="t-edge-off1-c1" points="665,316 752,316 752,355" class="t-edge-br"/>
+        <circle id="t-dot-off1" cx="665" cy="316" r="4.5" fill="#38bdf8" opacity=".95" filter="drop-shadow(0 0 6px #38bdf8)"/>
       {% endif %}
 
       <!-- ── DEPT ROOT ── -->
-      <g id="t-node-dept">
-        <rect id="t-rect-dept" x="210" y="24" width="420" height="72" rx="14" fill="url(#gDept)" stroke="#10b981" stroke-width="2.5" filter="url(#fGreen)" class="t-root-anim"/>
-        <rect x="226" y="34" width="46" height="48" rx="8" fill="rgba(16,185,129,.2)" stroke="rgba(16,185,129,.4)" stroke-width="1"/>
-        <text x="249" y="56" text-anchor="middle" font-size="13" font-weight="900" fill="#34d399" font-family="Inter,sans-serif">{% if td_obj %}{{ td_obj.code }}{% else %}REV{% endif %}</text>
-        <text x="249" y="72" text-anchor="middle" font-size="7.5" fill="#6ee7b7" font-family="Inter,sans-serif">CODE</text>
-        <text x="450" y="50" text-anchor="middle" font-size="9" font-weight="600" fill="#6ee7b7" letter-spacing="1.5" font-family="Inter,sans-serif">DEPARTMENT</text>
-        <text x="450" y="71" text-anchor="middle" font-size="14" font-weight="800" fill="#ffffff" font-family="Inter,sans-serif">{{ td }}</text>
+      <g id="t-node-dept" class="t-node-interactive">
+        <rect id="t-rect-dept" x="210" y="24" width="420" height="74" rx="15" fill="url(#gDept)" stroke="#10b981" stroke-width="2.5" filter="url(#fGlowDept)" class="t-root-anim"/>
+        <rect x="211" y="25" width="418" height="26" rx="14" fill="url(#gGlassSheen)" pointer-events="none"/>
+        <rect x="226" y="36" width="48" height="50" rx="9" fill="url(#gDeptBadge)" stroke="rgba(52,211,153,.5)" stroke-width="1.2"/>
+        <text x="250" y="58" text-anchor="middle" font-size="13.5" font-weight="900" fill="#34d399" font-family="Inter,sans-serif">{% if td_obj %}{{ td_obj.code }}{% else %}REV{% endif %}</text>
+        <text x="250" y="75" text-anchor="middle" font-size="7.5" font-weight="700" fill="#a7f3d0" letter-spacing="1" font-family="Inter,sans-serif">CODE</text>
+        <text x="420" y="49" text-anchor="middle" font-size="9" font-weight="700" fill="#a7f3d0" letter-spacing="1.8" font-family="Inter,sans-serif">DEPARTMENT JURISDICTION</text>
+        <text x="420" y="73" text-anchor="middle" font-size="14.5" font-weight="800" fill="#ffffff" letter-spacing="0.3" font-family="Inter,sans-serif">{{ td }}</text>
         {% if td_obj %}
-        <rect x="643" y="38" width="{% if td_obj.risk_level=='Critical' %}66{% else %}50{% endif %}" height="20" rx="10"
-              fill="{% if td_obj.risk_level=='Critical' %}#7f1d1d{% elif td_obj.risk_level=='High' %}#78350f{% else %}#1e3a5f{% endif %}"
-              stroke="{% if td_obj.risk_level=='Critical' %}#ef4444{% elif td_obj.risk_level=='High' %}#f97316{% else %}#3b82f6{% endif %}" stroke-width="1.2"/>
-        <text x="676" y="53" text-anchor="middle" font-size="8.5" font-weight="700"
-              fill="{% if td_obj.risk_level=='Critical' %}#fca5a5{% elif td_obj.risk_level=='High' %}#fdba74{% else %}#93c5fd{% endif %}"
-              font-family="Inter,sans-serif">{{ td_obj.risk_level }}</text>
+        <g transform="translate(540, 36)">
+          <rect width="{% if td_obj.risk_level=='Critical' %}76{% else %}64{% endif %}" height="22" rx="11"
+                fill="{% if td_obj.risk_level=='Critical' %}rgba(244,63,94,0.3){% elif td_obj.risk_level=='High' %}rgba(249,115,22,0.3){% elif td_obj.risk_level=='Low' %}rgba(45,212,191,0.3){% else %}rgba(129,140,248,0.3){% endif %}"
+                stroke="{% if td_obj.risk_level=='Critical' %}#f43f5e{% elif td_obj.risk_level=='High' %}#f97316{% elif td_obj.risk_level=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="1.2"/>
+          <text x="{% if td_obj.risk_level=='Critical' %}38{% else %}32{% endif %}" y="15" text-anchor="middle" font-size="8" font-weight="800"
+                fill="{% if td_obj.risk_level=='Critical' %}#ffe4e6{% elif td_obj.risk_level=='High' %}#ffedd5{% elif td_obj.risk_level=='Low' %}#ccfbf1{% else %}#e0e7ff{% endif %}"
+                font-family="Inter,sans-serif">{{ td_obj.risk_level }}</text>
+        </g>
         {% endif %}
       </g>
 
       <!-- ── OFFICER 0 ── -->
       {% if off0 %}
-      <g id="t-node-off0">
-        <rect id="t-rect-off0" x="75" y="202" width="200" height="68" rx="13" fill="url(#gOff)" stroke="#0891b2" stroke-width="2.2" filter="url(#fCyan)"/>
-        <circle cx="112" cy="236" r="16" fill="rgba(8,145,178,.3)" stroke="#0891b2" stroke-width="1.5"/>
-        <text x="112" y="241" text-anchor="middle" font-size="14" fill="#7dd3fc" font-family="sans-serif">&#9876;</text>
-        <text x="188" y="222" text-anchor="middle" font-size="8" font-weight="600" fill="#7dd3fc" letter-spacing=".8" font-family="Inter,sans-serif">{{ off0.rank | upper }}</text>
-        <text x="188" y="239" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ffffff" font-family="Inter,sans-serif">{{ off0.name | truncate(19,true,'…') }}</text>
-        <rect x="126" y="254" width="98" height="14" rx="7" fill="rgba(8,145,178,.2)" stroke="rgba(8,145,178,.35)" stroke-width="1"/>
-        <text x="175" y="265" text-anchor="middle" font-size="7.5" fill="#bae6fd" font-family="Inter,sans-serif">{{ off0_cases|length }} case{% if off0_cases|length!=1 %}s{% endif %} assigned</text>
+      <g id="t-node-off0" class="t-node-interactive">
+        <rect id="t-rect-off0" x="75" y="202" width="200" height="68" rx="14" fill="url(#gOff)" stroke="#38bdf8" stroke-width="2.2" filter="url(#fGlowOff)"/>
+        <rect x="76" y="203" width="198" height="24" rx="13" fill="url(#gGlassSheen)" pointer-events="none"/>
+        <text x="185" y="222" text-anchor="middle" font-size="8" font-weight="700" fill="#67e8f9" letter-spacing="1" font-family="Inter,sans-serif">{{ off0.rank | upper }}</text>
+        <text x="185" y="239" text-anchor="middle" font-size="11.5" font-weight="800" fill="#ffffff" font-family="Inter,sans-serif">{{ off0.name | truncate(19,true,'…') }}</text>
+        <rect x="134" y="253" width="102" height="14" rx="7" fill="rgba(56,189,248,0.18)" stroke="rgba(56,189,248,0.4)" stroke-width="1"/>
+        <text x="185" y="264" text-anchor="middle" font-size="7.5" font-weight="600" fill="#bae6fd" font-family="Inter,sans-serif">{{ off0_cases|length }} case{% if off0_cases|length!=1 %}s{% endif %} assigned</text>
       </g>
       {% endif %}
 
       <!-- ── OFFICER 1 ── -->
       {% if off1 %}
-      <g id="t-node-off1">
-        <rect id="t-rect-off1" x="565" y="202" width="200" height="68" rx="13" fill="url(#gOff)" stroke="#0891b2" stroke-width="2.2" filter="url(#fCyan)"/>
-        <circle cx="602" cy="236" r="16" fill="rgba(8,145,178,.3)" stroke="#0891b2" stroke-width="1.5"/>
-        <text x="602" y="241" text-anchor="middle" font-size="14" fill="#7dd3fc" font-family="sans-serif">&#9876;</text>
-        <text x="678" y="222" text-anchor="middle" font-size="8" font-weight="600" fill="#7dd3fc" letter-spacing=".8" font-family="Inter,sans-serif">{{ off1.rank | upper }}</text>
-        <text x="678" y="239" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ffffff" font-family="Inter,sans-serif">{{ off1.name | truncate(19,true,'…') }}</text>
-        <rect x="616" y="254" width="98" height="14" rx="7" fill="rgba(8,145,178,.2)" stroke="rgba(8,145,178,.35)" stroke-width="1"/>
-        <text x="665" y="265" text-anchor="middle" font-size="7.5" fill="#bae6fd" font-family="Inter,sans-serif">{{ off1_cases|length }} case{% if off1_cases|length!=1 %}s{% endif %} assigned</text>
+      <g id="t-node-off1" class="t-node-interactive">
+        <rect id="t-rect-off1" x="565" y="202" width="200" height="68" rx="14" fill="url(#gOff)" stroke="#38bdf8" stroke-width="2.2" filter="url(#fGlowOff)"/>
+        <rect x="566" y="203" width="198" height="24" rx="13" fill="url(#gGlassSheen)" pointer-events="none"/>
+        <text x="675" y="222" text-anchor="middle" font-size="8" font-weight="700" fill="#67e8f9" letter-spacing="1" font-family="Inter,sans-serif">{{ off1.rank | upper }}</text>
+        <text x="675" y="239" text-anchor="middle" font-size="11.5" font-weight="800" fill="#ffffff" font-family="Inter,sans-serif">{{ off1.name | truncate(19,true,'…') }}</text>
+        <rect x="624" y="253" width="102" height="14" rx="7" fill="rgba(56,189,248,0.18)" stroke="rgba(56,189,248,0.4)" stroke-width="1"/>
+        <text x="675" y="264" text-anchor="middle" font-size="7.5" font-weight="600" fill="#bae6fd" font-family="Inter,sans-serif">{{ off1_cases|length }} case{% if off1_cases|length!=1 %}s{% endif %} assigned</text>
       </g>
       {% endif %}
 
       <!-- ── COMPLAINT LEAVES: Off0 ── -->
       {% if off0_cases|length == 0 %}
-        <g id="t-node-off0-c0">
-          <rect id="t-rect-off0-c0" x="133" y="355" width="84" height="52" rx="10" fill="#111827" stroke="#374151" stroke-width="1.5" stroke-dasharray="4,3"/>
-          <text x="175" y="378" text-anchor="middle" font-size="9"   fill="#6b7280" font-family="Inter,sans-serif">No Cases</text>
-          <text x="175" y="394" text-anchor="middle" font-size="7.5" fill="#4b5563" font-style="italic" font-family="Inter,sans-serif">Assigned</text>
+        <g id="t-node-off0-c0" class="t-node-interactive">
+          <rect id="t-rect-off0-c0" x="101" y="355" width="148" height="68" rx="12" fill="#0f172a" stroke="rgba(148,163,184,0.3)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="175" y="385" text-anchor="middle" font-size="9.5" font-weight="600" fill="#94a3b8" font-family="Inter,sans-serif">No Cases</text>
+          <text x="175" y="401" text-anchor="middle" font-size="8" fill="#64748b" font-style="italic" font-family="Inter,sans-serif">Assigned</text>
         </g>
       {% elif off0_cases|length == 1 %}{%- set c=off0_cases[0] -%}
-        <g id="t-node-off0-c0">
-          <rect id="t-rect-off0-c0" x="133" y="355" width="84" height="62" rx="10" fill="url(#g{% if c.severity=='Critical' %}Crit{% elif c.severity=='High' %}High{% else %}Med{% endif %})" stroke="{% if c.severity=='Critical' %}#ef4444{% elif c.severity=='High' %}#f97316{% else %}#3b82f6{% endif %}" stroke-width="2" filter="url(#fLeaf)"/>
-          <text x="175" y="373" text-anchor="middle" font-size="7"   fill="rgba(255,255,255,.55)" font-family="Inter,sans-serif">COMPLAINT</text>
-          <text x="175" y="388" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fb923c" font-family="monospace">{{ c.complaint_id }}</text>
-          <text x="175" y="403" text-anchor="middle" font-size="8"   fill="#fde68a" font-family="Inter,sans-serif">{{ c.severity }}</text>
+        <g id="t-node-off0-c0" class="t-node-interactive">
+          <rect id="t-rect-off0-c0" x="101" y="355" width="148" height="68" rx="12" fill="url(#g{% if c.severity=='Critical' %}Crit{% elif c.severity=='High' %}High{% elif c.severity=='Low' %}Low{% else %}Med{% endif %})" stroke="{% if c.severity=='Critical' %}#f43f5e{% elif c.severity=='High' %}#f97316{% elif c.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="2" filter="url(#fGlow{% if c.severity=='Critical' %}Crit{% elif c.severity=='High' %}High{% elif c.severity=='Low' %}Low{% else %}Med{% endif %})"/>
+          <rect x="102" y="356" width="146" height="24" rx="11" fill="url(#gGlassSheen)" pointer-events="none"/>
+          <text x="175" y="371" text-anchor="middle" font-size="7.5" font-weight="700" letter-spacing="1" fill="{% if c.severity=='Critical' %}#fda4af{% elif c.severity=='High' %}#fed7aa{% elif c.severity=='Low' %}#99f6e4{% else %}#c7d2fe{% endif %}" font-family="Inter,sans-serif">COMPLAINT</text>
+          <text x="175" y="388" text-anchor="middle" font-size="9" font-weight="800" fill="#ffffff" font-family="'JetBrains Mono', Consolas, monospace">{{ c.complaint_id }}</text>
+          <rect x="137" y="396" width="76" height="17" rx="8.5" fill="{% if c.severity=='Critical' %}rgba(244,63,94,0.28){% elif c.severity=='High' %}rgba(249,115,22,0.28){% elif c.severity=='Low' %}rgba(45,212,191,0.28){% else %}rgba(129,140,248,0.28){% endif %}" stroke="{% if c.severity=='Critical' %}#f43f5e{% elif c.severity=='High' %}#f97316{% elif c.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="1"/>
+          <text x="175" y="408" text-anchor="middle" font-size="8" font-weight="700" fill="{% if c.severity=='Critical' %}#ffe4e6{% elif c.severity=='High' %}#ffedd5{% elif c.severity=='Low' %}#ccfbf1{% else %}#e0e7ff{% endif %}" font-family="Inter,sans-serif">{{ c.severity }}</text>
         </g>
       {% else %}{%- set c0=off0_cases[0] -%}{%- set c1=off0_cases[1] -%}
-        <g id="t-node-off0-c0">
-          <rect id="t-rect-off0-c0" x="18"  y="355" width="148" height="68" rx="10" fill="url(#g{% if c0.severity=='Critical' %}Crit{% elif c0.severity=='High' %}High{% else %}Med{% endif %})" stroke="{% if c0.severity=='Critical' %}#ef4444{% elif c0.severity=='High' %}#f97316{% else %}#3b82f6{% endif %}" stroke-width="2" filter="url(#fLeaf)"/>
-          <text x="92"  y="373" text-anchor="middle" font-size="7"   fill="rgba(255,255,255,.55)" font-family="Inter,sans-serif">COMPLAINT</text>
-          <text x="92"  y="388" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fb923c" font-family="monospace">{{ c0.complaint_id }}</text>
-          <text x="92"  y="403" text-anchor="middle" font-size="8"   fill="#fde68a" font-weight="600" font-family="Inter,sans-serif">{{ c0.severity }}</text>
+        <g id="t-node-off0-c0" class="t-node-interactive">
+          <rect id="t-rect-off0-c0" x="18" y="355" width="148" height="68" rx="12" fill="url(#g{% if c0.severity=='Critical' %}Crit{% elif c0.severity=='High' %}High{% elif c0.severity=='Low' %}Low{% else %}Med{% endif %})" stroke="{% if c0.severity=='Critical' %}#f43f5e{% elif c0.severity=='High' %}#f97316{% elif c0.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="2" filter="url(#fGlow{% if c0.severity=='Critical' %}Crit{% elif c0.severity=='High' %}High{% elif c0.severity=='Low' %}Low{% else %}Med{% endif %})"/>
+          <rect x="19" y="356" width="146" height="24" rx="11" fill="url(#gGlassSheen)" pointer-events="none"/>
+          <text x="92" y="371" text-anchor="middle" font-size="7.5" font-weight="700" letter-spacing="1" fill="{% if c0.severity=='Critical' %}#fda4af{% elif c0.severity=='High' %}#fed7aa{% elif c0.severity=='Low' %}#99f6e4{% else %}#c7d2fe{% endif %}" font-family="Inter,sans-serif">COMPLAINT</text>
+          <text x="92" y="388" text-anchor="middle" font-size="9" font-weight="800" fill="#ffffff" font-family="'JetBrains Mono', Consolas, monospace">{{ c0.complaint_id }}</text>
+          <rect x="54" y="396" width="76" height="17" rx="8.5" fill="{% if c0.severity=='Critical' %}rgba(244,63,94,0.28){% elif c0.severity=='High' %}rgba(249,115,22,0.28){% elif c0.severity=='Low' %}rgba(45,212,191,0.28){% else %}rgba(129,140,248,0.28){% endif %}" stroke="{% if c0.severity=='Critical' %}#f43f5e{% elif c0.severity=='High' %}#f97316{% elif c0.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="1"/>
+          <text x="92" y="408" text-anchor="middle" font-size="8" font-weight="700" fill="{% if c0.severity=='Critical' %}#ffe4e6{% elif c0.severity=='High' %}#ffedd5{% elif c0.severity=='Low' %}#ccfbf1{% else %}#e0e7ff{% endif %}" font-family="Inter,sans-serif">{{ c0.severity }}</text>
         </g>
-        <g id="t-node-off0-c1">
-          <rect id="t-rect-off0-c1" x="184" y="355" width="148" height="68" rx="10" fill="url(#g{% if c1.severity=='Critical' %}Crit{% elif c1.severity=='High' %}High{% else %}Med{% endif %})" stroke="{% if c1.severity=='Critical' %}#ef4444{% elif c1.severity=='High' %}#f97316{% else %}#3b82f6{% endif %}" stroke-width="2" filter="url(#fLeaf)"/>
-          <text x="258" y="373" text-anchor="middle" font-size="7"   fill="rgba(255,255,255,.55)" font-family="Inter,sans-serif">COMPLAINT</text>
-          <text x="258" y="388" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fbbf24" font-family="monospace">{{ c1.complaint_id }}</text>
-          <text x="258" y="403" text-anchor="middle" font-size="8"   fill="#fde68a" font-weight="600" font-family="Inter,sans-serif">{{ c1.severity }}</text>
+        <g id="t-node-off0-c1" class="t-node-interactive">
+          <rect id="t-rect-off0-c1" x="184" y="355" width="148" height="68" rx="12" fill="url(#g{% if c1.severity=='Critical' %}Crit{% elif c1.severity=='High' %}High{% elif c1.severity=='Low' %}Low{% else %}Med{% endif %})" stroke="{% if c1.severity=='Critical' %}#f43f5e{% elif c1.severity=='High' %}#f97316{% elif c1.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="2" filter="url(#fGlow{% if c1.severity=='Critical' %}Crit{% elif c1.severity=='High' %}High{% elif c1.severity=='Low' %}Low{% else %}Med{% endif %})"/>
+          <rect x="185" y="356" width="146" height="24" rx="11" fill="url(#gGlassSheen)" pointer-events="none"/>
+          <text x="258" y="371" text-anchor="middle" font-size="7.5" font-weight="700" letter-spacing="1" fill="{% if c1.severity=='Critical' %}#fda4af{% elif c1.severity=='High' %}#fed7aa{% elif c1.severity=='Low' %}#99f6e4{% else %}#c7d2fe{% endif %}" font-family="Inter,sans-serif">COMPLAINT</text>
+          <text x="258" y="388" text-anchor="middle" font-size="9" font-weight="800" fill="#ffffff" font-family="'JetBrains Mono', Consolas, monospace">{{ c1.complaint_id }}</text>
+          <rect x="220" y="396" width="76" height="17" rx="8.5" fill="{% if c1.severity=='Critical' %}rgba(244,63,94,0.28){% elif c1.severity=='High' %}rgba(249,115,22,0.28){% elif c1.severity=='Low' %}rgba(45,212,191,0.28){% else %}rgba(129,140,248,0.28){% endif %}" stroke="{% if c1.severity=='Critical' %}#f43f5e{% elif c1.severity=='High' %}#f97316{% elif c1.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="1"/>
+          <text x="258" y="408" text-anchor="middle" font-size="8" font-weight="700" fill="{% if c1.severity=='Critical' %}#ffe4e6{% elif c1.severity=='High' %}#ffedd5{% elif c1.severity=='Low' %}#ccfbf1{% else %}#e0e7ff{% endif %}" font-family="Inter,sans-serif">{{ c1.severity }}</text>
         </g>
       {% endif %}
 
       <!-- ── COMPLAINT LEAVES: Off1 ── -->
       {% if off1_cases|length == 0 %}
-        <g id="t-node-off1-c0">
-          <rect id="t-rect-off1-c0" x="623" y="355" width="84" height="52" rx="10" fill="#111827" stroke="#374151" stroke-width="1.5" stroke-dasharray="4,3"/>
-          <text x="665" y="378" text-anchor="middle" font-size="9"   fill="#6b7280" font-family="Inter,sans-serif">No Cases</text>
-          <text x="665" y="394" text-anchor="middle" font-size="7.5" fill="#4b5563" font-style="italic" font-family="Inter,sans-serif">Assigned</text>
+        <g id="t-node-off1-c0" class="t-node-interactive">
+          <rect id="t-rect-off1-c0" x="591" y="355" width="148" height="68" rx="12" fill="#0f172a" stroke="rgba(148,163,184,0.3)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="665" y="385" text-anchor="middle" font-size="9.5" font-weight="600" fill="#94a3b8" font-family="Inter,sans-serif">No Cases</text>
+          <text x="665" y="401" text-anchor="middle" font-size="8" fill="#64748b" font-style="italic" font-family="Inter,sans-serif">Assigned</text>
         </g>
       {% elif off1_cases|length == 1 %}{%- set c=off1_cases[0] -%}
-        <g id="t-node-off1-c0">
-          <rect id="t-rect-off1-c0" x="623" y="355" width="84" height="62" rx="10" fill="url(#g{% if c.severity=='Critical' %}Crit{% elif c.severity=='High' %}High{% else %}Med{% endif %})" stroke="{% if c.severity=='Critical' %}#ef4444{% elif c.severity=='High' %}#f97316{% else %}#3b82f6{% endif %}" stroke-width="2" filter="url(#fLeaf)"/>
-          <text x="665" y="373" text-anchor="middle" font-size="7"   fill="rgba(255,255,255,.55)" font-family="Inter,sans-serif">COMPLAINT</text>
-          <text x="665" y="388" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fb923c" font-family="monospace">{{ c.complaint_id }}</text>
-          <text x="665" y="403" text-anchor="middle" font-size="8"   fill="#fde68a" font-family="Inter,sans-serif">{{ c.severity }}</text>
+        <g id="t-node-off1-c0" class="t-node-interactive">
+          <rect id="t-rect-off1-c0" x="591" y="355" width="148" height="68" rx="12" fill="url(#g{% if c.severity=='Critical' %}Crit{% elif c.severity=='High' %}High{% elif c.severity=='Low' %}Low{% else %}Med{% endif %})" stroke="{% if c.severity=='Critical' %}#f43f5e{% elif c.severity=='High' %}#f97316{% elif c.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="2" filter="url(#fGlow{% if c.severity=='Critical' %}Crit{% elif c.severity=='High' %}High{% elif c.severity=='Low' %}Low{% else %}Med{% endif %})"/>
+          <rect x="592" y="356" width="146" height="24" rx="11" fill="url(#gGlassSheen)" pointer-events="none"/>
+          <text x="665" y="371" text-anchor="middle" font-size="7.5" font-weight="700" letter-spacing="1" fill="{% if c.severity=='Critical' %}#fda4af{% elif c.severity=='High' %}#fed7aa{% elif c.severity=='Low' %}#99f6e4{% else %}#c7d2fe{% endif %}" font-family="Inter,sans-serif">COMPLAINT</text>
+          <text x="665" y="388" text-anchor="middle" font-size="9" font-weight="800" fill="#ffffff" font-family="'JetBrains Mono', Consolas, monospace">{{ c.complaint_id }}</text>
+          <rect x="627" y="396" width="76" height="17" rx="8.5" fill="{% if c.severity=='Critical' %}rgba(244,63,94,0.28){% elif c.severity=='High' %}rgba(249,115,22,0.28){% elif c.severity=='Low' %}rgba(45,212,191,0.28){% else %}rgba(129,140,248,0.28){% endif %}" stroke="{% if c.severity=='Critical' %}#f43f5e{% elif c.severity=='High' %}#f97316{% elif c.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="1"/>
+          <text x="665" y="408" text-anchor="middle" font-size="8" font-weight="700" fill="{% if c.severity=='Critical' %}#ffe4e6{% elif c.severity=='High' %}#ffedd5{% elif c.severity=='Low' %}#ccfbf1{% else %}#e0e7ff{% endif %}" font-family="Inter,sans-serif">{{ c.severity }}</text>
         </g>
       {% else %}{%- set c2=off1_cases[0] -%}{%- set c3=off1_cases[1] -%}
-        <g id="t-node-off1-c0">
-          <rect id="t-rect-off1-c0" x="512" y="355" width="148" height="68" rx="10" fill="url(#g{% if c2.severity=='Critical' %}Crit{% elif c2.severity=='High' %}High{% else %}Med{% endif %})" stroke="{% if c2.severity=='Critical' %}#ef4444{% elif c2.severity=='High' %}#f97316{% else %}#3b82f6{% endif %}" stroke-width="2" filter="url(#fLeaf)"/>
-          <text x="586" y="373" text-anchor="middle" font-size="7"   fill="rgba(255,255,255,.55)" font-family="Inter,sans-serif">COMPLAINT</text>
-          <text x="586" y="388" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fb923c" font-family="monospace">{{ c2.complaint_id }}</text>
-          <text x="586" y="403" text-anchor="middle" font-size="8"   fill="#fde68a" font-weight="600" font-family="Inter,sans-serif">{{ c2.severity }}</text>
+        <g id="t-node-off1-c0" class="t-node-interactive">
+          <rect id="t-rect-off1-c0" x="512" y="355" width="148" height="68" rx="12" fill="url(#g{% if c2.severity=='Critical' %}Crit{% elif c2.severity=='High' %}High{% elif c2.severity=='Low' %}Low{% else %}Med{% endif %})" stroke="{% if c2.severity=='Critical' %}#f43f5e{% elif c2.severity=='High' %}#f97316{% elif c2.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="2" filter="url(#fGlow{% if c2.severity=='Critical' %}Crit{% elif c2.severity=='High' %}High{% elif c2.severity=='Low' %}Low{% else %}Med{% endif %})"/>
+          <rect x="513" y="356" width="146" height="24" rx="11" fill="url(#gGlassSheen)" pointer-events="none"/>
+          <text x="586" y="371" text-anchor="middle" font-size="7.5" font-weight="700" letter-spacing="1" fill="{% if c2.severity=='Critical' %}#fda4af{% elif c2.severity=='High' %}#fed7aa{% elif c2.severity=='Low' %}#99f6e4{% else %}#c7d2fe{% endif %}" font-family="Inter,sans-serif">COMPLAINT</text>
+          <text x="586" y="388" text-anchor="middle" font-size="9" font-weight="800" fill="#ffffff" font-family="'JetBrains Mono', Consolas, monospace">{{ c2.complaint_id }}</text>
+          <rect x="548" y="396" width="76" height="17" rx="8.5" fill="{% if c2.severity=='Critical' %}rgba(244,63,94,0.28){% elif c2.severity=='High' %}rgba(249,115,22,0.28){% elif c2.severity=='Low' %}rgba(45,212,191,0.28){% else %}rgba(129,140,248,0.28){% endif %}" stroke="{% if c2.severity=='Critical' %}#f43f5e{% elif c2.severity=='High' %}#f97316{% elif c2.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="1"/>
+          <text x="586" y="408" text-anchor="middle" font-size="8" font-weight="700" fill="{% if c2.severity=='Critical' %}#ffe4e6{% elif c2.severity=='High' %}#ffedd5{% elif c2.severity=='Low' %}#ccfbf1{% else %}#e0e7ff{% endif %}" font-family="Inter,sans-serif">{{ c2.severity }}</text>
         </g>
-        <g id="t-node-off1-c1">
-          <rect id="t-rect-off1-c1" x="678" y="355" width="148" height="68" rx="10" fill="url(#g{% if c3.severity=='Critical' %}Crit{% elif c3.severity=='High' %}High{% else %}Med{% endif %})" stroke="{% if c3.severity=='Critical' %}#ef4444{% elif c3.severity=='High' %}#f97316{% else %}#3b82f6{% endif %}" stroke-width="2" filter="url(#fLeaf)"/>
-          <text x="752" y="373" text-anchor="middle" font-size="7"   fill="rgba(255,255,255,.55)" font-family="Inter,sans-serif">COMPLAINT</text>
-          <text x="752" y="388" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fbbf24" font-family="monospace">{{ c3.complaint_id }}</text>
-          <text x="752" y="403" text-anchor="middle" font-size="8"   fill="#fde68a" font-weight="600" font-family="Inter,sans-serif">{{ c3.severity }}</text>
+        <g id="t-node-off1-c1" class="t-node-interactive">
+          <rect id="t-rect-off1-c1" x="678" y="355" width="148" height="68" rx="12" fill="url(#g{% if c3.severity=='Critical' %}Crit{% elif c3.severity=='High' %}High{% elif c3.severity=='Low' %}Low{% else %}Med{% endif %})" stroke="{% if c3.severity=='Critical' %}#f43f5e{% elif c3.severity=='High' %}#f97316{% elif c3.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="2" filter="url(#fGlow{% if c3.severity=='Critical' %}Crit{% elif c3.severity=='High' %}High{% elif c3.severity=='Low' %}Low{% else %}Med{% endif %})"/>
+          <rect x="679" y="356" width="146" height="24" rx="11" fill="url(#gGlassSheen)" pointer-events="none"/>
+          <text x="752" y="371" text-anchor="middle" font-size="7.5" font-weight="700" letter-spacing="1" fill="{% if c3.severity=='Critical' %}#fda4af{% elif c3.severity=='High' %}#fed7aa{% elif c3.severity=='Low' %}#99f6e4{% else %}#c7d2fe{% endif %}" font-family="Inter,sans-serif">COMPLAINT</text>
+          <text x="752" y="388" text-anchor="middle" font-size="9" font-weight="800" fill="#ffffff" font-family="'JetBrains Mono', Consolas, monospace">{{ c3.complaint_id }}</text>
+          <rect x="714" y="396" width="76" height="17" rx="8.5" fill="{% if c3.severity=='Critical' %}rgba(244,63,94,0.28){% elif c3.severity=='High' %}rgba(249,115,22,0.28){% elif c3.severity=='Low' %}rgba(45,212,191,0.28){% else %}rgba(129,140,248,0.28){% endif %}" stroke="{% if c3.severity=='Critical' %}#f43f5e{% elif c3.severity=='High' %}#f97316{% elif c3.severity=='Low' %}#2dd4bf{% else %}#818cf8{% endif %}" stroke-width="1"/>
+          <text x="752" y="408" text-anchor="middle" font-size="8" font-weight="700" fill="{% if c3.severity=='Critical' %}#ffe4e6{% elif c3.severity=='High' %}#ffedd5{% elif c3.severity=='Low' %}#ccfbf1{% else %}#e0e7ff{% endif %}" font-family="Inter,sans-serif">{{ c3.severity }}</text>
         </g>
       {% endif %}
     </svg>
@@ -470,16 +650,16 @@
     <!-- Legend -->
     {%- set all_c = off0_cases + off1_cases -%}
     {% if all_c %}
-    <div class="mt-4 pt-3" style="border-top:1px solid rgba(255,255,255,.06);">
-      <p class="mb-2" style="color:#4b5563;text-transform:uppercase;letter-spacing:.8px;font-size:.66rem;font-weight:700;">
-        <i class="fas fa-list-ul me-1" style="color:#10b981;"></i>Case Details
+    <div class="mt-4 pt-3" style="border-top:1px solid rgba(255,255,255,.08);">
+      <p class="mb-2" style="color:#94a3b8;text-transform:uppercase;letter-spacing:1px;font-size:.68rem;font-weight:700;">
+        <i class="fas fa-list-check me-1" style="color:#10b981;"></i>Jurisdiction Assigned Case Dossiers
       </p>
       <div class="d-flex flex-wrap gap-2">
         {% for c in all_c %}
         <div class="t-legend-pill">
-          <span class="badge font-monospace {% if c.severity=='Critical' %}bg-danger{% elif c.severity=='High' %}bg-warning text-dark{% elif c.severity=='Medium' %}bg-primary{% else %}bg-secondary{% endif %}" style="font-size:.6rem;">{{ c.complaint_id }}</span>
-          <span style="color:var(--text-body);">{{ c.complaint_title }}</span>
-          <span class="badge rounded-pill" style="font-size:.58rem;background:{% if c.complaint_status=='Resolved' %}rgba(16,185,129,.2){% elif 'Invest' in c.complaint_status %}rgba(251,191,36,.2){% else %}rgba(148,163,184,.2){% endif %};color:{% if c.complaint_status=='Resolved' %}#34d399{% elif 'Invest' in c.complaint_status %}#fbbf24{% else %}#94a3b8{% endif %};">{{ c.complaint_status }}</span>
+          <span class="badge font-monospace" style="font-size:.62rem;{% if c.severity=='Critical' %}background:linear-gradient(135deg,#881337,#be123c);border:1px solid #f43f5e;color:#ffe4e6;{% elif c.severity=='High' %}background:linear-gradient(135deg,#9a3412,#ea580c);border:1px solid #f97316;color:#ffedd5;{% elif c.severity=='Low' %}background:linear-gradient(135deg,#0f766e,#0d9488);border:1px solid #2dd4bf;color:#ccfbf1;{% else %}background:linear-gradient(135deg,#312e81,#4f46e5);border:1px solid #818cf8;color:#e0e7ff;{% endif %}">{{ c.complaint_id }}</span>
+          <span style="color:#e2e8f0;font-weight:500;">{{ c.complaint_title }}</span>
+          <span class="badge rounded-pill" style="font-size:.58rem;font-weight:700;background:{% if c.complaint_status=='Resolved' %}rgba(16,185,129,.2){% elif 'Invest' in c.complaint_status %}rgba(251,191,36,.2){% else %}rgba(148,163,184,.2){% endif %};color:{% if c.complaint_status=='Resolved' %}#34d399{% elif 'Invest' in c.complaint_status %}#fbbf24{% else %}#94a3b8{% endif %};border:1px solid {% if c.complaint_status=='Resolved' %}rgba(16,185,129,.4){% elif 'Invest' in c.complaint_status %}rgba(251,191,36,.4){% else %}rgba(148,163,184,.4){% endif %};">{{ c.complaint_status }}</span>
         </div>
         {% endfor %}
       </div>
@@ -874,6 +1054,7 @@
     }
 
     const stepDelay = 700; // ms per step for smooth viewing
+    let pillCount = 0; // track only node pills (not edge steps)
 
     steps.forEach((step, index) => {
       const tid = setTimeout(() => {
@@ -888,10 +1069,18 @@
           }
 
           if (stepsContainer) {
+            // Insert → arrow before every pill except the very first node
+            if (pillCount > 0) {
+              const arrow = document.createElement('span');
+              arrow.className = 't-arrow-sep';
+              arrow.textContent = '\u2192'; // →
+              stepsContainer.appendChild(arrow);
+            }
             const pill = document.createElement('span');
             pill.className = step.isTarget ? 'step-pill completed' : 'step-pill active';
             pill.textContent = step.name;
             stepsContainer.appendChild(pill);
+            pillCount++;
           }
 
           if (statusText) {
@@ -922,6 +1111,13 @@
               edge.classList.add('t-edge-found');
             }
           });
+
+          // Turn all arrow separators green to match found state
+          if (stepsContainer) {
+            stepsContainer.querySelectorAll('.t-arrow-sep').forEach(a => {
+              a.classList.add('found');
+            });
+          }
 
           if (spinner) {
             spinner.className = 'fas fa-check-circle text-success fs-6';

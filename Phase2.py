@@ -177,28 +177,18 @@ graph = {
     "CCMS-2026-8632": []
 }
 
-# =========================================================
-# 5. BFS TRAVERSAL (Level-by-Level Exploration)
-# =========================================================
-
 def bfs(graph, start):
     visited = set()
     queue = deque([start])
-    order = []
-
     while queue:
-        curr = queue.popleft()
-        if curr not in visited:
-            order.append(curr)
-            visited.add(curr)
-            for neighbor in graph.get(curr, []):
-                if neighbor not in visited:
-                    queue.append(neighbor)
+        current = queue.popleft()
+        if current not in visited:
+            print(current, end=" -> ")
+            visited.add(current)
+            for next_node in graph.get(current, []):
+                queue.append(next_node)
 
-    print(" -> ".join(order))
-    return order
+    return queue
 
-
-print("\n--- 5. BFS TRAVERSAL ---")
-print("BFS from 'Land Registration & Revenue':")
 bfs(graph, "Land Registration & Revenue")
+

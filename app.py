@@ -14,6 +14,31 @@ import dsa
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "ccms-secret-key-vigilance-2026-secure")
 
+def format_custom_date(val):
+    """Format any date or datetime into '26 JAN 2026' format."""
+    if not val:
+        return ""
+    if isinstance(val, (datetime.date, datetime.datetime)):
+        return val.strftime("%d %b %Y").upper()
+    val_str = str(val).strip()
+    if not val_str:
+        return ""
+    for fmt in ("%Y-%m-%d", "%Y-%m-%d %H:%M:%S", "%Y/%m/%d", "%d-%m-%Y", "%d/%m/%Y"):
+        try:
+            dt = datetime.datetime.strptime(val_str.split(".")[0], fmt)
+            return dt.strftime("%d %b %Y").upper()
+        except ValueError:
+            pass
+    try:
+        dt = datetime.datetime.fromisoformat(val_str)
+        return dt.strftime("%d %b %Y").upper()
+    except Exception:
+        pass
+    return val_str
+
+app.jinja_env.filters["format_custom_date"] = format_custom_date
+app.jinja_env.filters["custom_date"] = format_custom_date
+
 # In-memory DSA Data Stores (Phase 1 & Phase 2)
 complaints_linked_list = dsa.SinglyLinkedList()
 activity_stack = dsa.Stack()
@@ -845,15 +870,77 @@ def admin_dashboard():
     recent_complaints = db.query_db("SELECT * FROM complaints ORDER BY created_at DESC LIMIT 6")
     recent_logs = db.query_db("SELECT * FROM activity_logs ORDER BY timestamp DESC LIMIT 5")
 
-    return render_template("admin/dashboard.html", stats=stats, recent_complaints=recent_complaints, recent_logs=recent_logs)
+    # Phase 3 Algorithmic Data Analysis (3 Objectives + Merge Sort + Insights)
+    all_complaints = db.query_db("SELECT * FROM complaints") or []
+    all_departments = db.query_db("SELECT * FROM departments ORDER BY total_cases DESC") or []
+    all_officers = db.query_db("SELECT * FROM officers ORDER BY active_cases DESC") or []
+    phase3_analytics = dsa.run_phase3_analysis(all_complaints, all_departments, all_officers)
+
+    return render_template(
+        "admin/dashboard.html",
+        stats=stats,
+        recent_complaints=recent_complaints,
+        recent_logs=recent_logs,
+        phase3_analytics=phase3_analytics
+    )
 
 
 @app.route("/admin/complaints")
 @role_required("admin")
 def admin_complaints():
-    complaints = db.query_db("SELECT * FROM complaints ORDER BY created_at DESC")
+    sort_mode = request.args.get("sort", "").strip().lower()
+    sort_by = request.args.get("by", "complaint_id").strip()
+    order_dir = request.args.get("order", "asc").strip().lower()
+    complaints_raw = db.query_db("SELECT * FROM complaints") or []
+    complaints = [dict(c) for c in complaints_raw]
     officers = db.query_db("SELECT * FROM officers ORDER BY name ASC")
-    return render_template("admin/complaints.html", complaints=complaints, officers=officers)
+
+    # Format dates into uppercase '26 JAN 2026' format
+    for c in complaints:
+        raw_date = c.get("incident_date") or c.get("created_at") or ""
+        c["formatted_date"] = format_custom_date(raw_date)
+
+    # Extract distinct complaint statuses for live filter dropdown
+    statuses = sorted(list(set(c.get("complaint_status") for c in complaints if c.get("complaint_status"))))
+
+    active_algorithm = None
+    if sort_mode in ("priority", "priority_queue", "pq"):
+        try:
+            try:
+                import phase3 as Phase3
+            except ImportError:
+                import Phase3
+            complaints = Phase3.priority_queue(complaints)
+            active_algorithm = "Priority Max-Heap: Sequenced by Urgency (Critical → High → Medium → Low)"
+        except Exception as e:
+            print("PQ sort error:", e)
+    elif sort_mode in ("merge", "merge_sort"):
+        try:
+            try:
+                import phase3 as Phase3
+            except ImportError:
+                import Phase3
+            if sort_by in ("date", "incident_date"):
+                sort_by = "incident_date"
+            is_reverse = (order_dir == "desc")
+            complaints = Phase3.merge_sort(complaints, key=sort_by, reverse=is_reverse)
+            active_algorithm = f"Merge Sort [Stable O(N log N)]: Sorted by {sort_by} ({'Descending' if is_reverse else 'Ascending'})"
+        except Exception as e:
+            print("Merge sort error:", e)
+    else:
+        # Default order
+        complaints = sorted(complaints, key=lambda x: str(x.get("created_at") or ""), reverse=True)
+
+    return render_template(
+        "admin/complaints.html",
+        complaints=complaints,
+        officers=officers,
+        statuses=statuses,
+        sort_mode=sort_mode,
+        sort_by=sort_by,
+        order_dir=order_dir,
+        active_algorithm=active_algorithm,
+    )
 
 
 @app.route("/admin/complaints/delete/<complaint_id>", methods=["POST"])
@@ -935,7 +1022,68 @@ def admin_assign_single():
 @app.route("/admin/analytics")
 @role_required("admin")
 def admin_analytics():
-    return render_template("admin/analytics.html")
+    import json
+    import static_data
+
+    # ── KPI cards (live DB) ───────────────────────────────────────────────────
+    total_complaints = db.query_db("SELECT COUNT(*) as cnt FROM complaints")[0]["cnt"]
+    resolved_count   = db.query_db("SELECT COUNT(*) as cnt FROM complaints WHERE complaint_status='Resolved'")[0]["cnt"]
+    critical_count   = db.query_db("SELECT COUNT(*) as cnt FROM complaints WHERE severity='Critical'")[0]["cnt"]
+    active_officers  = db.query_db("SELECT COUNT(*) as cnt FROM officers WHERE status='Active'")[0]["cnt"]
+
+    # ── Chart 1: Department Performance — Grouped Bar (from static_data + DB) ─
+    # Use STATIC_DEPARTMENTS as canonical reference (full 6 depts)
+    dept_names    = [d["name"]           for d in static_data.STATIC_DEPARTMENTS]
+    dept_total    = [d["total_cases"]    for d in static_data.STATIC_DEPARTMENTS]
+    dept_resolved = [d["resolved_cases"] for d in static_data.STATIC_DEPARTMENTS]
+    dept_risk     = [d["risk_level"]     for d in static_data.STATIC_DEPARTMENTS]
+
+    # ── Chart 2: Severity Breakdown — Doughnut (live DB complaints) ───────────
+    sev_rows = db.query_db(
+        "SELECT severity, COUNT(*) as cnt FROM complaints GROUP BY severity ORDER BY CASE severity "
+        "WHEN 'Critical' THEN 1 WHEN 'High' THEN 2 WHEN 'Medium' THEN 3 ELSE 4 END"
+    ) or []
+    sev_labels = [r["severity"] for r in sev_rows]
+    sev_vals   = [r["cnt"]      for r in sev_rows]
+
+    # ── Chart 3: Complaint Status Pipeline — Horizontal Bar (live DB) ─────────
+    stat_rows = db.query_db(
+        "SELECT complaint_status, COUNT(*) as cnt FROM complaints GROUP BY complaint_status ORDER BY cnt DESC"
+    ) or []
+    stat_labels = [r["complaint_status"] for r in stat_rows]
+    stat_vals   = [r["cnt"]             for r in stat_rows]
+
+    # ── Dept resolution table (for table rows — re-use static_data) ───────────
+    departments = static_data.STATIC_DEPARTMENTS
+    dept_total_cases = sum(d["total_cases"] for d in departments)
+    dept_resolved_cases = sum(d["resolved_cases"] for d in departments)
+
+    chart = {
+        # Chart 1 — Grouped Bar (Department Caseload & Resolution)
+        "dept_labels":   json.dumps(dept_names),
+        "dept_total":    json.dumps(dept_total),
+        "dept_resolved": json.dumps(dept_resolved),
+        # Chart 2 — Doughnut (Severity Breakdown)
+        "sev_labels":    json.dumps(sev_labels),
+        "sev_vals":      json.dumps(sev_vals),
+        # Chart 3 — Horizontal Bar (Complaint Status Pipeline)
+        "stat_labels":   json.dumps(stat_labels),
+        "stat_vals":     json.dumps(stat_vals),
+    }
+
+    return render_template(
+        "admin/analytics.html",
+        departments=departments,
+        dept_total_cases=dept_total_cases,
+        dept_resolved_cases=dept_resolved_cases,
+        total_complaints=total_complaints,
+        resolved_count=resolved_count,
+        critical_count=critical_count,
+        active_officers=active_officers,
+        sev_rows=sev_rows,
+        stat_rows=stat_rows,
+        chart=chart,
+    )
 
 
 @app.route("/admin/citizens")
@@ -948,7 +1096,13 @@ def admin_citizens():
 @app.route("/admin/officers")
 @role_required("admin")
 def admin_officers():
-    officers = db.query_db("SELECT * FROM officers ORDER BY name ASC")
+    officers_raw = db.query_db("SELECT * FROM officers ORDER BY officer_id ASC") or []
+    officers = [dict(o) for o in officers_raw]
+    try:
+        import phase3
+        officers = phase3.merge_sort(officers, key="officer_id", reverse=False)
+    except Exception as e:
+        print("Officer sort error:", e)
     departments = db.query_db("SELECT * FROM departments")
     return render_template("admin/officers.html", officers=officers, departments=departments)
 

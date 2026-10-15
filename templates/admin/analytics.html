@@ -1,138 +1,877 @@
 {% extends 'admin/base.html' %}
-
 {% set active_page = 'analytics' %}
+{% block title %}Visual Analytics — CCMS Vigilance Command{% endblock %}
 {% block page_heading %}Vigilance Intelligence &amp; Visual Analytics{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   VISUAL ANALYTICS — PREMIUM DARK GREEN VIGILANCE DESIGN SYSTEM
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* Section header badge */
+.va-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.va-section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: var(--primary-subtle);
+  border: 1px solid var(--border-glow);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+}
+
+/* ── KPI Cards ──────────────────────────────────────────────────────────── */
+.va-kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  height: 100%;
+}
+.va-kpi-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-lg);
+}
+.va-kpi-stripe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+}
+.va-kpi-icon-wrap {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+.va-kpi-value {
+  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+.va-kpi-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+.va-kpi-meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  margin-top: 10px;
+}
+
+/* ── Chart Cards ────────────────────────────────────────────────────────── */
+.va-chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.va-chart-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+.va-card-glow {
+  position: absolute;
+  top: 0;
+  left: 2rem;
+  right: 2rem;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+}
+.va-chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.va-chart-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-heading);
+  margin: 0 0 3px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.va-chart-sub {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+.va-chart-pill {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+.va-chart-canvas-wrap {
+  position: relative;
+  flex-grow: 1;
+  min-height: 220px;
+  width: 100%;
+}
+
+/* ── Interactive Legends & Badges ───────────────────────────────────────── */
+.va-legend-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border-color);
+}
+.va-legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  color: var(--text-body);
+  border: 1px solid var(--border-color);
+}
+.va-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Table Styling ──────────────────────────────────────────────────────── */
+.va-table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 0.25s ease;
+}
+.va-table-card:hover {
+  border-color: var(--border-hover);
+}
+.va-table-header {
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.va-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.va-table th {
+  padding: 0.85rem 1.2rem;
+  font-weight: 800;
+  font-size: 0.68rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+}
+.va-table td {
+  padding: 0.95rem 1.2rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-body);
+  vertical-align: middle;
+}
+.va-table tr:last-child td {
+  border-bottom: none;
+}
+.va-table tr:hover td {
+  background: var(--bg-subtle);
+}
+.va-progress-wrap {
+  width: 110px;
+  height: 7px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+.va-progress-bar {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--gradient-brand);
+}
+
+/* ── Dark green vigilance enhancements ──────────────────────────────────── */
+[data-theme="dark-green"] .va-table td,
+[data-theme="dark"] .va-table td {
+  color: #d1fae5;
+}
+[data-theme="dark-green"] .va-table tr:hover td,
+[data-theme="dark"] .va-table tr:hover td {
+  background: rgba(16, 185, 129, 0.08);
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="row g-4 mb-4">
-  <!-- Chart 1: Department Distribution -->
-  <div class="col-lg-6">
-    <div class="ccms-card p-4 shadow-sm h-100">
-      <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
-        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-building-columns text-primary me-2"></i>Cases by Government Department</h5>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ROW 1 — INTELLIGENCE KPI SUMMARY CARDS (Dataset & Live Aggregates)
+═══════════════════════════════════════════════════════════════════════════ -->
+<div class="va-section-header">
+  <div class="va-section-tag">
+    <i class="fas fa-radar"></i> Anti-Corruption Dataset Intelligence
+  </div>
+  <span class="small" style="color:var(--text-muted); font-size:0.75rem;">
+    <i class="fas fa-database me-1"></i> Source: <code>static_data.py</code> &amp; SQLite DB
+  </span>
+</div>
+
+<div class="row g-3 mb-4">
+
+  <!-- KPI 1: Total Recorded Cases across Departments -->
+  <div class="col-6 col-lg-3">
+    <div class="va-kpi-card">
+      <div class="va-kpi-stripe" style="background: var(--gradient-cyber);"></div>
+      <div class="d-flex align-items-center gap-3 ps-2">
+        <div class="va-kpi-icon-wrap" style="background: rgba(8, 145, 178, 0.15); color: var(--accent-cyan);">
+          <i class="fas fa-building-shield"></i>
+        </div>
+        <div>
+          <div class="va-kpi-value" style="color: var(--accent-cyan);">{{ dept_total_cases }}</div>
+          <div class="va-kpi-label">Total Dept Cases</div>
+          <span class="va-kpi-meta-badge" style="background: rgba(8, 145, 178, 0.12); color: var(--accent-cyan);">
+            <i class="fas fa-sitemap" style="font-size:0.6rem;"></i> 6 Key Departments
+          </span>
+        </div>
       </div>
-      <canvas id="deptBarChart" height="200"></canvas>
     </div>
   </div>
 
-  <!-- Chart 2: Category Distribution -->
-  <div class="col-lg-6">
-    <div class="ccms-card p-4 shadow-sm h-100">
-      <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
-        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-tags text-violet me-2"></i>Misconduct Classification Breakdown</h5>
+  <!-- KPI 2: Resolved Cases & Clearance Rate -->
+  <div class="col-6 col-lg-3">
+    <div class="va-kpi-card">
+      <div class="va-kpi-stripe" style="background: var(--gradient-success);"></div>
+      <div class="d-flex align-items-center gap-3 ps-2">
+        <div class="va-kpi-icon-wrap" style="background: var(--primary-subtle); color: var(--accent-emerald);">
+          <i class="fas fa-circle-check"></i>
+        </div>
+        <div>
+          <div class="va-kpi-value" style="color: var(--accent-emerald);">{{ dept_resolved_cases }}</div>
+          <div class="va-kpi-label">Sanctioned &amp; Resolved</div>
+          <span class="va-kpi-meta-badge" style="background: var(--primary-subtle); color: var(--accent-emerald);">
+            <i class="fas fa-arrow-trend-up" style="font-size:0.6rem;"></i>
+            {% if dept_total_cases > 0 %}{{ ((dept_resolved_cases / dept_total_cases) * 100) | round | int }}%{% else %}0%{% endif %} Clearance Rate
+          </span>
+        </div>
       </div>
-      <canvas id="categoryChart" height="200"></canvas>
     </div>
   </div>
 
-  <!-- Chart 3: Severity Breakdown -->
-  <div class="col-lg-6">
-    <div class="ccms-card p-4 shadow-sm h-100">
-      <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
-        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-triangle-exclamation text-danger me-2"></i>Severity &amp; Risk Spread</h5>
+  <!-- KPI 3: Live Complaints Intake -->
+  <div class="col-6 col-lg-3">
+    <div class="va-kpi-card">
+      <div class="va-kpi-stripe" style="background: var(--gradient-gold);"></div>
+      <div class="d-flex align-items-center gap-3 ps-2">
+        <div class="va-kpi-icon-wrap" style="background: rgba(217, 119, 6, 0.15); color: var(--accent-amber);">
+          <i class="fas fa-file-shield"></i>
+        </div>
+        <div>
+          <div class="va-kpi-value" style="color: var(--accent-amber);">{{ total_complaints }}</div>
+          <div class="va-kpi-label">Live Active Complaints</div>
+          <span class="va-kpi-meta-badge" style="background: rgba(217, 119, 6, 0.12); color: var(--accent-amber);">
+            <i class="fas fa-bell" style="font-size:0.6rem;"></i> Whistleblower Docket
+          </span>
+        </div>
       </div>
-      <canvas id="severityChart" height="200"></canvas>
     </div>
   </div>
 
-  <!-- Chart 4: Resolution Velocity -->
-  <div class="col-lg-6">
-    <div class="ccms-card p-4 shadow-sm h-100">
-      <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
-        <h5 class="fw-bold text-heading mb-0"><i class="fas fa-gauge-high text-emerald me-2"></i>Investigation Resolution Trend</h5>
+  <!-- KPI 4: Critical Severity Triage -->
+  <div class="col-6 col-lg-3">
+    <div class="va-kpi-card">
+      <div class="va-kpi-stripe" style="background: var(--gradient-danger);"></div>
+      <div class="d-flex align-items-center gap-3 ps-2">
+        <div class="va-kpi-icon-wrap" style="background: rgba(225, 29, 72, 0.15); color: var(--accent-rose);">
+          <i class="fas fa-triangle-exclamation"></i>
+        </div>
+        <div>
+          <div class="va-kpi-value" style="color: var(--accent-rose);">{{ critical_count }}</div>
+          <div class="va-kpi-label">Critical Threat Cases</div>
+          <span class="va-kpi-meta-badge" style="background: rgba(225, 29, 72, 0.12); color: var(--accent-rose);">
+            <i class="fas fa-bolt" style="font-size:0.6rem;"></i> Immediate Escalation
+          </span>
+        </div>
       </div>
-      <canvas id="resolutionChart" height="200"></canvas>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ROW 2 — 3 OBJECTIVES / 3 DISTINCT CATEGORIES OF CHARTS
+═══════════════════════════════════════════════════════════════════════════ -->
+
+<!-- OBJECTIVE 1: Vertical Grouped Bar Chart (Department Intake vs Resolution) -->
+<div class="row g-3 mb-4">
+  <div class="col-12">
+    <div class="va-chart-card">
+      <div class="va-card-glow" style="background: var(--gradient-cyber);"></div>
+      <div class="va-chart-header">
+        <div>
+          <h6 class="va-chart-title">
+            <i class="fas fa-chart-column" style="color:var(--accent-cyan);"></i>
+            Objective 1: Department Caseload &amp; Resolution Performance
+          </h6>
+          <p class="va-chart-sub">
+            Grouped Bar comparison of total reported corruption cases versus resolved cases across all 6 departments
+          </p>
+        </div>
+        <span class="va-chart-pill" style="background: rgba(8, 145, 178, 0.15); color: var(--accent-cyan); border: 1px solid rgba(8, 145, 178, 0.3);">
+          <i class="fas fa-layer-group me-1"></i> Grouped Bar Chart
+        </span>
+      </div>
+      <div class="va-chart-canvas-wrap" style="min-height: 270px;">
+        <canvas id="chartDeptGroupedBar"></canvas>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- OBJECTIVE 2 & 3: Doughnut Chart & Horizontal Bar Chart -->
+<div class="row g-3 mb-4">
+
+  <!-- OBJECTIVE 2: Doughnut Chart (Threat Severity Distribution) -->
+  <div class="col-lg-5">
+    <div class="va-chart-card">
+      <div class="va-card-glow" style="background: var(--gradient-danger);"></div>
+      <div class="va-chart-header">
+        <div>
+          <h6 class="va-chart-title">
+            <i class="fas fa-chart-pie" style="color:var(--accent-rose);"></i>
+            Objective 2: Threat Severity Breakdown
+          </h6>
+          <p class="va-chart-sub">
+            Doughnut classification of complaint urgency and risk levels
+          </p>
+        </div>
+        <span class="va-chart-pill" style="background: rgba(225, 29, 72, 0.12); color: var(--accent-rose); border: 1px solid rgba(225, 29, 72, 0.25);">
+          <i class="fas fa-circle-notch me-1"></i> Doughnut Chart
+        </span>
+      </div>
+      <div class="va-chart-canvas-wrap" style="min-height: 230px;">
+        <canvas id="chartSeverityDoughnut"></canvas>
+      </div>
+      <div class="va-legend-grid">
+        {% set sev_colors = {'Critical': '#e11d48', 'High': '#d97706', 'Medium': '#0891b2', 'Low': '#10b981'} %}
+        {% for s in sev_rows %}
+        <span class="va-legend-pill">
+          <span class="va-legend-dot" style="background: {{ sev_colors.get(s.severity, '#888') }};"></span>
+          {{ s.severity }}: <strong>{{ s.cnt }}</strong>
+        </span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- OBJECTIVE 3: Horizontal Bar Chart (Complaint Status Pipeline) -->
+  <div class="col-lg-7">
+    <div class="va-chart-card">
+      <div class="va-card-glow" style="background: var(--gradient-brand);"></div>
+      <div class="va-chart-header">
+        <div>
+          <h6 class="va-chart-title">
+            <i class="fas fa-bars-progress" style="color:var(--primary);"></i>
+            Objective 3: Complaint Investigation Pipeline
+          </h6>
+          <p class="va-chart-sub">
+            Horizontal Bar distribution of whistleblower complaints through operational lifecycle
+          </p>
+        </div>
+        <span class="va-chart-pill" style="background: var(--primary-subtle); color: var(--primary); border: 1px solid var(--border-glow);">
+          <i class="fas fa-chart-bar me-1"></i> Horizontal Bar Chart
+        </span>
+      </div>
+      <div class="va-chart-canvas-wrap" style="min-height: 230px;">
+        <canvas id="chartStatusHorizontalBar"></canvas>
+      </div>
+      <div class="va-legend-grid">
+        {% set stat_colors = {'Under Review': '#d97706', 'Investigation Active': '#0891b2', 'Assigned': '#7c3aed', 'Pending': '#64748b', 'Resolved': '#10b981'} %}
+        {% for st in stat_rows %}
+        <span class="va-legend-pill">
+          <span class="va-legend-dot" style="background: {{ stat_colors.get(st.complaint_status, '#888') }};"></span>
+          {{ st.complaint_status }}: <strong>{{ st.cnt }}</strong>
+        </span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ROW 3 — DEPARTMENT PERFORMANCE & RISK AUDIT TABLE
+═══════════════════════════════════════════════════════════════════════════ -->
+<div class="va-table-card mb-4">
+  <div class="va-table-header">
+    <div>
+      <h6 class="mb-0 fw-bold" style="color:var(--text-heading); font-size:0.92rem;">
+        <i class="fas fa-shield-halved me-2" style="color:var(--primary);"></i>
+        Department Performance &amp; Vigilance Risk Audit
+      </h6>
+      <span class="small" style="color:var(--text-muted); font-size:0.75rem;">
+        Full dataset records from <code>static_data.STATIC_DEPARTMENTS</code> (6 Departments)
+      </span>
+    </div>
+    <span class="badge" style="background:var(--primary-subtle); color:var(--primary); font-size:0.75rem; border:1px solid var(--border-glow);">
+      <i class="fas fa-check-double me-1"></i> Verified Dataset
+    </span>
+  </div>
+  <div class="table-responsive">
+    <table class="va-table">
+      <thead>
+        <tr>
+          <th>Department Name &amp; Code</th>
+          <th>Supervising Head</th>
+          <th class="text-center">Total Cases</th>
+          <th class="text-center">Resolved Cases</th>
+          <th>Resolution Progress</th>
+          <th class="text-center">Risk Level</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set risk_colors = {'Critical': '#e11d48', 'High': '#d97706', 'Medium': '#0891b2', 'Low': '#10b981'} %}
+        {% for dept in departments %}
+        {% set pct = ((dept.resolved_cases / (dept.total_cases if dept.total_cases > 0 else 1)) * 100) | round | int %}
+        <tr>
+          <td>
+            <div class="fw-bold" style="color:var(--text-heading);">{{ dept.name }}</div>
+            <div class="small" style="color:var(--text-muted); font-size:0.72rem;">
+              <span class="badge me-1" style="background:var(--bg-subtle); color:var(--text-muted); border:1px solid var(--border-color);">{{ dept.code }}</span>
+              ID: {{ dept.dept_id }}
+            </div>
+          </td>
+          <td>
+            <div class="fw-semibold" style="color:var(--text-body);">{{ dept.head }}</div>
+          </td>
+          <td class="text-center">
+            <span class="badge" style="background:rgba(8,145,178,0.12); color:var(--accent-cyan); font-weight:700; font-size:0.8rem; border:1px solid rgba(8,145,178,0.25);">
+              {{ dept.total_cases }}
+            </span>
+          </td>
+          <td class="text-center">
+            <span class="badge" style="background:var(--primary-subtle); color:var(--accent-emerald); font-weight:700; font-size:0.8rem; border:1px solid var(--border-glow);">
+              {{ dept.resolved_cases }}
+            </span>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="va-progress-wrap">
+                <div class="va-progress-bar" style="width: {{ pct }}%;"></div>
+              </div>
+              <span class="fw-bold" style="font-size:0.78rem; color:var(--text-heading);">{{ pct }}%</span>
+            </div>
+          </td>
+          <td class="text-center">
+            {% set r_col = risk_colors.get(dept.risk_level, '#888') %}
+            <span class="badge" style="background: {{ r_col }}18; color: {{ r_col }}; border: 1px solid {{ r_col }}44; font-size: 0.72rem; letter-spacing: 0.5px; text-transform: uppercase;">
+              {{ dept.risk_level }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHART THEME ADAPTATION ENGINE (Light Mode & Dark Green Vigilance Mode)
+═══════════════════════════════════════════════════════════════════════════ */
+
+// Check whether current theme is dark or dark-green
+function checkIsDark() {
+  const theme = document.documentElement.getAttribute('data-theme') || '';
+  return theme === 'dark-green' || theme === 'dark' || document.body.classList.contains('dark-mode');
+}
+
+// Get theme colors dynamically
+function getThemePalette() {
+  const isDark = checkIsDark();
+  return {
+    isDark: isDark,
+    textColor: isDark ? '#86efac' : '#4b6358',
+    headingColor: isDark ? '#f0fdf4' : '#081c15',
+    gridColor: isDark ? 'rgba(52, 211, 153, 0.10)' : 'rgba(6, 26, 20, 0.06)',
+    tooltipBg: isDark ? '#0a1f18' : '#ffffff',
+    tooltipBorder: isDark ? 'rgba(52, 211, 153, 0.4)' : 'rgba(5, 150, 105, 0.25)',
+    tooltipTitle: isDark ? '#f0fdf4' : '#081c15',
+    tooltipBody: isDark ? '#d1fae5' : '#1e332a',
+    // Accent colors
+    cyan: isDark ? '#38bdf8' : '#0891b2',
+    emerald: isDark ? '#34d399' : '#059669',
+    amber: isDark ? '#fbbf24' : '#d97706',
+    rose: isDark ? '#f87171' : '#e11d48',
+    violet: isDark ? '#a78bfa' : '#7c3aed',
+    slate: isDark ? '#94a3b8' : '#64748b'
+  };
+}
+
+// Chart references
+let chart1 = null;
+let chart2 = null;
+let chart3 = null;
+
+// Raw pre-serialized data from backend
+const DATA_DEPT_LABELS   = {{ chart.dept_labels   | safe }};
+const DATA_DEPT_TOTAL    = {{ chart.dept_total    | safe }};
+const DATA_DEPT_RESOLVED = {{ chart.dept_resolved | safe }};
+
+const DATA_SEV_LABELS    = {{ chart.sev_labels    | safe }};
+const DATA_SEV_VALS      = {{ chart.sev_vals      | safe }};
+
+const DATA_STAT_LABELS   = {{ chart.stat_labels   | safe }};
+const DATA_STAT_VALS     = {{ chart.stat_vals     | safe }};
+
+/* ── 1. Create Objective 1: Department Grouped Bar Chart ──────────────────── */
+function buildChart1() {
+  const ctx = document.getElementById('chartDeptGroupedBar');
+  if (!ctx) return;
+  const pal = getThemePalette();
+
+  chart1 = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: DATA_DEPT_LABELS,
+      datasets: [
+        {
+          label: 'Total Registered Cases',
+          data: DATA_DEPT_TOTAL,
+          backgroundColor: pal.isDark ? 'rgba(56, 189, 248, 0.75)' : 'rgba(8, 145, 178, 0.85)',
+          borderColor: pal.cyan,
+          borderWidth: 1.5,
+          borderRadius: 6,
+          borderSkipped: false
+        },
+        {
+          label: 'Resolved & Sanctioned',
+          data: DATA_DEPT_RESOLVED,
+          backgroundColor: pal.isDark ? 'rgba(52, 211, 153, 0.80)' : 'rgba(5, 150, 105, 0.85)',
+          borderColor: pal.emerald,
+          borderWidth: 1.5,
+          borderRadius: 6,
+          borderSkipped: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+          align: 'end',
+          labels: {
+            color: pal.textColor,
+            usePointStyle: true,
+            pointStyle: 'circle',
+            font: { family: "'Inter', sans-serif", weight: '700', size: 11 },
+            padding: 16
+          }
+        },
+        tooltip: {
+          backgroundColor: pal.tooltipBg,
+          borderColor: pal.tooltipBorder,
+          borderWidth: 1.5,
+          titleColor: pal.tooltipTitle,
+          bodyColor: pal.tooltipBody,
+          padding: 12,
+          usePointStyle: true,
+          callbacks: {
+            label: function(ctx) {
+              return ` ${ctx.dataset.label}: ${ctx.parsed.y} cases`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: {
+            color: pal.textColor,
+            font: { family: "'Inter', sans-serif", size: 11, weight: '600' },
+            callback: function(val, idx) {
+              const label = DATA_DEPT_LABELS[idx] || '';
+              return label.length > 15 ? label.substring(0, 15) + '…' : label;
+            }
+          }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: pal.gridColor },
+          ticks: {
+            color: pal.textColor,
+            font: { family: "'Inter', sans-serif", weight: '600' },
+            precision: 0
+          }
+        }
+      }
+    }
+  });
+}
+
+/* ── 2. Create Objective 2: Threat Severity Doughnut Chart ───────────────── */
+function buildChart2() {
+  const ctx = document.getElementById('chartSeverityDoughnut');
+  if (!ctx) return;
+  const pal = getThemePalette();
+
+  const sevColorMap = {
+    'Critical': pal.rose,
+    'High': pal.amber,
+    'Medium': pal.cyan,
+    'Low': pal.emerald
+  };
+  const bgColors = DATA_SEV_LABELS.map(lbl => sevColorMap[lbl] || pal.violet);
+
+  chart2 = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: DATA_SEV_LABELS,
+      datasets: [{
+        data: DATA_SEV_VALS,
+        backgroundColor: bgColors,
+        borderColor: pal.isDark ? '#0e271f' : '#ffffff',
+        borderWidth: 3,
+        hoverOffset: 12,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '72%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: pal.tooltipBg,
+          borderColor: pal.tooltipBorder,
+          borderWidth: 1.5,
+          titleColor: pal.tooltipTitle,
+          bodyColor: pal.tooltipBody,
+          padding: 12,
+          callbacks: {
+            label: function(ctx) {
+              const total = DATA_SEV_VALS.reduce((a, b) => a + b, 0);
+              const val = ctx.parsed;
+              const pct = total > 0 ? Math.round((val / total) * 100) : 0;
+              return ` ${ctx.label}: ${val} cases (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+/* ── 3. Create Objective 3: Complaint Status Horizontal Bar Chart ────────── */
+function buildChart3() {
+  const ctx = document.getElementById('chartStatusHorizontalBar');
+  if (!ctx) return;
+  const pal = getThemePalette();
+
+  const statColorMap = {
+    'Under Review': pal.amber,
+    'Investigation Active': pal.cyan,
+    'Assigned': pal.violet,
+    'Pending': pal.slate,
+    'Resolved': pal.emerald
+  };
+  const barColors = DATA_STAT_LABELS.map(lbl => statColorMap[lbl] || pal.emerald);
+
+  chart3 = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: DATA_STAT_LABELS,
+      datasets: [{
+        label: 'Cases in Status',
+        data: DATA_STAT_VALS,
+        backgroundColor: barColors,
+        borderColor: barColors,
+        borderWidth: 1,
+        borderRadius: 6,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: pal.tooltipBg,
+          borderColor: pal.tooltipBorder,
+          borderWidth: 1.5,
+          titleColor: pal.tooltipTitle,
+          bodyColor: pal.tooltipBody,
+          padding: 12,
+          callbacks: {
+            label: function(ctx) {
+              return ` ${ctx.label}: ${ctx.parsed.x} complaint(s)`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          grid: { color: pal.gridColor },
+          ticks: {
+            color: pal.textColor,
+            font: { family: "'Inter', sans-serif", weight: '600' },
+            precision: 0
+          }
+        },
+        y: {
+          grid: { display: false },
+          ticks: {
+            color: pal.textColor,
+            font: { family: "'Inter', sans-serif", size: 11, weight: '600' }
+          }
+        }
+      }
+    }
+  });
+}
+
+/* ── Dynamic Theme Refresh Function ─────────────────────────────────────── */
+function updateChartsTheme() {
+  const pal = getThemePalette();
+
+  if (chart1) {
+    chart1.data.datasets[0].backgroundColor = pal.isDark ? 'rgba(56, 189, 248, 0.75)' : 'rgba(8, 145, 178, 0.85)';
+    chart1.data.datasets[0].borderColor = pal.cyan;
+    chart1.data.datasets[1].backgroundColor = pal.isDark ? 'rgba(52, 211, 153, 0.80)' : 'rgba(5, 150, 105, 0.85)';
+    chart1.data.datasets[1].borderColor = pal.emerald;
+    chart1.options.plugins.legend.labels.color = pal.textColor;
+    chart1.options.plugins.tooltip.backgroundColor = pal.tooltipBg;
+    chart1.options.plugins.tooltip.borderColor = pal.tooltipBorder;
+    chart1.options.plugins.tooltip.titleColor = pal.tooltipTitle;
+    chart1.options.plugins.tooltip.bodyColor = pal.tooltipBody;
+    chart1.options.scales.x.ticks.color = pal.textColor;
+    chart1.options.scales.y.ticks.color = pal.textColor;
+    chart1.options.scales.y.grid.color = pal.gridColor;
+    chart1.update();
+  }
+
+  if (chart2) {
+    const sevColorMap = {
+      'Critical': pal.rose,
+      'High': pal.amber,
+      'Medium': pal.cyan,
+      'Low': pal.emerald
+    };
+    chart2.data.datasets[0].backgroundColor = DATA_SEV_LABELS.map(lbl => sevColorMap[lbl] || pal.violet);
+    chart2.data.datasets[0].borderColor = pal.isDark ? '#0e271f' : '#ffffff';
+    chart2.options.plugins.tooltip.backgroundColor = pal.tooltipBg;
+    chart2.options.plugins.tooltip.borderColor = pal.tooltipBorder;
+    chart2.options.plugins.tooltip.titleColor = pal.tooltipTitle;
+    chart2.options.plugins.tooltip.bodyColor = pal.tooltipBody;
+    chart2.update();
+  }
+
+  if (chart3) {
+    const statColorMap = {
+      'Under Review': pal.amber,
+      'Investigation Active': pal.cyan,
+      'Assigned': pal.violet,
+      'Pending': pal.slate,
+      'Resolved': pal.emerald
+    };
+    const barColors = DATA_STAT_LABELS.map(lbl => statColorMap[lbl] || pal.emerald);
+    chart3.data.datasets[0].backgroundColor = barColors;
+    chart3.data.datasets[0].borderColor = barColors;
+    chart3.options.plugins.tooltip.backgroundColor = pal.tooltipBg;
+    chart3.options.plugins.tooltip.borderColor = pal.tooltipBorder;
+    chart3.options.plugins.tooltip.titleColor = pal.tooltipTitle;
+    chart3.options.plugins.tooltip.bodyColor = pal.tooltipBody;
+    chart3.options.scales.x.ticks.color = pal.textColor;
+    chart3.options.scales.x.grid.color = pal.gridColor;
+    chart3.options.scales.y.ticks.color = pal.textColor;
+    chart3.update();
+  }
+}
+
+// Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
-  // Dept Bar Chart
-  const deptCtx = document.getElementById('deptBarChart');
-  if (deptCtx) {
-    new Chart(deptCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Police', 'Revenue', 'PWD', 'Health', 'Education', 'Transport'],
-        datasets: [{
-          label: 'Total Cases',
-          data: [42, 65, 51, 29, 34, 38],
-          backgroundColor: '#2563eb',
-          borderRadius: 6
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true } }
-      }
-    });
-  }
+  buildChart1();
+  buildChart2();
+  buildChart3();
 
-  // Category Doughnut
-  const catCtx = document.getElementById('categoryChart');
-  if (catCtx) {
-    new Chart(catCtx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Bribery & Demand', 'Land Scam', 'Road/PWD Scam', 'Police Misconduct', 'Procurement Fraud'],
-        datasets: [{
-          data: [35, 25, 20, 12, 8],
-          backgroundColor: ['#2563eb', '#7c3aed', '#06b6d4', '#f59e0b', '#f43f5e']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom' } }
+  // Watch for theme changes via MutationObserver on <html> data-theme attribute
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'data-theme') {
+        setTimeout(updateChartsTheme, 30);
       }
     });
-  }
+  });
+  observer.observe(document.documentElement, { attributes: true });
 
-  // Severity Pie
-  const sevCtx = document.getElementById('severityChart');
-  if (sevCtx) {
-    new Chart(sevCtx, {
-      type: 'pie',
-      data: {
-        labels: ['Critical', 'High', 'Medium', 'Low'],
-        datasets: [{
-          data: [15, 45, 30, 10],
-          backgroundColor: ['#f43f5e', '#f59e0b', '#3b82f6', '#64748b']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom' } }
-      }
+  // Also bind to theme toggle buttons as fallback
+  document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setTimeout(updateChartsTheme, 80);
     });
-  }
-
-  // Resolution Line
-  const resCtx = document.getElementById('resolutionChart');
-  if (resCtx) {
-    new Chart(resCtx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-        datasets: [{
-          label: 'Sanctioned & Resolved',
-          data: [10, 15, 14, 22, 25, 31, 38, 35],
-          borderColor: '#10b981',
-          backgroundColor: 'rgba(16, 185, 129, 0.15)',
-          fill: true,
-          tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true } }
-      }
-    });
-  }
+  });
 });
 </script>
 {% endblock %}

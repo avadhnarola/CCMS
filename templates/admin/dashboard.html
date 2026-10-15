@@ -107,6 +107,203 @@
   </div>
 </div>
 
+<!-- ========================================================================= -->
+<!-- PHASE 3: ALGORITHMIC DATA PROCESSING & STRATEGIC INTELLIGENCE (CLO3) -->
+<!-- ========================================================================= -->
+<div class="ccms-card p-4 mb-4 shadow-sm border-warning border-opacity-25" style="background: linear-gradient(135deg, rgba(245,158,11,0.04) 0%, rgba(37,99,235,0.03) 100%);">
+  <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-4 border-bottom gap-2">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="badge text-white fw-bold px-2.5 py-1 rounded-pill" style="font-size:0.7rem; background: linear-gradient(135deg, #f59e0b, #d97706);">
+          <i class="fas fa-layer-group me-1"></i> PHASE 3 COMPLIANT
+        </span>
+        <span class="badge bg-primary-subtle text-primary border px-2.5 py-1 rounded-pill small fw-bold">
+          3 Analytical Objectives &bull; Merge Sort &bull; Searching &bull; Priority Heap
+        </span>
+      </div>
+      <h4 class="fw-bold text-heading brand-font mb-0">Algorithmic Data Processing &amp; Strategic Intelligence</h4>
+      <p class="small text-muted mb-0">
+        Empirical vigilance analytics derived through divide-and-conquer Merge Sort, binary/linear search filters, and max-heap priority structures.
+      </p>
+    </div>
+  </div>
+
+  <!-- 3 DISTINCT OBJECTIVE PANELS ROW -->
+  <div class="row g-4">
+    <!-- OBJECTIVE 1: Severity & Risk Priority Profiling -->
+    <div class="col-lg-4">
+      <div class="ccms-card p-3.5 h-100 d-flex flex-column border" style="background: var(--bg-surface);">
+        <div class="d-flex align-items-center justify-content-between pb-2 mb-3 border-bottom">
+          <div class="d-flex align-items-center gap-2">
+            <div class="stat-icon" style="width:32px; height:32px; font-size:0.8rem; background:rgba(239,68,68,0.12); color:#ef4444;">
+              <i class="fas fa-triangle-exclamation"></i>
+            </div>
+            <div>
+              <h6 class="fw-bold text-heading mb-0" style="font-size:0.9rem;">Objective 1: Risk &amp; Severity</h6>
+              <span class="text-muted" style="font-size:0.7rem;">Merge Sort (Rank) + Linear Filter</span>
+            </div>
+          </div>
+          <span class="badge bg-danger-subtle text-danger border" style="font-size:0.68rem;">{{ phase3_analytics.objective1.risk_percentage }}% High Risk</span>
+        </div>
+
+        <!-- Visual Representation: Risk Distribution Chart -->
+        <div class="text-center mb-3" style="position: relative; height: 180px;">
+          <canvas id="obj1RiskChart"></canvas>
+        </div>
+
+        <!-- Key Metrics Strip -->
+        <div class="row g-1 text-center mb-3">
+          <div class="col-3">
+            <div class="p-1.5 rounded bg-subtle border">
+              <div class="fw-bold text-danger" style="font-size:0.85rem;">{{ phase3_analytics.objective1.counts.Critical }}</div>
+              <div class="text-muted" style="font-size:0.62rem;">Critical</div>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="p-1.5 rounded bg-subtle border">
+              <div class="fw-bold text-warning" style="font-size:0.85rem;">{{ phase3_analytics.objective1.counts.High }}</div>
+              <div class="text-muted" style="font-size:0.62rem;">High</div>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="p-1.5 rounded bg-subtle border">
+              <div class="fw-bold text-primary" style="font-size:0.85rem;">{{ phase3_analytics.objective1.counts.Medium }}</div>
+              <div class="text-muted" style="font-size:0.62rem;">Medium</div>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="p-1.5 rounded bg-subtle border">
+              <div class="fw-bold text-success" style="font-size:0.85rem;">{{ phase3_analytics.objective1.counts.Low }}</div>
+              <div class="text-muted" style="font-size:0.62rem;">Low</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Strategic Insights Box -->
+        <div class="mt-auto p-2.5 rounded border border-danger-subtle" style="background: rgba(239,68,68,0.04);">
+          <div class="d-flex align-items-center gap-1.5 mb-1.5">
+            <i class="fas fa-lightbulb text-warning" style="font-size:0.75rem;"></i>
+            <span class="fw-bold text-heading" style="font-size:0.72rem; letter-spacing:0.3px;">STRATEGIC INSIGHTS:</span>
+          </div>
+          <ul class="mb-0 ps-3" style="font-size:0.72rem; line-height:1.45; color: var(--text-body);">
+            {% for ins in phase3_analytics.objective1.insights %}
+            <li class="mb-1">{{ ins }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBJECTIVE 2: Department-wise Caseload & Bottlenecks -->
+    <div class="col-lg-4">
+      <div class="ccms-card p-3.5 h-100 d-flex flex-column border" style="background: var(--bg-surface);">
+        <div class="d-flex align-items-center justify-content-between pb-2 mb-3 border-bottom">
+          <div class="d-flex align-items-center gap-2">
+            <div class="stat-icon" style="width:32px; height:32px; font-size:0.8rem; background:rgba(37,99,235,0.12); color:var(--primary);">
+              <i class="fas fa-building-columns"></i>
+            </div>
+            <div>
+              <h6 class="fw-bold text-heading mb-0" style="font-size:0.9rem;">Objective 2: Dept Bottlenecks</h6>
+              <span class="text-muted" style="font-size:0.7rem;">Merge Sort (Caseload Descending)</span>
+            </div>
+          </div>
+          <span class="badge bg-primary-subtle text-primary border" style="font-size:0.68rem;">Ranked #1: {{ phase3_analytics.objective2.top_dept.name[:12] }}</span>
+        </div>
+
+        <!-- Visual Representation: Ranked Horizontal Bar Chart -->
+        <div class="mb-3" style="position: relative; height: 180px;">
+          <canvas id="obj2DeptChart"></canvas>
+        </div>
+
+        <!-- Key Metrics Strip -->
+        <div class="p-2 rounded bg-subtle border mb-3 text-center">
+          <div class="d-flex align-items-center justify-content-around">
+            <div>
+              <span class="text-muted" style="font-size:0.65rem;">Top Burden Sector:</span>
+              <div class="fw-bold text-primary small text-truncate" style="max-width:140px;">{{ phase3_analytics.objective2.top_dept.name }}</div>
+            </div>
+            <div class="border-start ps-3">
+              <span class="text-muted" style="font-size:0.65rem;">Top 2 Concentration:</span>
+              <div class="fw-bold text-heading small">{{ phase3_analytics.objective2.top_2_share }}%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Strategic Insights Box -->
+        <div class="mt-auto p-2.5 rounded border border-primary-subtle" style="background: rgba(37,99,235,0.04);">
+          <div class="d-flex align-items-center gap-1.5 mb-1.5">
+            <i class="fas fa-chart-line text-primary" style="font-size:0.75rem;"></i>
+            <span class="fw-bold text-heading" style="font-size:0.72rem; letter-spacing:0.3px;">BOTTLENECK INSIGHTS:</span>
+          </div>
+          <ul class="mb-0 ps-3" style="font-size:0.72rem; line-height:1.45; color: var(--text-body);">
+            {% for ins in phase3_analytics.objective2.insights %}
+            <li class="mb-1">{{ ins }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBJECTIVE 3: Officer Workload & Allocation Balancing -->
+    <div class="col-lg-4">
+      <div class="ccms-card p-3.5 h-100 d-flex flex-column border" style="background: var(--bg-surface);">
+        <div class="d-flex align-items-center justify-content-between pb-2 mb-3 border-bottom">
+          <div class="d-flex align-items-center gap-2">
+            <div class="stat-icon" style="width:32px; height:32px; font-size:0.8rem; background:rgba(124,58,237,0.12); color:var(--accent-violet);">
+              <i class="fas fa-user-gear"></i>
+            </div>
+            <div>
+              <h6 class="fw-bold text-heading mb-0" style="font-size:0.9rem;">Objective 3: Officer Workload</h6>
+              <span class="text-muted" style="font-size:0.7rem;">Merge Sort (Loads) + Max-Heap</span>
+            </div>
+          </div>
+          <span class="badge bg-warning-subtle text-warning border" style="font-size:0.68rem;">{{ phase3_analytics.objective3.available_count }} Available</span>
+        </div>
+
+        <!-- Visual Representation: Officer Capacity Distribution Chart -->
+        <div class="text-center mb-3" style="position: relative; height: 180px;">
+          <canvas id="obj3OfficerChart"></canvas>
+        </div>
+
+        <!-- Key Metrics Strip -->
+        <div class="row g-1 text-center mb-3">
+          <div class="col-4">
+            <div class="p-1.5 rounded bg-subtle border">
+              <div class="fw-bold text-danger" style="font-size:0.85rem;">{{ phase3_analytics.objective3.overloaded_count }}</div>
+              <div class="text-muted" style="font-size:0.62rem;">Overloaded (&ge;2)</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="p-1.5 rounded bg-subtle border">
+              <div class="fw-bold text-primary" style="font-size:0.85rem;">{{ phase3_analytics.objective3.balanced_count }}</div>
+              <div class="text-muted" style="font-size:0.62rem;">Balanced (1)</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="p-1.5 rounded bg-subtle border">
+              <div class="fw-bold text-success" style="font-size:0.85rem;">{{ phase3_analytics.objective3.available_count }}</div>
+              <div class="text-muted" style="font-size:0.62rem;">Available (0)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Strategic Insights Box -->
+        <div class="mt-auto p-2.5 rounded border border-warning-subtle" style="background: rgba(245,158,11,0.04);">
+          <div class="d-flex align-items-center gap-1.5 mb-1.5">
+            <i class="fas fa-scale-balanced text-warning" style="font-size:0.75rem;"></i>
+            <span class="fw-bold text-heading" style="font-size:0.72rem; letter-spacing:0.3px;">ALLOCATION INSIGHTS:</span>
+          </div>
+          <ul class="mb-0 ps-3" style="font-size:0.72rem; line-height:1.45; color: var(--text-body);">
+            {% for ins in phase3_analytics.objective3.insights %}
+            <li class="mb-1">{{ ins }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MASTER RECENT ACTIVITY & RECENT CASES -->
 <div class="row g-4">
   <div class="col-lg-7">
@@ -216,18 +413,124 @@
           labels: ['Resolved', 'Pending', 'Investigating'],
           datasets: [{
             data: [{{ stats.resolved_complaints or 2 }}, {{ stats.pending_complaints or 1 }}, {{ stats.active_complaints or 1 }}],
-    backgroundColor: ['#10b981', '#f59e0b', '#06b6d4'],
-      borderWidth: 0
-  }]
-      },
-    options: {
-    responsive: true,
-    plugins: {
-      legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+            backgroundColor: ['#10b981', '#f59e0b', '#06b6d4'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+          }
+        }
+      });
     }
-  }
-    });
-  }
-});
+
+    // =========================================================================
+    // PHASE 3 OBJECTIVE 1: Severity & Risk Priority Profiling (Chart.js)
+    // =========================================================================
+    const obj1Ctx = document.getElementById('obj1RiskChart');
+    if (obj1Ctx) {
+      new Chart(obj1Ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Critical', 'High', 'Medium', 'Low'],
+          datasets: [{
+            data: [
+              {{ phase3_analytics.objective1.counts.Critical or 0 }},
+              {{ phase3_analytics.objective1.counts.High or 0 }},
+              {{ phase3_analytics.objective1.counts.Medium or 0 }},
+              {{ phase3_analytics.objective1.counts.Low or 0 }}
+            ],
+            backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#10b981'],
+            borderWidth: 2,
+            borderColor: 'var(--bg-surface)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+          },
+          cutout: '62%'
+        }
+      });
+    }
+
+    // =========================================================================
+    // PHASE 3 OBJECTIVE 2: Department-wise Caseload & Bottlenecks (Chart.js)
+    // =========================================================================
+    const obj2Ctx = document.getElementById('obj2DeptChart');
+    if (obj2Ctx) {
+      const deptLabels = {{ phase3_analytics.objective2.labels | tojson }};
+      const deptValues = {{ phase3_analytics.objective2.case_counts | tojson }};
+      // Shorten label names for compact layout
+      const truncatedLabels = deptLabels.map(l => l.length > 15 ? l.substring(0, 15) + '…' : l);
+
+      new Chart(obj2Ctx, {
+        type: 'bar',
+        data: {
+          labels: truncatedLabels,
+          datasets: [{
+            label: 'Total Cases',
+            data: deptValues,
+            backgroundColor: 'rgba(37, 99, 235, 0.85)',
+            borderColor: '#2563eb',
+            borderWidth: 1,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+            y: { grid: { display: false }, ticks: { font: { size: 9.5 } } }
+          }
+        }
+      });
+    }
+
+    // =========================================================================
+    // PHASE 3 OBJECTIVE 3: Officer Workload & Allocation Balancing (Chart.js)
+    // =========================================================================
+    const obj3Ctx = document.getElementById('obj3OfficerChart');
+    if (obj3Ctx) {
+      new Chart(obj3Ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Overloaded (≥2)', 'Balanced (1)', 'Available (0)'],
+          datasets: [{
+            label: 'Investigators',
+            data: [
+              {{ phase3_analytics.objective3.overloaded_count or 0 }},
+              {{ phase3_analytics.objective3.balanced_count or 0 }},
+              {{ phase3_analytics.objective3.available_count or 0 }}
+            ],
+            backgroundColor: ['#ef4444', '#3b82f6', '#10b981'],
+            borderRadius: 5,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+    }
+  });
 </script>
 {% endblock %}

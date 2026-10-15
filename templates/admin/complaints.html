@@ -3,40 +3,834 @@
 {% set active_page = 'complaints' %}
 {% block page_heading %}Master Complaint Management{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   PREMIUM DSA CONSOLE & WORKSPACE — STATE-OF-THE-ART DESIGN SYSTEM
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* Base Typography & Antialiasing */
+.dsa-hub-header, .dsa-deck-grid, .dsa-live-filter-bar, .table-custom, .dsa-execution-alert {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: -0.015em;
+}
+
+/* ── Top Hub Control Center ──────────────────────────────────────────────── */
+.dsa-hub-header {
+  background: linear-gradient(135deg, rgba(8, 28, 22, 0.85) 0%, rgba(4, 18, 14, 0.95) 100%);
+  border: 1px solid rgba(52, 211, 153, 0.22);
+  border-radius: 18px;
+  padding: 1.15rem 1.4rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
+}
+
+.dsa-live-pulse-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #10b981;
+  display: inline-block;
+  box-shadow: 0 0 10px #10b981;
+  animation: dsaPulseDot 1.8s infinite;
+}
+@keyframes dsaPulseDot {
+  0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70%  { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.dsa-hub-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #34d399;
+}
+
+.dsa-stat-chip {
+  background: rgba(3, 12, 8, 0.65);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: 12px;
+  padding: 6px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 90px;
+}
+.dsa-stat-chip.cyan {
+  border-color: rgba(6, 182, 212, 0.35);
+  background: rgba(6, 182, 212, 0.08);
+}
+.dsa-stat-num {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #f0fdf4;
+  line-height: 1.1;
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+}
+.dsa-stat-chip.cyan .dsa-stat-num {
+  color: #38bdf8;
+}
+.dsa-stat-lbl {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted, #86efac);
+  font-weight: 600;
+}
+
+/* ── 3-Card Algorithmic Console Grid ─────────────────────────────────────── */
+.dsa-deck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 1.25rem;
+}
+
+/* Card Common Base */
+.dsa-card-base {
+  border-radius: 18px;
+  padding: 1.3rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
+}
+.dsa-card-base::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 1;
+}
+
+/* Card 1: Cyan Search */
+.dsa-card-search {
+  background: linear-gradient(155deg, rgba(8, 30, 34, 0.92) 0%, rgba(5, 18, 22, 0.96) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.32);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 25px rgba(6, 182, 212, 0.08);
+}
+.dsa-card-search::before {
+  background: linear-gradient(90deg, #06b6d4 0%, #38bdf8 50%, #0891b2 100%);
+}
+.dsa-card-search:hover {
+  transform: translateY(-3px);
+  border-color: rgba(6, 182, 212, 0.55);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 35px rgba(6, 182, 212, 0.18);
+}
+
+/* Card 2: Violet Merge Sort */
+.dsa-card-sort {
+  background: linear-gradient(155deg, rgba(22, 14, 38, 0.92) 0%, rgba(12, 8, 24, 0.96) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.32);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 25px rgba(217, 70, 239, 0.08);
+}
+.dsa-card-sort::before {
+  background: linear-gradient(90deg, #d946ef 0%, #a855f7 50%, #8b5cf6 100%);
+}
+.dsa-card-sort:hover {
+  transform: translateY(-3px);
+  border-color: rgba(168, 85, 247, 0.55);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 35px rgba(168, 85, 247, 0.18);
+}
+
+/* Card 3: Amber Priority Queue */
+.dsa-card-priority {
+  background: linear-gradient(155deg, rgba(32, 24, 10, 0.92) 0%, rgba(20, 14, 6, 0.96) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.32);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 25px rgba(245, 158, 11, 0.08);
+}
+.dsa-card-priority::before {
+  background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 50%, #d97706 100%);
+}
+.dsa-card-priority:hover {
+  transform: translateY(-3px);
+  border-color: rgba(245, 158, 11, 0.55);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 35px rgba(245, 158, 11, 0.18);
+}
+
+/* Header & Icon Bubbles */
+.dsa-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.95rem;
+}
+.dsa-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dsa-algo-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+.dsa-algo-icon.cyan   { background: rgba(6, 182, 212, 0.18); color: #38bdf8; border: 1px solid rgba(6, 182, 212, 0.4); }
+.dsa-algo-icon.violet { background: rgba(168, 85, 247, 0.18); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
+.dsa-algo-icon.amber  { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+.dsa-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #f0fdf4;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.dsa-tag-complexity {
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 8px;
+  letter-spacing: 0.4px;
+}
+.tag-cyan   { background: rgba(6, 182, 212, 0.15); color: #38bdf8; border: 1px solid rgba(6, 182, 212, 0.45); }
+.tag-violet { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.45); }
+.tag-amber  { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.45); }
+
+/* Field Labels */
+.dsa-lbl {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-muted, #86efac);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Enhanced Search Input Group */
+.dsa-search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.dsa-search-input-wrap i.search-prefix-icon {
+  position: absolute;
+  left: 12px;
+  color: #38bdf8;
+  font-size: 0.85rem;
+  pointer-events: none;
+  opacity: 0.8;
+}
+.dsa-input-box-enhanced {
+  background: rgba(3, 12, 8, 0.65);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  color: #f0fdf4;
+  border-radius: 11px;
+  padding: 8px 34px 8px 34px;
+  font-size: 0.85rem;
+  transition: all 0.25s ease;
+  width: 100%;
+}
+.dsa-input-box-enhanced:focus {
+  border-color: #06b6d4;
+  outline: none;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.45);
+  background: rgba(3, 12, 8, 0.9);
+}
+.dsa-input-box-enhanced::placeholder {
+  color: rgba(134, 239, 172, 0.45);
+  font-size: 0.8rem;
+}
+.dsa-clear-input-btn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: rgba(240, 253, 244, 0.45);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0 4px;
+  display: none;
+}
+.dsa-clear-input-btn:hover {
+  color: #f87171;
+}
+
+/* Quick Target Chips */
+.dsa-quick-chips-bar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 0.85rem;
+}
+.dsa-chip-label {
+  font-size: 0.66rem;
+  color: rgba(134, 239, 172, 0.6);
+  font-weight: 600;
+}
+.dsa-quick-chip {
+  background: rgba(6, 182, 212, 0.09);
+  border: 1px solid rgba(6, 182, 212, 0.28);
+  color: #38bdf8;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+}
+.dsa-quick-chip:hover {
+  background: rgba(6, 182, 212, 0.25);
+  border-color: #38bdf8;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Select Boxes */
+.dsa-select-box-enhanced {
+  background: rgba(3, 12, 8, 0.7);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  color: #f0fdf4;
+  border-radius: 11px;
+  padding: 7px 11px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  width: 100%;
+  transition: all 0.25s ease;
+}
+.dsa-select-box-enhanced:focus {
+  border-color: #d946ef;
+  outline: none;
+  box-shadow: 0 0 14px rgba(217, 70, 239, 0.45);
+}
+
+.dsa-algo-badge-box {
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #d8b4fe;
+  border-radius: 11px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+}
+
+/* ── High-Impact Gradient Buttons ────────────────────────────────────────── */
+.btn-dsa-linear {
+  background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  font-size: 0.82rem;
+  border-radius: 11px;
+  padding: 9px 14px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-dsa-linear:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.65);
+  color: #ffffff;
+}
+
+.btn-dsa-binary {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  font-size: 0.82rem;
+  border-radius: 11px;
+  padding: 9px 14px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-dsa-binary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.65);
+  color: #ffffff;
+}
+
+.btn-dsa-merge-run {
+  background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 11px;
+  padding: 9px 16px;
+  width: 100%;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(168, 85, 247, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-dsa-merge-run:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(168, 85, 247, 0.7);
+  color: #ffffff;
+}
+
+.btn-dsa-priority-run {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 11px;
+  padding: 9px 16px;
+  width: 100%;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-dsa-priority-run:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(245, 158, 11, 0.7);
+  color: #ffffff;
+}
+
+/* Priority Urgency Chain */
+.priority-tier-chain {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 0.65rem;
+}
+.tier-pill {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.tier-critical { background: rgba(225, 29, 72, 0.18); color: #f87171; border: 1px solid rgba(225, 29, 72, 0.45); box-shadow: 0 0 10px rgba(225, 29, 72, 0.2); }
+.tier-high     { background: rgba(217, 119, 6, 0.18); color: #fbbf24; border: 1px solid rgba(217, 119, 6, 0.45); }
+.tier-medium   { background: rgba(8, 145, 178, 0.18); color: #38bdf8; border: 1px solid rgba(8, 145, 178, 0.45); }
+.tier-low      { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.45); }
+.tier-sep      { font-size: 0.65rem; color: var(--text-muted, #86efac); opacity: 0.6; }
+
+.priority-desc-text {
+  font-size: 0.73rem;
+  color: var(--text-muted, #86efac);
+  line-height: 1.45;
+  margin-bottom: 0.95rem;
+}
+
+/* ── Live Bottom Filter Command Dock ─────────────────────────────────────── */
+.dsa-live-filter-bar {
+  background: linear-gradient(135deg, rgba(8, 28, 22, 0.9) 0%, rgba(4, 18, 14, 0.96) 100%);
+  border: 1px solid rgba(52, 211, 153, 0.28);
+  border-radius: 16px;
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  flex-wrap: wrap;
+  backdrop-filter: blur(14px);
+}
+.live-search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 260px;
+}
+.live-search-input-wrap i {
+  color: #34d399;
+  font-size: 0.88rem;
+}
+.live-search-input-wrap input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f0fdf4;
+  font-size: 0.86rem;
+  width: 100%;
+}
+.live-search-input-wrap input::placeholder {
+  color: rgba(134, 239, 172, 0.45);
+  font-size: 0.82rem;
+}
+
+.status-dropdown-filter {
+  background: rgba(3, 12, 8, 0.7);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: #f0fdf4;
+  border-radius: 9px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  outline: none;
+  min-width: 155px;
+  transition: border-color 0.2s ease;
+}
+.status-dropdown-filter:focus {
+  border-color: #10b981;
+}
+
+.live-count-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #38bdf8;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.28);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+.live-count-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+}
+
+.btn-dsa-reset {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 9px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.btn-dsa-reset:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+.btn-dsa-reset:hover i {
+  transform: rotate(-180deg);
+  transition: transform 0.4s ease;
+}
+
+/* ── Status Feedback Alert ─────────────────────────────────────────────── */
+.dsa-execution-alert {
+  border-radius: 14px;
+  padding: 11px 16px;
+  margin-bottom: 1.15rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  animation: dsaFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+}
+@keyframes dsaFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Case ID Monospace Pill ─────────────────────────────────────────────── */
+.case-id-pill {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  padding: 4px 9px;
+  border-radius: 7px;
+  letter-spacing: 0.3px;
+}
+
+/* Row Highlight Effects */
+@keyframes rowPulseGlow {
+  0%   { background-color: rgba(6, 182, 212, 0.45); box-shadow: inset 0 0 16px rgba(6, 182, 212, 0.4); }
+  50%  { background-color: rgba(16, 185, 129, 0.28); }
+  100% { background-color: rgba(6, 182, 212, 0.14); box-shadow: inset 0 0 8px rgba(6, 182, 212, 0.2); }
+}
+.row-dsa-highlight {
+  animation: rowPulseGlow 1.2s ease-out;
+}
+.row-dsa-pinned {
+  background-color: rgba(6, 182, 212, 0.15) !important;
+  border-left: 3px solid #06b6d4 !important;
+}
+
+/* ── Beautiful Empty State for No Value Found ────────────────────────────── */
+.dsa-empty-state-box {
+  background: linear-gradient(160deg, rgba(239, 68, 68, 0.08) 0%, rgba(15, 23, 42, 0.6) 100%);
+  border: 1px dashed rgba(239, 68, 68, 0.45);
+  border-radius: 20px;
+  max-width: 540px;
+  margin: 1.8rem auto;
+  padding: 2.4rem 2rem;
+  text-align: center;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35), 0 0 30px rgba(239, 68, 68, 0.12);
+  animation: dsaFadeIn 0.3s ease-out;
+}
+.dsa-empty-icon-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.3rem auto;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.3);
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="ccms-card p-4 shadow-sm mb-4">
-  <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom gap-3">
-    <div>
-      <h5 class="fw-bold text-heading mb-0">
-        <i class="fas fa-folder-tree me-2" style="color: var(--primary);"></i>Global Complaints Inventory
-      </h5>
-      <span class=" small">Centralized supervisory oversight across all municipal, police, and revenue complaints</span>
-    </div>
-
-    <div class="d-flex flex-wrap align-items-center gap-2">
-      <!-- Search input -->
-      <div class="input-group input-group-sm" style="width: 220px;">
-        <span class="input-group-text bg-subtle border-end-0 "><i class="fas fa-search"></i></span>
-        <input type="text" id="adminSearchComplaints" class="form-control border-start-0" placeholder="Filter cases...">
+  
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       COMMAND HUB HEADER & PIPELINE STATUS
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div class="dsa-hub-header">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <span class="dsa-live-pulse-dot"></span>
+          <span class="dsa-hub-kicker">DSA Algorithmic Core Online</span>
+          <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); font-size: 0.65rem; padding: 2px 7px;"></span>
+        </div>
+        <h5 class="fw-bold text-heading mb-1 d-flex align-items-center gap-2">
+          <i class="fas fa-microchip me-1" style="color: var(--primary, #10b981);"></i>Global Complaints Command &amp; Algorithmic Console
+        </h5>
+        <span class="small" style="color: var(--text-muted, #86efac);">High-speed divide &amp; conquer searching, stable recursive sorting, and urgency Max-Heap prioritization</span>
       </div>
-
-      <a href="{{ url_for('admin_assignment') }}" class="btn btn-sm btn-brand"
-        style="background:var(--gradient-brand);">
-        <i class="fas fa-wand-magic-sparkles me-1"></i> Greedy Auto-Assign
-      </a>
+      <div class="d-flex align-items-center gap-2">
+        <div class="dsa-stat-chip">
+          <span class="dsa-stat-num" id="statTotalCases">{{ complaints|length }}</span>
+          <span class="dsa-stat-lbl">Total Cases</span>
+        </div>
+        <div class="dsa-stat-chip cyan">
+          <span class="dsa-stat-num" id="statVisibleCases">{{ complaints|length }}</span>
+          <span class="dsa-stat-lbl">Active View</span>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       3 DYNAMIC DSA CARDS (SEARCH COMPLAINT | RECURSIVE SORT | PRIORITY QUEUE)
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div class="dsa-deck-grid">
+
+    <!-- ── CARD 1: Search Complaint (Linear & Binary) ──────────────────────── -->
+    <div class="dsa-card-base dsa-card-search">
+      <div>
+        <div class="dsa-header">
+          <div class="dsa-title-wrap">
+            <div class="dsa-algo-icon cyan">
+              <i class="fas fa-magnifying-glass"></i>
+            </div>
+            <div>
+              <h6 class="dsa-title">Search Complaint</h6>
+              <span class="dsa-chip-label">ID Lookup &amp; Verification</span>
+            </div>
+          </div>
+          <span class="dsa-tag-complexity tag-cyan">O(N)</span>
+        </div>
+
+        <div class="dsa-lbl">
+          <span>Target Complaint ID:</span>
+          <span class="small opacity-75" style="font-size:0.68rem;">Press Enter to search</span>
+        </div>
+
+        <div class="dsa-search-input-wrap">
+          <i class="fas fa-barcode search-prefix-icon"></i>
+          <input type="text" id="targetComplaintInput" class="dsa-input-box-enhanced" placeholder="Enter ID e.g. 1024, 2237, CCMS..." autocomplete="off">
+          <button type="button" id="btnClearSearchInput" class="dsa-clear-input-btn" title="Clear input">&times;</button>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mt-2">
+        <button id="btnRunLinearSearch" class="btn btn-dsa-linear flex-fill" type="button" title="Linear Search: Scans sequentially O(N)">
+          <i class="fas fa-bars-staggered"></i> Linear O(N)
+        </button>
+        <button id="btnRunBinarySearch" class="btn btn-dsa-binary flex-fill" type="button" title="Binary Search: Divide and Conquer O(log N)">
+          <i class="fas fa-bolt"></i> Binary O(log N)
+        </button>
+      </div>
+    </div>
+
+    <!-- ── CARD 2: Recursive Sort (Merge Sort Stable) ──────────────────────── -->
+    <div class="dsa-card-base dsa-card-sort">
+      <div>
+        <div class="dsa-header">
+          <div class="dsa-title-wrap">
+            <div class="dsa-algo-icon violet">
+              <i class="fas fa-shuffle"></i>
+            </div>
+            <div>
+              <h6 class="dsa-title">Recursive Sort</h6>
+              <span class="dsa-chip-label">Divide &amp; Conquer</span>
+            </div>
+          </div>
+          <span class="dsa-tag-complexity tag-violet">O(N LOG N)</span>
+        </div>
+
+        <div class="row g-2 mb-2">
+          <div class="col-7">
+            <label class="dsa-lbl" for="selectSortBy">Sort Attribute:</label>
+            <select id="selectSortBy" class="dsa-select-box-enhanced">
+              <option value="complaint_id" selected>Complaint ID</option>
+              <option value="incident_date">Incident Date</option>
+              <option value="severity">Priority / Severity</option>
+              <option value="complaint_title">Title Summary</option>
+            </select>
+          </div>
+          <div class="col-5">
+            <label class="dsa-lbl">Algorithm:</label>
+            <div class="dsa-algo-badge-box">
+              <i class="fas fa-code-merge" style="color:#d946ef;"></i> Merge
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="dsa-lbl" for="selectSortOrder">Direction:</label>
+          <select id="selectSortOrder" class="dsa-select-box-enhanced">
+            <option value="asc" selected>&#9650; Ascending (Low &rarr; High / Oldest First)</option>
+            <option value="desc">&#9660; Descending (High &rarr; Low / Newest First)</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="btnRunMergeSort" class="btn btn-dsa-merge-run" type="button" title="Execute Divide &amp; Conquer Merge Sort">
+        <i class="fas fa-code-merge"></i> Run Merge Sort
+      </button>
+    </div>
+
+    <!-- ── CARD 3: Priority Based Processing (Max-Heap) ────────────────────── -->
+    <div class="dsa-card-base dsa-card-priority">
+      <div>
+        <div class="dsa-header">
+          <div class="dsa-title-wrap">
+            <div class="dsa-algo-icon amber">
+              <i class="fas fa-crown"></i>
+            </div>
+            <div>
+              <h6 class="dsa-title">Priority Pipeline</h6>
+              <span class="dsa-chip-label">Emergency Urgency</span>
+            </div>
+          </div>
+          <span class="dsa-tag-complexity tag-amber">MAX-HEAP</span>
+        </div>
+
+        <div class="priority-tier-chain">
+          <span class="tier-pill tier-critical"><i class="fas fa-circle-exclamation"></i> Critical (4)</span>
+          <span class="tier-sep">&gt;</span>
+          <span class="tier-pill tier-high">High (3)</span>
+          <span class="tier-sep">&gt;</span>
+          <span class="tier-pill tier-medium">Medium (2)</span>
+          <span class="tier-sep">&gt;</span>
+          <span class="tier-pill tier-low">Low (1)</span>
+        </div>
+
+        <p class="priority-desc-text">
+          Constructs a Max-Heap in-memory and sequences all complaints by urgency rank: Critical cases prioritized first, followed by High, Medium, and Low.
+        </p>
+      </div>
+
+      <button id="btnRunPriorityQueue" class="btn btn-dsa-priority-run" type="button" title="Sequence complaints using Priority Queue Max-Heap">
+        <i class="fas fa-bolt"></i> Sequence by Priority (Max-Heap)
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       BOTTOM LIVE FILTER COMMAND DOCK
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div class="dsa-live-filter-bar">
+    <div class="live-search-input-wrap">
+      <i class="fas fa-magnifying-glass"></i>
+      <input type="text" id="liveFilterInput" placeholder="Filter by ID, keywords, department, category, officer..." autocomplete="off">
+    </div>
+
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <select id="statusFilterSelect" class="status-dropdown-filter">
+        <option value="all" selected>All Statuses</option>
+        {% for s in statuses %}
+        <option value="{{ s }}">{{ s }}</option>
+        {% endfor %}
+      </select>
+
+      <div class="live-count-badge">
+        <span class="live-count-dot"></span>
+        <span>Showing <strong id="visibleCount">{{ complaints|length }}</strong> of <strong id="totalCount">{{ complaints|length }}</strong> Complaints</span>
+      </div>
+
+      <button id="btnResetAllDSA" class="btn-dsa-reset" type="button" title="Reset all sorting, search, and filters">
+        <i class="fas fa-rotate-left"></i> Reset View
+      </button>
+    </div>
+  </div>
+
+  <!-- Dynamic DSA Execution Banner -->
+  <div id="dsaExecutionBanner" class="dsa-execution-alert" style="display:none;">
+    <div class="d-flex align-items-center gap-2">
+      <span id="dsaBannerIcon"></span>
+      <span id="dsaBannerMessage"></span>
+    </div>
+    <button type="button" class="btn-close btn-close-white" style="font-size:0.7rem;" onclick="document.getElementById('dsaExecutionBanner').style.display='none';"></button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       COMPLAINTS TABLE
+  ═══════════════════════════════════════════════════════════════════════════ -->
   {% if complaints %}
   <div class="table-responsive">
     <table class="table-custom" id="adminComplaintsTable">
       <thead>
         <tr>
-          <th>Case ID</th>
+          <th style="white-space: nowrap; min-width: 175px;">Case ID</th>
           <th>Summary</th>
           <th>Department</th>
           <th>Category</th>
-          <th>Severity</th>
+          <th class="text-center">Priority</th>
           <th>Status</th>
           <th>Assigned Officer</th>
           <th class="text-end">Admin Controls</th>
@@ -44,21 +838,31 @@
       </thead>
       <tbody>
         {% for c in complaints %}
-        <tr>
-          <td>
-            <span class="fw-bold brand-font" style="color: var(--primary);">{{ c.complaint_id }}</span>
+        <tr data-complaint-id="{{ c.complaint_id }}" 
+            data-severity="{{ c.severity }}" 
+            data-date="{{ c.incident_date or c.created_at or '' }}"
+            data-incident-date="{{ c.incident_date or c.created_at or '' }}"
+            data-title="{{ c.complaint_title }}"
+            data-complaint-title="{{ c.complaint_title }}"
+            data-category="{{ c.misconduct_category }}"
+            data-sector="{{ c.sector }}"
+            data-status="{{ c.complaint_status }}">
+          <td style="white-space: nowrap;">
+            <span class="case-id-pill">
+              <i class="fas fa-fingerprint me-1 opacity-75"></i>{{ c.complaint_id }}
+            </span>
           </td>
           <td>
-            <div class="fw-semibold text-heading text-truncate" style="max-width: 200px;">{{ c.complaint_title }}</div>
-            <span class=" small">{{ c.incident_date }}</span>
+            <div class="fw-semibold text-heading text-truncate" style="max-width: 220px;">{{ c.complaint_title }}</div>
+            <span class="small text-muted incident-date-display" data-raw-date="{{ c.incident_date or c.created_at or '' }}">{{ c.formatted_date or (c.incident_date or c.created_at)|format_custom_date }}</span>
           </td>
           <td>
-            <span class="small ">{{ c.sector }}</span>
+            <span class="small">{{ c.sector }}</span>
           </td>
           <td>
-            <span class="badge bg-subtle  border">{{ c.misconduct_category }}</span>
+            <span class="badge bg-subtle border text-muted">{{ c.misconduct_category }}</span>
           </td>
-          <td>
+          <td class="text-center">
             <span class="badge-priority {{ c.severity }}">{{ c.severity }}</span>
           </td>
           <td>
@@ -99,27 +903,23 @@
       <i class="fas fa-folder-open"></i>
     </div>
     <h5 class="fw-bold text-heading mb-1">No Complaints in System</h5>
-    <p class=" small mb-0">Complaints submitted by citizens will appear here for administrative routing and audit.</p>
+    <p class="small text-muted mb-0">Complaints submitted by citizens will appear here for administrative routing and audit.</p>
   </div>
   {% endif %}
 </div>
 
-<!-- Dedicated Dynamic Modal for Assigning Officer -->
-<div class="modal fade" id="assignOfficerModal" tabindex="-1" aria-labelledby="assignOfficerModalLabel"
-  aria-hidden="true">
+<!-- Modal: Assign Officer -->
+<div class="modal fade" id="assignOfficerModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
     <div class="modal-content assign-officer-modal">
       <div class="modal-header">
-        <div>
-          <h5 class="modal-title fw-bold mb-0" id="assignOfficerModalLabel">
-            <i class="fas fa-user-shield me-2" style="color: var(--primary);"></i>Assign Vigilance Officer
-          </h5>
-          <span class="small " id="modalCaseIdText"></span>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title fw-bold mb-0">
+          <i class="fas fa-user-shield me-2" style="color: var(--primary, #10b981);"></i>Assign Vigilance Officer
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <form action="{{ url_for('admin_assign_single') }}" method="POST">
-        <input type="hidden" name="complaint_id" id="modalComplaintIdInput" value="">
+        <input type="hidden" name="complaint_id" id="modalComplaintIdInput">
         <div class="modal-body text-start">
           <div class="assign-officer-summary">
             <span class="summary-label">Case Dossier Reference</span>
@@ -130,7 +930,7 @@
               <span id="modalCaseSeverityBadge"></span>
             </div>
           </div>
-          <div class="assign-officer-field">
+          <div class="assign-officer-field mt-3">
             <label class="form-label" for="officerSelectDropdown">
               <i class="fas fa-user-check"></i> Select Vigilance Officer
             </label>
@@ -158,61 +958,558 @@
 
 {% block extra_js %}
 <script>
-  // Filter complaints table in real-time
-  document.getElementById('adminSearchComplaints')?.addEventListener('keyup', function () {
-    const query = this.value.toLowerCase();
-    const rows = document.querySelectorAll('#adminComplaintsTable tbody tr');
-    rows.forEach(row => {
-      const text = row.textContent.toLowerCase();
-      row.style.display = text.includes(query) ? '' : 'none';
+  // Cache table body and default row order
+  const tableBody = document.querySelector('#adminComplaintsTable tbody');
+  const originalRows = tableBody ? Array.from(tableBody.querySelectorAll('tr')) : [];
+
+  // Helper function: Escape HTML
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+  }
+
+  // Helper function: Remove 'No value found' empty state row if present
+  function removeNoMatchRow() {
+    const existing = document.getElementById('noValueFoundRow');
+    if (existing) existing.remove();
+  }
+
+  // Helper function: Render beautiful 'No value found' empty state row
+  function showNoMatchRow(searchedTarget, customMsg) {
+    removeNoMatchRow();
+    if (!tableBody) return;
+    const tr = document.createElement('tr');
+    tr.id = 'noValueFoundRow';
+    tr.innerHTML = `
+      <td colspan="8" class="text-center py-5">
+        <div class="dsa-empty-state-box">
+          <div class="dsa-empty-icon-circle">
+            <i class="fas fa-search-minus fa-2x" style="color: #f87171;"></i>
+          </div>
+          <h5 class="fw-bold text-white mb-2" style="font-size: 1.15rem; letter-spacing: -0.01em;">
+            No value found for my specific value
+          </h5>
+          <p class="small text-muted mb-3" style="max-width: 440px; margin: 0 auto; line-height: 1.5;">
+            ${customMsg || 'Target identifier'} <span class="badge bg-danger bg-opacity-25 border border-danger text-danger px-2 py-1 font-monospace" style="font-size:0.85rem;">${escapeHtml(searchedTarget)}</span> was inspected across all complaint records, but no corresponding match was found.
+          </p>
+          <button class="btn btn-sm btn-outline-info rounded-pill px-3 py-1" type="button" onclick="resetAll()">
+            <i class="fas fa-rotate-left me-1"></i> Reset View & Show All Records
+          </button>
+        </div>
+      </td>
+    `;
+    tableBody.appendChild(tr);
+  }
+
+  // Helper function to update visible count badges and stat chips
+  function updateCounters() {
+    if (!tableBody) return;
+    const allDataRows = Array.from(tableBody.querySelectorAll('tr:not(#noValueFoundRow)'));
+    const visible = allDataRows.filter(r => r.style.display !== 'none').length;
+    const vCountEl = document.getElementById('visibleCount');
+    const tCountEl = document.getElementById('totalCount');
+    const statVis = document.getElementById('statVisibleCases');
+    const statTot = document.getElementById('statTotalCases');
+
+    if (vCountEl) vCountEl.textContent = visible;
+    if (tCountEl) tCountEl.textContent = allDataRows.length;
+    if (statVis) statVis.textContent = visible;
+    if (statTot) statTot.textContent = allDataRows.length;
+  }
+
+  // Quick fill helper for quick chip tags
+  function quickFillSearch(id) {
+    const input = document.getElementById('targetComplaintInput');
+    const clearBtn = document.getElementById('btnClearSearchInput');
+    if (input) {
+      input.value = id;
+      if (clearBtn) clearBtn.style.display = 'block';
+      executeLinearSearch();
+    }
+  }
+
+  // Helper function to show execution banner
+  function showBanner(type, iconHtml, textHtml) {
+    const banner = document.getElementById('dsaExecutionBanner');
+    const icon = document.getElementById('dsaBannerIcon');
+    const msg = document.getElementById('dsaBannerMessage');
+    if (!banner) return;
+
+    banner.className = 'dsa-execution-alert';
+    if (type === 'cyan') {
+      banner.style.background = 'rgba(6, 182, 212, 0.12)';
+      banner.style.border = '1px solid rgba(6, 182, 212, 0.4)';
+      banner.style.color = '#38bdf8';
+    } else if (type === 'violet') {
+      banner.style.background = 'rgba(168, 85, 247, 0.12)';
+      banner.style.border = '1px solid rgba(168, 85, 247, 0.4)';
+      banner.style.color = '#c084fc';
+    } else if (type === 'amber') {
+      banner.style.background = 'rgba(245, 158, 11, 0.12)';
+      banner.style.border = '1px solid rgba(245, 158, 11, 0.4)';
+      banner.style.color = '#fbbf24';
+    } else if (type === 'red') {
+      banner.style.background = 'rgba(225, 29, 72, 0.12)';
+      banner.style.border = '1px solid rgba(225, 29, 72, 0.4)';
+      banner.style.color = '#f87171';
+    }
+
+    icon.innerHTML = iconHtml;
+    msg.innerHTML = textHtml;
+    banner.style.display = 'flex';
+  }
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // 1. LINEAR SEARCH — O(N) Sequential Search
+  // ═════════════════════════════════════════════════════════════════════════
+  function executeLinearSearch() {
+    const rawTarget = document.getElementById('targetComplaintInput').value.trim();
+    if (!rawTarget) {
+      showBanner('red', '<i class="fas fa-circle-exclamation"></i>', 'Please enter a Target Complaint ID to perform Linear Search.');
+      return;
+    }
+    const target = rawTarget.toUpperCase();
+    const rows = Array.from(tableBody.querySelectorAll('tr:not(#noValueFoundRow)'));
+    removeNoMatchRow();
+
+    let steps = 0;
+    let foundRow = null;
+
+    // Linear Search: iterate sequentially from index 0 to N-1
+    for (let i = 0; i < rows.length; i++) {
+      steps++;
+      const cid = (rows[i].getAttribute('data-complaint-id') || '').toUpperCase();
+      if (cid === target || cid.includes(target) || cid.replace(/[^0-9]/g, '').endsWith(target)) {
+        foundRow = rows[i];
+        break;
+      }
+    }
+
+    if (foundRow) {
+      // ONLY DISPLAY SEARCHED VALUE RECORD; HIDE ALL OTHERS
+      rows.forEach(r => {
+        if (r === foundRow) {
+          r.style.display = '';
+          r.classList.remove('row-dsa-highlight', 'row-dsa-pinned');
+          r.classList.add('row-dsa-highlight', 'row-dsa-pinned');
+        } else {
+          r.style.display = 'none';
+          r.classList.remove('row-dsa-highlight', 'row-dsa-pinned');
+        }
+      });
+      foundRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      showBanner(
+        'cyan',
+        '<i class="fas fa-check-circle"></i>',
+        `<strong>Linear Search Match Found!</strong> Displaying only Case <code>${foundRow.getAttribute('data-complaint-id')}</code> (located in <strong>${steps}</strong> step(s) out of ${rows.length} records) [Complexity: <em>O(N)</em>].`
+      );
+    } else {
+      // HIDE ALL ROWS & DISPLAY "NO VALUE FOUND FOR MY SPECIFIC VALUE"
+      rows.forEach(r => {
+        r.style.display = 'none';
+        r.classList.remove('row-dsa-highlight', 'row-dsa-pinned');
+      });
+      showNoMatchRow(rawTarget, 'Linear Search inspected all records sequentially, but target');
+      showBanner(
+        'red',
+        '<i class="fas fa-triangle-exclamation"></i>',
+        `<strong>No value found for my specific value:</strong> <code>${rawTarget}</code> after inspecting all <strong>${steps}</strong> entries.`
+      );
+    }
+    updateCounters();
+  }
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // 2. BINARY SEARCH — O(log N) Divide & Conquer Search
+  // ═════════════════════════════════════════════════════════════════════════
+  function executeBinarySearch() {
+    const rawTarget = document.getElementById('targetComplaintInput').value.trim();
+    if (!rawTarget) {
+      showBanner('red', '<i class="fas fa-circle-exclamation"></i>', 'Please enter a Target Complaint ID to perform Binary Search.');
+      return;
+    }
+    const target = rawTarget.toUpperCase();
+    const rows = Array.from(tableBody.querySelectorAll('tr:not(#noValueFoundRow)'));
+    removeNoMatchRow();
+
+    // Step A: Binary search requires data to be sorted by ID ascending
+    const sortedRows = dsaMergeSortRows(rows, 'complaint_id', true);
+    sortedRows.forEach(r => tableBody.appendChild(r));
+
+    // Step B: Perform binary search
+    let low = 0;
+    let high = sortedRows.length - 1;
+    let steps = 0;
+    let foundRow = null;
+
+    while (low <= high) {
+      steps++;
+      const mid = Math.floor((low + high) / 2);
+      const midRow = sortedRows[mid];
+      const midId = (midRow.getAttribute('data-complaint-id') || '').toUpperCase();
+
+      if (midId === target || midId.includes(target) || midId.replace(/[^0-9]/g, '').endsWith(target)) {
+        foundRow = midRow;
+        break;
+      } else if (midId < target) {
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+
+    if (foundRow) {
+      // ONLY DISPLAY SEARCHED VALUE RECORD; HIDE ALL OTHERS
+      sortedRows.forEach(r => {
+        if (r === foundRow) {
+          r.style.display = '';
+          r.classList.remove('row-dsa-highlight', 'row-dsa-pinned');
+          r.classList.add('row-dsa-highlight', 'row-dsa-pinned');
+        } else {
+          r.style.display = 'none';
+          r.classList.remove('row-dsa-highlight', 'row-dsa-pinned');
+        }
+      });
+      foundRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      showBanner(
+        'cyan',
+        '<i class="fas fa-bolt"></i>',
+        `<strong>Binary Search Match Found!</strong> Displaying only Case <code>${foundRow.getAttribute('data-complaint-id')}</code> (located in <strong>${steps}</strong> comparison(s)) [Complexity: <em>O(log N)</em>].`
+      );
+    } else {
+      // HIDE ALL ROWS & DISPLAY "NO VALUE FOUND FOR MY SPECIFIC VALUE"
+      sortedRows.forEach(r => {
+        r.style.display = 'none';
+        r.classList.remove('row-dsa-highlight', 'row-dsa-pinned');
+      });
+      showNoMatchRow(rawTarget, 'Binary Search completed divide & conquer comparisons, but target');
+      showBanner(
+        'red',
+        '<i class="fas fa-triangle-exclamation"></i>',
+        `<strong>No value found for my specific value:</strong> <code>${rawTarget}</code> after <strong>${steps}</strong> divide & conquer comparisons.`
+      );
+    }
+    updateCounters();
+  }
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // 3. MERGE SORT — O(N log N) Stable Recursive Sort
+  // ═════════════════════════════════════════════════════════════════════════
+  // Format any date into uppercase standard format: "26 JAN 2026"
+  function formatDisplayDate(dateStr) {
+    if (!dateStr) return '';
+    const trimmed = String(dateStr).trim();
+    if (/^\d{1,2}\s+[A-Z]{3}\s+\d{4}$/i.test(trimmed)) {
+      return trimmed.toUpperCase();
+    }
+    const d = new Date(trimmed);
+    if (isNaN(d.getTime())) return trimmed;
+    const day = String(d.getDate()).padStart(2, '0');
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const month = months[d.getMonth()];
+    const year = d.getFullYear();
+    return `${day} ${month} ${year}`;
+  }
+
+  // Parse any date format into timestamp for accurate sorting
+  function parseSortDate(val) {
+    if (!val) return NaN;
+    const str = String(val).trim();
+    let t = Date.parse(str);
+    if (!isNaN(t)) return t;
+    const parts = str.replace(/-/g, ' ').split(/\s+/);
+    if (parts.length === 3) {
+      t = Date.parse(`${parts[1]} ${parts[0]} ${parts[2]}`);
+      if (!isNaN(t)) return t;
+    }
+    return NaN;
+  }
+
+  // Extract sortable attribute value from row
+  function extractSortValue(row, key) {
+    if (!row) return '';
+    if (key === 'incident_date' || key === 'date') {
+      return (row.getAttribute('data-incident-date') || row.getAttribute('data-date') || '').trim();
+    }
+    if (key === 'complaint_id' || key === 'id') {
+      return (row.getAttribute('data-complaint-id') || row.getAttribute('data-id') || '').trim();
+    }
+    if (key === 'severity' || key === 'priority') {
+      return (row.getAttribute('data-severity') || row.getAttribute('data-priority') || '').trim();
+    }
+    if (key === 'complaint_title' || key === 'title') {
+      return (row.getAttribute('data-complaint-title') || row.getAttribute('data-title') || '').trim();
+    }
+    return (
+      row.getAttribute(`data-${key.replace(/_/g, '-')}`) ||
+      row.getAttribute(`data-${key}`) ||
+      ''
+    ).trim();
+  }
+
+  // Compare values stably
+  function compareSortValues(valA, valB, key, ascending) {
+    if (key === 'incident_date' || key === 'date') {
+      const tA = parseSortDate(valA);
+      const tB = parseSortDate(valB);
+      if (!isNaN(tA) && !isNaN(tB)) {
+        if (tA === tB) return true;
+        return ascending ? (tA < tB) : (tA > tB);
+      }
+      if (isNaN(tA) && isNaN(tB)) return true;
+      if (isNaN(tA)) return false;
+      if (isNaN(tB)) return true;
+    }
+
+    if (key === 'severity' || key === 'priority') {
+      const rankMap = { 'Critical': 1, 'High': 2, 'Medium': 3, 'Low': 4 };
+      const rA = rankMap[valA] || 5;
+      const rB = rankMap[valB] || 5;
+      if (rA !== rB) {
+        return ascending ? (rA <= rB) : (rA >= rB);
+      }
+    }
+
+    const cmp = valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' });
+    return ascending ? (cmp <= 0) : (cmp >= 0);
+  }
+
+  function dsaMergeSortRows(arr, key, ascending) {
+    if (arr.length <= 1) return arr;
+    const mid = Math.floor(arr.length / 2);
+    const left = dsaMergeSortRows(arr.slice(0, mid), key, ascending);
+    const right = dsaMergeSortRows(arr.slice(mid), key, ascending);
+
+    const result = [];
+    let i = 0, j = 0;
+    while (i < left.length && j < right.length) {
+      const valA = extractSortValue(left[i], key);
+      const valB = extractSortValue(right[j], key);
+
+      const condition = compareSortValues(valA, valB, key, ascending);
+
+      if (condition) {
+        result.push(left[i]);
+        i++;
+      } else {
+        result.push(right[j]);
+        j++;
+      }
+    }
+    return result.concat(left.slice(i)).concat(right.slice(j));
+  }
+
+  function executeMergeSort() {
+    if (!tableBody) return;
+    removeNoMatchRow();
+    const sortBy = document.getElementById('selectSortBy').value;
+    const sortOrder = document.getElementById('selectSortOrder').value;
+    const isAscending = (sortOrder === 'asc');
+
+    const rows = Array.from(tableBody.querySelectorAll('tr:not(#noValueFoundRow)'));
+    const sorted = dsaMergeSortRows(rows, sortBy, isAscending);
+
+    sorted.forEach(r => {
+      tableBody.appendChild(r);
+      r.style.display = '';
+      r.classList.remove('row-dsa-highlight', 'row-dsa-pinned');
+      r.classList.add('row-dsa-highlight');
     });
+
+    const isDate = (sortBy === 'incident_date' || sortBy === 'date');
+    const sortText = sortBy === 'complaint_id' 
+      ? 'Complaint ID' 
+      : isDate 
+        ? 'Incident Date' 
+        : sortBy === 'severity' 
+          ? 'Priority / Severity' 
+          : 'Title Summary';
+
+    const dirText = isAscending 
+      ? (isDate ? 'Ascending (Oldest &rarr; Newest)' : 'Ascending (Low &rarr; High / A &rarr; Z)')
+      : (isDate ? 'Descending (Newest &rarr; Oldest)' : 'Descending (High &rarr; Low / Z &rarr; A)');
+
+    showBanner(
+      'violet',
+      '<i class="fas fa-code-merge"></i>',
+      `<strong>Recursive Merge Sort Applied!</strong> Partitioned and merged ${sorted.length} complaints by <strong>${sortText}</strong> in <strong>${dirText}</strong> [Complexity: <em>O(N log N)</em> Stable].`
+    );
+    updateCounters();
+  }
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // 4. PRIORITY BASED PROCESSING (MAX-HEAP)
+  // ═════════════════════════════════════════════════════════════════════════
+  const HEAP_PRIORITY_RANK = {
+    'Critical': 1,
+    'High': 2,
+    'Medium': 3,
+    'Low': 4
+  };
+
+  function executePriorityQueue() {
+    if (!tableBody) return;
+    removeNoMatchRow();
+    const rows = Array.from(tableBody.querySelectorAll('tr:not(#noValueFoundRow)'));
+
+    // Heap extraction logic: Critical (1) > High (2) > Medium (3) > Low (4)
+    rows.sort((a, b) => {
+      const sevA = (a.getAttribute('data-severity') || 'Low').trim();
+      const sevB = (b.getAttribute('data-severity') || 'Low').trim();
+      const rankA = HEAP_PRIORITY_RANK[sevA] || 5;
+      const rankB = HEAP_PRIORITY_RANK[sevB] || 5;
+
+      if (rankA !== rankB) {
+        return rankA - rankB; // Ascending rank: 1 before 2, 2 before 3, etc.
+      }
+      // Secondary: Case ID ascending
+      const idA = (a.getAttribute('data-complaint-id') || '').trim();
+      const idB = (b.getAttribute('data-complaint-id') || '').trim();
+      return idA.localeCompare(idB, undefined, { numeric: true });
+    });
+
+    rows.forEach(r => {
+      tableBody.appendChild(r);
+      r.style.display = '';
+      r.classList.remove('row-dsa-highlight', 'row-dsa-pinned');
+      r.classList.add('row-dsa-highlight');
+    });
+
+    showBanner(
+      'amber',
+      '<i class="fas fa-crown"></i>',
+      `<strong>Max-Heap Priority Sequencing Active!</strong> All ${rows.length} cases reordered by Emergency Urgency: <strong>Critical (4) &rarr; High (3) &rarr; Medium (2) &rarr; Low (1)</strong>.`
+    );
+    updateCounters();
+  }
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // 5. LIVE MULTI-COLUMN FILTER & STATUS FILTER
+  // ═════════════════════════════════════════════════════════════════════════
+  function applyLiveFilters() {
+    if (!tableBody) return;
+    removeNoMatchRow();
+    const filterText = document.getElementById('liveFilterInput').value.trim().toLowerCase();
+    const statusVal = document.getElementById('statusFilterSelect').value;
+    const rows = Array.from(tableBody.querySelectorAll('tr:not(#noValueFoundRow)'));
+
+    let visibleCount = 0;
+    rows.forEach(r => {
+      const text = r.textContent.toLowerCase();
+      const rawDate = (r.getAttribute('data-date') || '').toLowerCase();
+      const status = (r.getAttribute('data-status') || '').trim();
+
+      const matchesText = !filterText || text.includes(filterText) || rawDate.includes(filterText);
+      const matchesStatus = (statusVal === 'all') || (status === statusVal);
+
+      if (matchesText && matchesStatus) {
+        r.style.display = '';
+        visibleCount++;
+      } else {
+        r.style.display = 'none';
+      }
+    });
+
+    if (visibleCount === 0 && (filterText || statusVal !== 'all')) {
+      showNoMatchRow(filterText || statusVal, 'Active live filter matched 0 records for');
+    }
+
+    updateCounters();
+  }
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // 6. RESET ALL TO ORIGINAL STATE
+  // ═════════════════════════════════════════════════════════════════════════
+  function resetAll() {
+    if (!tableBody || !originalRows.length) return;
+    removeNoMatchRow();
+    originalRows.forEach(r => {
+      tableBody.appendChild(r);
+      r.style.display = '';
+      r.classList.remove('row-dsa-highlight', 'row-dsa-pinned');
+    });
+
+    document.getElementById('targetComplaintInput').value = '';
+    document.getElementById('liveFilterInput').value = '';
+    document.getElementById('statusFilterSelect').value = 'all';
+    document.getElementById('selectSortBy').value = 'complaint_id';
+    document.getElementById('selectSortOrder').value = 'asc';
+
+    const banner = document.getElementById('dsaExecutionBanner');
+    if (banner) banner.style.display = 'none';
+
+    const clearBtn = document.getElementById('btnClearSearchInput');
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    updateCounters();
+  }
+
+  // ── ATTACH EVENT LISTENERS ───────────────────────────────────────────────
+  const targetInputEl = document.getElementById('targetComplaintInput');
+  const clearSearchBtn = document.getElementById('btnClearSearchInput');
+
+  targetInputEl?.addEventListener('input', () => {
+    if (clearSearchBtn) clearSearchBtn.style.display = targetInputEl.value.trim() ? 'block' : 'none';
+  });
+  clearSearchBtn?.addEventListener('click', () => {
+    if (targetInputEl) {
+      targetInputEl.value = '';
+      clearSearchBtn.style.display = 'none';
+      targetInputEl.focus();
+      resetAll();
+    }
   });
 
-  // Dynamic Assign Officer Modal Trigger
+  document.getElementById('btnRunLinearSearch')?.addEventListener('click', executeLinearSearch);
+  document.getElementById('btnRunBinarySearch')?.addEventListener('click', executeBinarySearch);
+  targetInputEl?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') executeLinearSearch();
+  });
+
+  document.getElementById('btnRunMergeSort')?.addEventListener('click', executeMergeSort);
+  document.getElementById('btnRunPriorityQueue')?.addEventListener('click', executePriorityQueue);
+
+  document.getElementById('liveFilterInput')?.addEventListener('input', applyLiveFilters);
+  document.getElementById('statusFilterSelect')?.addEventListener('change', applyLiveFilters);
+  document.getElementById('btnResetAllDSA')?.addEventListener('click', resetAll);
+
+  // Modal assign officer
   document.addEventListener('DOMContentLoaded', function () {
-    const assignModalEl = document.getElementById('assignOfficerModal');
-    let assignModal = null;
-    if (assignModalEl && typeof bootstrap !== 'undefined') {
-      assignModal = new bootstrap.Modal(assignModalEl);
+    // Guarantee all displayed dates match uppercase "26 JAN 2026" format
+    document.querySelectorAll('.incident-date-display').forEach(el => {
+      const raw = el.getAttribute('data-raw-date') || el.textContent;
+      if (raw) {
+        el.textContent = formatDisplayDate(raw);
+      }
+    });
+
+    updateCounters();
+    const modalEl = document.getElementById('assignOfficerModal');
+    let modal = null;
+    if (modalEl && typeof bootstrap !== 'undefined') {
+      modal = new bootstrap.Modal(modalEl);
     }
 
     document.querySelectorAll('.assign-officer-btn').forEach(btn => {
       btn.addEventListener('click', function () {
-        const caseId = this.getAttribute('data-complaint-id') || '';
+        const cid = this.getAttribute('data-complaint-id') || '';
         const title = this.getAttribute('data-complaint-title') || '';
         const sector = this.getAttribute('data-complaint-sector') || '';
         const severity = this.getAttribute('data-complaint-severity') || 'Medium';
-        const currentOfficer = this.getAttribute('data-current-officer') || '';
+        const officer = this.getAttribute('data-current-officer') || '';
 
-        const idInput = document.getElementById('modalComplaintIdInput');
-        const idText = document.getElementById('modalCaseIdText');
-        const titleEl = document.getElementById('modalCaseTitle');
-        const sectorEl = document.getElementById('modalCaseSector');
-        const badgeEl = document.getElementById('modalCaseSeverityBadge');
+        document.getElementById('modalComplaintIdInput').value = cid;
+        document.getElementById('modalCaseTitle').textContent = `[${cid}] ${title}`;
+        document.getElementById('modalCaseSector').textContent = sector;
+        document.getElementById('modalCaseSeverityBadge').innerHTML = `<span class="badge-priority ${severity}">${severity}</span>`;
+
         const select = document.getElementById('officerSelectDropdown');
-
-        if (idInput) idInput.value = caseId;
-        if (idText) idText.textContent = 'Tracking ID: ' + caseId;
-        if (titleEl) titleEl.textContent = title;
-        if (sectorEl) sectorEl.textContent = sector;
-        if (badgeEl) {
-          badgeEl.innerHTML = `<span class="badge-priority ${severity}">${severity} priority</span>`;
+        if (select && officer && officer !== 'Unassigned') {
+          select.value = officer;
         }
 
-        if (select) {
-          if (currentOfficer && currentOfficer !== 'Unassigned') {
-            select.value = currentOfficer;
-          } else {
-            select.selectedIndex = 0;
-          }
-        }
-
-        if (assignModal) {
-          assignModal.show();
-        } else if (assignModalEl && typeof bootstrap !== 'undefined') {
-          const m = new bootstrap.Modal(assignModalEl);
-          m.show();
-        }
+        if (modal) modal.show();
       });
     });
   });

@@ -1286,3 +1286,282 @@ body.dark-mode {
   background-color: #f6f8f7 !important;
   color: #1e332a !important;
 }
+
+/* ============================================================
+   LINEAR SEARCH PANEL — Complaints Master
+============================================================ */
+.linear-search-panel {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.linear-search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.linear-search-icon {
+  position: absolute;
+  left: 0.7rem;
+  color: var(--primary);
+  font-size: 0.85rem;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.75;
+}
+
+.linear-search-input {
+  height: 36px;
+  padding: 0 0.85rem 0 2.1rem;
+  width: 210px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-heading);
+  font-size: 0.83rem;
+  font-family: var(--font-sans);
+  transition: border-color 0.2s, box-shadow 0.2s, width 0.3s;
+  outline: none;
+}
+
+.linear-search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  width: 240px;
+}
+
+.linear-search-input::placeholder { color: var(--text-muted); }
+
+.linear-search-btn {
+  height: 36px;
+  padding: 0 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+  white-space: nowrap;
+}
+
+.linear-search-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+}
+
+.linear-search-btn:active { transform: translateY(0); opacity: 1; }
+
+.linear-search-reset {
+  height: 32px;
+  width: 32px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.linear-search-reset:hover {
+  background: rgba(239,68,68,0.1);
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+/* Result Info Bar */
+.linear-search-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  border: 1px solid transparent;
+}
+
+.linear-search-info--found {
+  background: rgba(16,185,129,0.08);
+  border-color: rgba(16,185,129,0.3);
+  color: #065f46;
+}
+
+.linear-search-info--notfound {
+  background: rgba(239,68,68,0.07);
+  border-color: rgba(239,68,68,0.25);
+  color: #7f1d1d;
+}
+
+.linear-search-info code {
+  background: rgba(0,0,0,0.08);
+  padding: 0 0.25rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.78rem;
+}
+
+/* Highlight row on match */
+.linear-search-highlight td {
+  background: rgba(37,99,235,0.07) !important;
+  border-left: 3px solid var(--primary) !important;
+  animation: highlightFlash 0.5s ease;
+}
+
+@keyframes highlightFlash {
+  0%   { background: rgba(37,99,235,0.22) !important; }
+  100% { background: rgba(37,99,235,0.07) !important; }
+}
+
+
+/* ============================================================
+   BINARY SEARCH PANEL — Officer Roster
+============================================================ */
+.binary-search-panel {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.binary-search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.binary-search-icon {
+  position: absolute;
+  left: 0.7rem;
+  color: #f59e0b;
+  font-size: 0.82rem;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.85;
+}
+
+.binary-search-input {
+  height: 36px;
+  padding: 0 0.85rem 0 2.1rem;
+  width: 210px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-heading);
+  font-size: 0.83rem;
+  font-family: var(--font-sans);
+  transition: border-color 0.2s, box-shadow 0.2s, width 0.3s;
+  outline: none;
+}
+
+.binary-search-input:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.14);
+  width: 240px;
+}
+
+.binary-search-input::placeholder { color: var(--text-muted); }
+
+.binary-search-btn {
+  height: 36px;
+  padding: 0 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(217,119,6,0.28);
+  white-space: nowrap;
+}
+
+.binary-search-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(217,119,6,0.4);
+}
+
+.binary-search-btn:active { transform: translateY(0); opacity: 1; }
+
+.binary-search-reset {
+  height: 32px;
+  width: 32px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.binary-search-reset:hover {
+  background: rgba(239,68,68,0.1);
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+/* Result Info Bar */
+.binary-search-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  border: 1px solid transparent;
+}
+
+.binary-search-info--found {
+  background: rgba(245,158,11,0.08);
+  border-color: rgba(245,158,11,0.3);
+  color: #78350f;
+}
+
+.binary-search-info--notfound {
+  background: rgba(239,68,68,0.07);
+  border-color: rgba(239,68,68,0.25);
+  color: #7f1d1d;
+}
+
+.binary-search-info code {
+  background: rgba(0,0,0,0.08);
+  padding: 0 0.25rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.78rem;
+}
+
+/* Highlight row on match */
+.binary-search-highlight td {
+  background: rgba(245,158,11,0.09) !important;
+  border-left: 3px solid #f59e0b !important;
+  animation: binaryHighlightFlash 0.5s ease;
+}
+
+@keyframes binaryHighlightFlash {
+  0%   { background: rgba(245,158,11,0.28) !important; }
+  100% { background: rgba(245,158,11,0.09) !important; }
+}

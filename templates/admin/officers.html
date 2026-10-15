@@ -12,11 +12,37 @@
       <span class=" small">Anti-Corruption Bureau field investigators and department directors</span>
     </div>
 
-    <div class="d-flex align-items-center gap-2">
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <!-- Binary Search Panel -->
+      <div class="binary-search-panel d-flex align-items-center gap-2">
+        <div class="binary-search-input-wrap">
+          <span class="binary-search-icon"><i class="fas fa-bolt"></i></span>
+          <input type="text" id="binarySearchOfficerId" class="binary-search-input" placeholder="Enter Officer ID..." autocomplete="off">
+        </div>
+        <button id="binarySearchBtn" class="binary-search-btn" type="button" title="Binary Search">
+          <i class="fas fa-magnifying-glass-chart me-1"></i> Search
+        </button>
+        <button id="binarySearchResetBtn" class="binary-search-reset" type="button" title="Reset" style="display:none;">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
       <button type="button" class="btn btn-brand btn-sm" data-bs-toggle="modal" data-bs-target="#addOfficerModal">
         <i class="fas fa-user-plus me-1"></i> Add Officer
       </button>
     </div>
+  </div>
+
+  <!-- Binary Search Result Info Bar -->
+  <div id="binarySearchInfo" class="binary-search-info" style="display:none;">
+    <span id="binarySearchInfoText"></span>
+  </div>
+
+  <div class="d-flex align-items-center justify-content-between mb-2">
+    <span class="badge" style="background:var(--primary-subtle); color:var(--primary); border:1px solid var(--border-glow); font-size:0.75rem; padding:5px 12px;">
+      <i class="fas fa-arrow-down-1-9 me-1"></i> Roster sorted in Ascending Order by Officer ID (&uarr;) &mdash; O(log N) Binary Search Ready
+    </span>
+    <span class="small text-muted">{{ officers | length }} active officers</span>
   </div>
 
   {% if officers %}
@@ -24,7 +50,7 @@
     <table class="table-custom" id="adminOfficersTable">
       <thead>
         <tr>
-          <th>Badge ID</th>
+          <th style="white-space: nowrap; min-width: 140px;">Officer ID &uarr;</th>
           <th>Officer Name</th>
           <th>Rank</th>
           <th>Department</th>
@@ -36,8 +62,12 @@
       </thead>
       <tbody>
         {% for off in officers %}
-        <tr>
-          <td><span class="fw-bold text-cyan brand-font">{{ off.officer_id }}</span></td>
+        <tr data-officer-id="{{ off.officer_id }}">
+          <td style="white-space: nowrap;">
+            <span class="d-inline-flex align-items-center gap-1 badge bg-subtle text-cyan border" style="white-space: nowrap; font-family: monospace; font-size: 0.85rem; font-weight: 700; padding: 5px 10px;">
+              <i class="fas fa-id-badge text-muted"></i>{{ off.officer_id }}
+            </span>
+          </td>
           <td>
             <div class="fw-semibold text-heading">{{ off.name }}</div>
             <span class=" small">{{ off.phone }}</span>
@@ -134,4 +164,77 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // ── BINARY SEARCH for Officers by Officer ID ──────────────────────────
+  (function () {
+    // Build sorted array of { id, row } from the table (sorted ascending by officer_id text)
+    function buildSortedIndex() {
+      const rows = Array.from(document.querySelectorAll('#adminOfficersTable tbody tr'));
+      return rows
+        .map(row => ({
+          id: (row.querySelector('td:first-child')?.textContent.trim().toUpperCase() || ''),
+          row
+        }))
+        .sort((a, b) => a.id.localeCompare(b.id));
+    }
+
+    function runBinarySearch() {
+      const query  = document.getElementById('binarySearchOfficerId').value.trim().toUpperCase();
+      const infoBar  = document.getElementById('binarySearchInfo');
+      const infoText = document.getElementById('binarySearchInfoText');
+      const resetBtn = document.getElementById('binarySearchResetBtn');
+      const allRows  = document.querySelectorAll('#adminOfficersTable tbody tr');
+
+      if (!query) {
+        allRows.forEach(r => { r.style.display = ''; r.classList.remove('binary-search-highlight'); });
+        infoBar.style.display = 'none';
+        resetBtn.style.display = 'none';
+        return;
+      }
+
+      const index = buildSortedIndex();
+
+      // Binary Search — O(log n)
+      let lo = 0, hi = index.length - 1, steps = 0, foundEntry = null;
+      while (lo <= hi) {
+        steps++;
+        const mid = Math.floor((lo + hi) / 2);
+        const cmp = index[mid].id.localeCompare(query);
+        if (cmp === 0) { foundEntry = index[mid]; break; }
+        else if (cmp < 0) lo = mid + 1;
+        else              hi = mid - 1;
+      }
+
+      // Show/hide rows
+      allRows.forEach(r => { r.style.display = 'none'; r.classList.remove('binary-search-highlight'); });
+      infoBar.style.display = 'flex';
+      resetBtn.style.display = 'flex';
+
+      if (foundEntry) {
+        foundEntry.row.style.display = '';
+        foundEntry.row.classList.add('binary-search-highlight');
+        infoBar.className = 'binary-search-info binary-search-info--found';
+        infoText.innerHTML = `<i class="fas fa-circle-check me-2"></i>Officer <code>${query}</code> found in <strong>${steps}</strong> comparison(s) out of ${index.length} records (Binary Search)`;
+      } else {
+        infoBar.className = 'binary-search-info binary-search-info--notfound';
+        infoText.innerHTML = `<i class="fas fa-triangle-exclamation me-2"></i>No officer with ID <code>${query}</code> found after <strong>${steps}</strong> comparison(s) (Binary Search)`;
+      }
+    }
+
+    document.getElementById('binarySearchBtn')?.addEventListener('click', runBinarySearch);
+    document.getElementById('binarySearchOfficerId')?.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') runBinarySearch();
+    });
+    document.getElementById('binarySearchResetBtn')?.addEventListener('click', function() {
+      document.getElementById('binarySearchOfficerId').value = '';
+      const allRows = document.querySelectorAll('#adminOfficersTable tbody tr');
+      allRows.forEach(r => { r.style.display = ''; r.classList.remove('binary-search-highlight'); });
+      document.getElementById('binarySearchInfo').style.display = 'none';
+      this.style.display = 'none';
+    });
+  })();
+</script>
 {% endblock %}
