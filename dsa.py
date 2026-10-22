@@ -1713,8 +1713,66 @@ def run_phase3_demo():
     print("\n" + "="*65 + "\n")
 
 
+
+# ==============================================================================
+# PHASE 4: ALGORITHMIC PROBLEM SOLVING & DATA OPTIMIZATION
+# ==============================================================================
+# Greedy Complaint-to-Officer Workload Balancing Engine
+from phase4 import (
+    calculate_officer_workload,
+    get_eligible_officers,
+    recommend_officer,
+    plan_greedy_batch_assignments,
+    ACTIVE_STATUSES,
+    RESOLVED_STATUSES
+)
+
+
+def run_phase4_demo():
+    print("\n" + "=" * 65)
+    print("CCMS DSA - PHASE 4: GREEDY ALGORITHM AUTO-ASSIGNMENT ENGINE")
+    print("=" * 65)
+    from static_data import STATIC_COMPLAINTS, STATIC_OFFICERS
+
+    # Demonstrate single complaint greedy recommendation
+    unassigned = [c for c in STATIC_COMPLAINTS if not c.get("assigned_officer") or c.get("assigned_officer") in ["Unassigned", "None", ""]]
+    target = unassigned[0] if unassigned else STATIC_COMPLAINTS[1]
+
+    print(f"\n[1] GREEDY RECOMMENDATION FOR CASE: [{target['complaint_id']}]")
+    print(f"  • Title: {target['complaint_title']}")
+    print(f"  • Department: {target['sector']}")
+    print(f"  • Severity: {target['severity']}")
+
+    eligible, note = get_eligible_officers(target, STATIC_OFFICERS)
+    print(f"  • Eligibility Check: {note}")
+
+    rec = recommend_officer(target, eligible, STATIC_COMPLAINTS)
+    if rec["status"] == "SUCCESS":
+        off = rec["recommended_officer"]
+        print(f"  • Recommended Officer: {off['name']} (ID: {off['officer_id']}, Rank: {off['rank']})")
+        print(f"  • Active Workload: {rec['workload']} case(s)")
+        print(f"  • Decision Rationale: {rec['reason']}")
+        print("  • Candidate Evaluation Matrix:")
+        for cand in rec["evaluated_candidates"]:
+            print(f"      - {cand['name']} ({cand['officer_id']}): {cand['workload']} active cases | Dept: {cand['department']}")
+    else:
+        print(f"  • Recommendation Status: {rec['status']} - {rec['reason']}")
+
+    print("\n[2] BATCH GREEDY BALANCING SIMULATION:")
+    batch_plan = plan_greedy_batch_assignments(STATIC_COMPLAINTS[:3], STATIC_OFFICERS, STATIC_COMPLAINTS)
+    for idx, item in enumerate(batch_plan, 1):
+        c = item["complaint"]
+        r = item.get("recommendation")
+        if r and r["status"] == "SUCCESS":
+            o = r["recommended_officer"]
+            print(f"  {idx}. [{c['complaint_id']}] -> {o['name']} ({o['officer_id']}) [Simulated Workload: {r['workload']}]")
+
+    print("=" * 65 + "\n")
+
+
 if __name__ == "__main__":
     run_phase1_demo()
     run_phase2_demo()
     run_phase3_demo()
+    run_phase4_demo()
 

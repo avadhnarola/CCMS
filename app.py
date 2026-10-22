@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 
 import db
 import dsa
+import phase4
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "ccms-secret-key-vigilance-2026-secure")
@@ -685,11 +686,12 @@ def citizen_notifications():
 @role_required("officer")
 def officer_dashboard():
     officer_name = session.get("full_name", "")
+    officer_id = session.get("user_id", "")
     officer_dept = session.get("department", "")
 
     cases = db.query_db(
-        "SELECT * FROM complaints WHERE assigned_officer = %s OR sector = %s ORDER BY created_at DESC",
-        (officer_name, officer_dept)
+        "SELECT * FROM complaints WHERE assigned_officer_id = %s OR assigned_officer = %s OR sector = %s ORDER BY created_at DESC",
+        (officer_id, officer_name, officer_dept)
     )
     if not cases:
         cases = db.query_db("SELECT * FROM complaints ORDER BY created_at DESC")
@@ -713,11 +715,12 @@ def officer_dashboard():
 @role_required("officer")
 def officer_assigned_cases():
     officer_name = session.get("full_name", "")
+    officer_id = session.get("user_id", "")
     officer_dept = session.get("department", "")
 
     cases = db.query_db(
-        "SELECT * FROM complaints WHERE assigned_officer = %s OR sector = %s ORDER BY created_at DESC",
-        (officer_name, officer_dept)
+        "SELECT * FROM complaints WHERE assigned_officer_id = %s OR assigned_officer = %s OR sector = %s ORDER BY created_at DESC",
+        (officer_id, officer_name, officer_dept)
     )
     if not cases:
         cases = db.query_db("SELECT * FROM complaints ORDER BY created_at DESC")
@@ -955,39 +958,188 @@ def admin_delete_complaint(complaint_id):
 @app.route("/admin/assignment", methods=["GET"])
 @role_required("admin")
 def admin_assignment():
-    unassigned_complaints = db.query_db("SELECT * FROM complaints WHERE assigned_officer IS NULL OR assigned_officer = '' OR assigned_officer = 'Unassigned'")
-    officers = db.query_db("SELECT * FROM officers ORDER BY active_cases ASC")
-    return render_template("admin/assignment.html", unassigned_complaints=unassigned_complaints, officers=officers)
+    unassigned_complaints = db.query_db("SELECT * FROM complaints WHERE assigned_officer IS NULL OR assigned_officer = '' OR assigned_officer = 'Unassigned'") or []
+    officers = db.query_db("SELECT * FROM officers ORDER BY active_cases ASC") or []
+    all_complaints = db.query_db("SELECT * FROM complaints") or []
+
+    # Recalculate live active workload for each officer using Phase 4 Greedy workload counter
+    updated_officers = []
+    for off in officers:
+        off_copy = dict(off)
+        off_copy["active_cases"] = phase4.calculate_officer_workload(off["officer_id"], all_complaints)
+        updated_officers.append(off_copy)
+
+    # Sort officers by true live active cases
+    updated_officers.sort(key=lambda x: (x["active_cases"], str(x["officer_id"])))
+
+    return render_template(
+        "admin/assignment.html",
+        unassigned_complaints=unassigned_complaints,
+        officers=updated_officers
+    )
+
+
+@app.route("/admin/assignment/recommend", methods=["GET", "POST"])
+@role_required("admin")
+def admin_assignment_recommend():
+    """Phase 4 Greedy Algorithm: Generates an automatic assignment recommendation without modifying the database."""
+    complaint_id = request.args.get("complaint_id") or request.form.get("complaint_id")
+    if not complaint_id:
+        return jsonify({"status": "ERROR", "message": "Complaint ID is required."}), 400
+
+    complaint = db.query_db("SELECT * FROM complaints WHERE complaint_id = %s", (complaint_id,), one=True)
+    if not complaint:
+        return jsonify({"status": "ERROR", "message": f"Complaint {complaint_id} not found."}), 404
+
+    # Fetch active officers and complaints for live workload calculations
+    officers = db.query_db("SELECT * FROM officers WHERE status = 'Active'") or []
+    all_complaints = db.query_db("SELECT * FROM complaints") or []
+
+    eligible_officers, note = phase4.get_eligible_officers(complaint, officers, strict_department=True)
+    rec = phase4.recommend_officer(complaint, eligible_officers, all_complaints)
+    rec["eligibility_note"] = note
+    rec["severity"] = complaint.get("severity", "Medium")
+
+    return jsonify(rec)
+
+
+@app.route("/admin/assignment/confirm", methods=["POST"])
+@role_required("admin")
+def admin_assignment_confirm():
+    """Phase 4: Confirms and commits the Greedy recommendation to the database after admin validation."""
+    complaint_id = request.form.get("complaint_id")
+    officer_id = request.form.get("officer_id")
+
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.is_json
+
+    if not complaint_id or not officer_id:
+        if is_ajax:
+            return jsonify({"status": "ERROR", "message": "Complaint ID and Officer ID are required."}), 400
+        flash("Complaint ID and Officer ID are required for assignment confirmation.", "danger")
+        return redirect(url_for("admin_assignment"))
+
+    # 1. Validate that the complaint exists and still needs assignment
+    complaint = db.query_db("SELECT * FROM complaints WHERE complaint_id = %s", (complaint_id,), one=True)
+    if not complaint:
+        if is_ajax:
+            return jsonify({"status": "ERROR", "message": f"Complaint {complaint_id} does not exist."}), 404
+        flash(f"Complaint {complaint_id} does not exist.", "danger")
+        return redirect(url_for("admin_assignment"))
+
+    current_assigned = complaint.get("assigned_officer")
+    if current_assigned and current_assigned not in ["", "Unassigned", "None"]:
+        msg = f"Complaint {complaint_id} has already been assigned to {current_assigned}."
+        if is_ajax:
+            return jsonify({"status": "ALREADY_ASSIGNED", "message": msg}), 409
+        flash(msg, "warning")
+        return redirect(url_for("admin_assignment"))
+
+    # 2. Recheck that the recommended officer is still eligible and available
+    officer = db.query_db("SELECT * FROM officers WHERE officer_id = %s", (officer_id,), one=True)
+    if not officer or str(officer.get("status", "")).strip().lower() != "active":
+        msg = f"Officer {officer_id} is not active or no longer eligible."
+        if is_ajax:
+            return jsonify({"status": "INELIGIBLE", "message": msg}), 400
+        flash(msg, "danger")
+        return redirect(url_for("admin_assignment"))
+
+    # 3. Recalculate live workload
+    all_complaints = db.query_db("SELECT * FROM complaints") or []
+    current_workload = phase4.calculate_officer_workload(officer_id, all_complaints)
+
+    # 4. Save assignment into database
+    officer_name = officer["name"]
+    db.execute_db(
+        """UPDATE complaints 
+           SET assigned_officer = %s, assigned_officer_id = %s, complaint_status = 'Under Review', updated_at = CURRENT_TIMESTAMP 
+           WHERE complaint_id = %s""",
+        (officer_name, officer_id, complaint_id)
+    )
+
+    # 5. Sync active_cases count in officers table
+    new_workload = current_workload + 1
+    db.execute_db("UPDATE officers SET active_cases = %s WHERE officer_id = %s", (new_workload, officer_id))
+
+    # 6. Log activity and create officer notification
+    log_activity(
+        "Super Admin",
+        "Greedy Assignment Confirmed",
+        f"Assigned {complaint_id} to {officer_name} ({officer_id}). Prior active workload: {current_workload}."
+    )
+    db.execute_db(
+        "INSERT INTO notifications (user_id, recipient_role, title, message, badge_type) VALUES (NULL, 'officer', %s, %s, 'warning')",
+        (f"New Case Assignment: {complaint_id}", f"Complaint '{complaint['complaint_title']}' in {complaint['sector']} has been assigned to you by the Greedy Workload Balancer.")
+    )
+
+    success_msg = f"Greedy assignment confirmed! Case {complaint_id} assigned to {officer_name} ({officer_id}) with initial workload {current_workload} active case(s)."
+
+    if is_ajax:
+        return jsonify({
+            "status": "SUCCESS",
+            "message": success_msg,
+            "complaint_id": complaint_id,
+            "officer_id": officer_id,
+            "officer_name": officer_name,
+            "updated_workload": new_workload
+        })
+
+    flash(success_msg, "success")
+    return redirect(url_for("admin_assignment"))
+
+
+@app.route("/admin/assignment/batch-plan", methods=["GET"])
+@role_required("admin")
+def admin_assignment_batch_plan():
+    """Phase 4 Greedy Batch Planner: Returns the sequential greedy assignment plan for all unassigned complaints."""
+    unassigned = db.query_db("SELECT * FROM complaints WHERE assigned_officer IS NULL OR assigned_officer = '' OR assigned_officer = 'Unassigned'") or []
+    officers = db.query_db("SELECT * FROM officers WHERE status = 'Active'") or []
+    all_complaints = db.query_db("SELECT * FROM complaints") or []
+
+    planned = phase4.plan_greedy_batch_assignments(unassigned, officers, all_complaints)
+    return jsonify({
+        "status": "SUCCESS",
+        "unassigned_count": len(unassigned),
+        "planned_assignments": planned
+    })
 
 
 @app.route("/admin/assignment/auto", methods=["POST"])
 @role_required("admin")
 def admin_greedy_auto_assign():
-    """Greedy Algorithm: Assign unassigned complaints to least-loaded officer with matching or available department."""
-    unassigned = db.query_db("SELECT * FROM complaints WHERE assigned_officer IS NULL OR assigned_officer = '' OR assigned_officer = 'Unassigned'")
+    """Greedy Algorithm Batch Executor: Assigns unassigned complaints with sequential workload tracking."""
+    unassigned = db.query_db("SELECT * FROM complaints WHERE assigned_officer IS NULL OR assigned_officer = '' OR assigned_officer = 'Unassigned'") or []
+    if not unassigned:
+        flash("No unassigned complaints found. All cases are currently assigned.", "info")
+        return redirect(url_for("admin_assignment"))
+
+    officers = db.query_db("SELECT * FROM officers WHERE status = 'Active'") or []
+    all_complaints = db.query_db("SELECT * FROM complaints") or []
+
+    planned = phase4.plan_greedy_batch_assignments(unassigned, officers, all_complaints)
     assigned_count = 0
 
-    for c in unassigned:
-        # 1. Look for officer in the same department with lowest active cases
-        officer = db.query_db(
-            "SELECT * FROM officers WHERE department = %s ORDER BY active_cases ASC LIMIT 1",
-            (c["sector"],),
-            one=True
-        )
-        # 2. If no matching dept, pick officer with lowest global active cases
-        if not officer:
-            officer = db.query_db("SELECT * FROM officers ORDER BY active_cases ASC LIMIT 1", one=True)
-
-        if officer:
+    for item in planned:
+        if item["status"] == "SUCCESS" and item.get("recommendation"):
+            rec = item["recommendation"]
+            comp = item["complaint"]
+            best = rec["recommended_officer"]
             db.execute_db(
-                "UPDATE complaints SET assigned_officer = %s, assigned_officer_id = %s, complaint_status = 'Under Review' WHERE complaint_id = %s",
-                (officer["name"], officer["officer_id"], c["complaint_id"])
+                "UPDATE complaints SET assigned_officer = %s, assigned_officer_id = %s, complaint_status = 'Under Review', updated_at = CURRENT_TIMESTAMP WHERE complaint_id = %s",
+                (best["name"], best["officer_id"], comp["complaint_id"])
             )
-            db.execute_db("UPDATE officers SET active_cases = active_cases + 1 WHERE officer_id = %s", (officer["officer_id"],))
             assigned_count += 1
 
+    # Resync all officers' active cases
+    for off in officers:
+        cnt = db.query_db(
+            "SELECT COUNT(*) as cnt FROM complaints WHERE (assigned_officer_id = %s OR assigned_officer = %s) AND complaint_status IN ('Under Review', 'Investigation Active', 'Assigned')",
+            (off["officer_id"], off["name"]),
+            one=True
+        )["cnt"]
+        db.execute_db("UPDATE officers SET active_cases = %s WHERE officer_id = %s", (cnt, off["officer_id"]))
+
     log_activity("Super Admin", "Greedy Auto-Assignment", f"Greedy engine assigned {assigned_count} unassigned cases to officers.")
-    flash(f"Greedy engine assigned {assigned_count} complaints with optimal workload balancing.", "success")
+    flash(f"Greedy engine successfully assigned {assigned_count} complaint(s) with optimal workload balancing.", "success")
     return redirect(url_for("admin_assignment"))
 
 
@@ -997,26 +1149,48 @@ def admin_assign_single():
     complaint_id = request.form.get("complaint_id")
     officer_name = request.form.get("officer_name")
 
+    comp = db.query_db("SELECT * FROM complaints WHERE complaint_id = %s", (complaint_id,), one=True)
+    if not comp:
+        flash(f"Complaint {complaint_id} not found.", "danger")
+        return redirect(url_for("admin_complaints"))
+
+    officers = db.query_db("SELECT * FROM officers WHERE status = 'Active'") or []
+    all_complaints = db.query_db("SELECT * FROM complaints") or []
+
     if not officer_name:
-        # Run greedy pick for this single case
-        comp = db.query_db("SELECT * FROM complaints WHERE complaint_id = %s", (complaint_id,), one=True)
-        officer = db.query_db("SELECT * FROM officers WHERE department = %s ORDER BY active_cases ASC LIMIT 1", (comp["sector"],), one=True)
-        if not officer:
-            officer = db.query_db("SELECT * FROM officers ORDER BY active_cases ASC LIMIT 1", one=True)
-        officer_name = officer["name"] if officer else "Senior Inspector A. Verma"
-        officer_id = officer["officer_id"] if officer else "OFF-4402"
+        # Run greedy recommendation for this single case
+        eligible, _ = phase4.get_eligible_officers(comp, officers, strict_department=True)
+        rec = phase4.recommend_officer(comp, eligible, all_complaints)
+        if rec["status"] == "SUCCESS":
+            officer_name = rec["recommended_officer"]["name"]
+            officer_id = rec["recommended_officer"]["officer_id"]
+        else:
+            flash(f"No eligible officer available for {complaint_id}.", "warning")
+            return redirect(url_for("admin_assignment"))
     else:
-        off_obj = db.query_db("SELECT * FROM officers WHERE name = %s", (officer_name,), one=True)
-        officer_id = off_obj["officer_id"] if off_obj else "OFF-4402"
+        off_obj = db.query_db("SELECT * FROM officers WHERE name = %s OR officer_id = %s", (officer_name, officer_name), one=True)
+        if off_obj:
+            officer_name = off_obj["name"]
+            officer_id = off_obj["officer_id"]
+        else:
+            officer_id = "OFF-4402"
 
     db.execute_db(
-        "UPDATE complaints SET assigned_officer = %s, assigned_officer_id = %s, complaint_status = 'Under Review' WHERE complaint_id = %s",
+        "UPDATE complaints SET assigned_officer = %s, assigned_officer_id = %s, complaint_status = 'Under Review', updated_at = CURRENT_TIMESTAMP WHERE complaint_id = %s",
         (officer_name, officer_id, complaint_id)
     )
-    db.execute_db("UPDATE officers SET active_cases = active_cases + 1 WHERE officer_id = %s", (officer_id,))
-    log_activity("Super Admin", "Case Assigned", f"Assigned {complaint_id} to {officer_name}")
-    flash(f"Case {complaint_id} assigned to {officer_name}.", "success")
-    return redirect(url_for("admin_complaints"))
+
+    # Recalculate officer active cases
+    cnt = db.query_db(
+        "SELECT COUNT(*) as cnt FROM complaints WHERE (assigned_officer_id = %s OR assigned_officer = %s) AND complaint_status IN ('Under Review', 'Investigation Active', 'Assigned')",
+        (officer_id, officer_name),
+        one=True
+    )["cnt"]
+    db.execute_db("UPDATE officers SET active_cases = %s WHERE officer_id = %s", (cnt, officer_id))
+
+    log_activity("Super Admin", "Case Assigned", f"Assigned {complaint_id} to {officer_name} ({officer_id})")
+    flash(f"Case {complaint_id} successfully assigned to {officer_name}.", "success")
+    return redirect(url_for("admin_assignment"))
 
 
 @app.route("/admin/analytics")
@@ -1209,7 +1383,7 @@ def admin_delete_category(category_id):
 @app.route("/admin/category-tree")
 @role_required("admin")
 def admin_category_tree():
-    """
+    r"""
     Renders the Complaint Category Binary Tree Form:
                      CORRUPTION
                     /          \
@@ -1332,7 +1506,7 @@ def admin_reports():
     from_date = request.args.get("from_date", "2026-01-01")
     to_date = request.args.get("to_date", "2026-12-31")
 
-    query = "SELECT * FROM complaints ORDER BY incident_date ASC"
+    query = "SELECT * FROM complaints WHERE (incident_date BETWEEN %s AND %s OR incident_date IS NULL OR incident_date = '')"
     params = [from_date, to_date]
 
     if dept != "all":

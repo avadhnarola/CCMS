@@ -71,6 +71,7 @@
               <th>Sector</th>
               <th>Severity</th>
               <th>Status</th>
+              <th>Assigned Officer</th>
             </tr>
           </thead>
           <tbody>
@@ -83,6 +84,7 @@
               <td><span class="small ">{{ c.sector }}</span></td>
               <td><span class="badge-priority {{ c.severity }}">{{ c.severity }}</span></td>
               <td><span class="badge-status {{ c.complaint_status }}">{{ c.complaint_status }}</span></td>
+              <td><span class="small fw-semibold text-heading">{{ c.assigned_officer or 'Unassigned' }}</span></td>
             </tr>
             {% endfor %}
           </tbody>

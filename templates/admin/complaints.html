@@ -930,10 +930,27 @@
               <span id="modalCaseSeverityBadge"></span>
             </div>
           </div>
-          <div class="assign-officer-field mt-3">
-            <label class="form-label" for="officerSelectDropdown">
+          <div class="d-flex align-items-center justify-content-between mt-3 mb-1">
+            <label class="form-label mb-0" for="officerSelectDropdown">
               <i class="fas fa-user-check"></i> Select Vigilance Officer
             </label>
+            <button type="button" class="btn btn-sm btn-outline-success py-0 px-2" id="btnModalGreedyRecommend" style="font-size:0.75rem;">
+              <i class="fas fa-bolt me-1"></i> Greedy Auto-Recommend
+            </button>
+          </div>
+
+          <!-- Dynamic Greedy Recommendation Card inside Modal -->
+          <div id="modalGreedyRecommendationCard" class="p-2.5 rounded border border-success border-opacity-50 mb-2 small d-none"
+            style="background: rgba(16,185,129,0.08); font-size: 0.8rem;">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <strong class="text-success"><i class="fas fa-brain me-1"></i> Greedy Optimal Choice:</strong>
+              <span class="badge bg-emerald-subtle text-success border border-success-subtle" id="modalGreedyWorkload">0 active cases</span>
+            </div>
+            <div class="text-white fw-semibold" id="modalGreedyOfficerName">Officer Name</div>
+            <div class="small text-muted mt-1" id="modalGreedyReason" style="line-height:1.35;">Reason...</div>
+          </div>
+
+          <div class="assign-officer-field">
             <select name="officer_name" id="officerSelectDropdown" class="form-select assign-officer-select" required>
               <option value="" selected disabled>Choose assigned investigator...</option>
               {% for off in officers %}
@@ -1509,9 +1526,56 @@
           select.value = officer;
         }
 
+        // Reset recommendation card
+        const card = document.getElementById('modalGreedyRecommendationCard');
+        if (card) card.classList.add('d-none');
+
         if (modal) modal.show();
       });
     });
+
+    // Greedy Auto-Recommend inside Assign Modal
+    const btnGreedy = document.getElementById('btnModalGreedyRecommend');
+    const greedyCard = document.getElementById('modalGreedyRecommendationCard');
+    if (btnGreedy) {
+      btnGreedy.addEventListener('click', function() {
+        const cid = document.getElementById('modalComplaintIdInput').value;
+        if (!cid) return;
+        btnGreedy.disabled = true;
+        btnGreedy.innerHTML = '<span class="spinner-border spinner-border-sm me-1" style="width:0.75rem;height:0.75rem;"></span> Optimizing...';
+
+        fetch(`{{ url_for('admin_assignment_recommend') }}?complaint_id=${encodeURIComponent(cid)}`)
+          .then(res => res.json())
+          .then(data => {
+            btnGreedy.disabled = false;
+            btnGreedy.innerHTML = '<i class="fas fa-bolt me-1"></i> Greedy Auto-Recommend';
+
+            if (data.status === 'SUCCESS' && data.recommended_officer) {
+              const off = data.recommended_officer;
+              const select = document.getElementById('officerSelectDropdown');
+              if (select) {
+                for (let i = 0; i < select.options.length; i++) {
+                  if (select.options[i].value === off.name) {
+                    select.selectedIndex = i;
+                    break;
+                  }
+                }
+              }
+              document.getElementById('modalGreedyOfficerName').textContent = `${off.name} (${off.rank} - ${off.department})`;
+              document.getElementById('modalGreedyWorkload').textContent = `${off.workload} active case${off.workload !== 1 ? 's' : ''}`;
+              document.getElementById('modalGreedyReason').textContent = data.reason;
+              if (greedyCard) greedyCard.classList.remove('d-none');
+            } else {
+              alert(data.reason || 'No eligible officer found for this department.');
+            }
+          })
+          .catch(err => {
+            btnGreedy.disabled = false;
+            btnGreedy.innerHTML = '<i class="fas fa-bolt me-1"></i> Greedy Auto-Recommend';
+            alert('Error running greedy algorithm: ' + err.message);
+          });
+      });
+    }
   });
 </script>
 {% endblock %}
