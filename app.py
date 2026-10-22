@@ -447,7 +447,7 @@ def logout():
 def citizen_dashboard():
     user_id = session.get("user_id")
     complaints = db.query_db(
-        "SELECT * FROM complaints WHERE user_id = %s OR user_id = 1 ORDER BY created_at DESC",
+        "SELECT * FROM complaints WHERE user_id = %s ORDER BY created_at DESC",
         (user_id,)
     )
 
@@ -566,7 +566,7 @@ def file_complaint():
 def my_complaints():
     user_id = session.get("user_id")
     complaints = db.query_db(
-        "SELECT * FROM complaints WHERE user_id = %s OR user_id = 1 ORDER BY created_at DESC",
+        "SELECT * FROM complaints WHERE user_id = %s ORDER BY created_at DESC",
         (user_id,)
     )
     return render_template("citizen/my_complaints.html", complaints=complaints)
@@ -577,7 +577,7 @@ def my_complaints():
 def citizen_evidence():
     user_id = session.get("user_id")
     complaints = db.query_db(
-        "SELECT complaint_id, evidence_file, incident_date FROM complaints WHERE (user_id = %s OR user_id = 1) AND evidence_file IS NOT NULL AND evidence_file != ''",
+        "SELECT complaint_id, evidence_file, incident_date FROM complaints WHERE user_id = %s AND evidence_file IS NOT NULL AND evidence_file != ''",
         (user_id,)
     )
 
@@ -614,7 +614,7 @@ def citizen_feedback():
         return redirect(url_for("citizen_dashboard"))
 
     user_complaints = db.query_db(
-        "SELECT complaint_id, complaint_title, complaint_status FROM complaints WHERE user_id = %s OR user_id = 1 ORDER BY created_at DESC",
+        "SELECT complaint_id, complaint_title, complaint_status FROM complaints WHERE user_id = %s ORDER BY created_at DESC",
         (user_id,)
     )
     selected_id = request.args.get("id", "")

@@ -1,7 +1,15 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-panel="citizen" data-theme="light">
 
 <head>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('ccms_theme_citizen');
+      if (saved === 'dark-green' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    })();
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Citizen Portal | CCMS{% endblock %}</title>

@@ -245,6 +245,49 @@ class TestPhase4IntegrationWorkflow(unittest.TestCase):
         # Cleanup test record
         db.execute_db("DELETE FROM complaints WHERE complaint_id = %s", (new_cid,))
 
+    def test_citizen_dashboard_displays_only_own_complaints(self):
+        """Verify that a new citizen only sees complaints they created, not complaints by other users or user_id=1."""
+        # Create a new citizen with unique ID 8888
+        new_citizen_id = 8888
+        db.execute_db(
+            "INSERT OR REPLACE INTO users (id, full_name, email, mobile_number, password, role) VALUES (%s, %s, %s, %s, %s, 'citizen')",
+            (new_citizen_id, "Nishant Test", "nishant@test.com", "9998887770", "hash123")
+        )
+
+        with self.client.session_transaction() as sess:
+            sess["user_id"] = new_citizen_id
+            sess["full_name"] = "Nishant Test"
+            sess["role"] = "citizen"
+
+        # Check dashboard for new citizen who hasn't filed any complaint yet
+        dash_resp = self.client.get("/citizen/dashboard")
+        self.assertEqual(dash_resp.status_code, 200)
+        # Must show 0 filed complaints and empty state message
+        self.assertIn(b"Total Filed", dash_resp.data)
+        self.assertIn(b"No Complaints Logged Yet", dash_resp.data)
+        # Must NOT show admin/other complaints like CCMS-2026-6795 or CCMS-2026-4366
+        self.assertNotIn(b"CCMS-2026-6795", dash_resp.data)
+        self.assertNotIn(b"CCMS-2026-4366", dash_resp.data)
+
+        # Now this citizen files one complaint
+        citizen_cid = "CCMS-NISHANT-001"
+        db.execute_db(
+            """INSERT INTO complaints 
+               (complaint_id, user_id, complaint_title, misconduct_category, sector, incident_date, location, description, severity, complaint_status)
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'Pending')""",
+            (citizen_cid, new_citizen_id, "Nishant Personal Complaint", "Bribery", "Police & Law Enforcement", "2026-10-22", "Local Station", "Personal complaint", "Low")
+        )
+
+        dash_after = self.client.get("/citizen/dashboard")
+        self.assertEqual(dash_after.status_code, 200)
+        self.assertIn(citizen_cid.encode(), dash_after.data)
+        self.assertNotIn(b"CCMS-2026-6795", dash_after.data)
+        self.assertNotIn(b"CCMS-2026-4366", dash_after.data)
+
+        # Cleanup
+        db.execute_db("DELETE FROM complaints WHERE complaint_id = %s", (citizen_cid,))
+        db.execute_db("DELETE FROM users WHERE id = %s", (new_citizen_id,))
+
 
 if __name__ == "__main__":
     unittest.main()

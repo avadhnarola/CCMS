@@ -3,19 +3,37 @@
    UNIFIED CLIENT SCRIPT & INTERACTION ENGINE (MAIN.JS)
 ============================================================ */
 
-// 1. Theme Management (Light  ↔  Dark Green)
+// 1. Panel-Specific Theme Management (Independent for Landing, Admin, Citizen, Officer)
+function getCurrentPanel() {
+  const explicit = document.documentElement.getAttribute('data-panel');
+  if (explicit) return explicit;
+  const path = (window.location.pathname || '').toLowerCase();
+  if (path.startsWith('/admin')) return 'admin';
+  if (path.startsWith('/citizen')) return 'citizen';
+  if (path.startsWith('/officer')) return 'officer';
+  return 'landing';
+}
+
+function getThemeStorageKey() {
+  return 'ccms_theme_' + getCurrentPanel();
+}
+
 function initTheme() {
-  const savedTheme = localStorage.getItem('ccms_theme') || 'light';
+  const key = getThemeStorageKey();
+  const savedTheme = localStorage.getItem(key) || 'light';
   // Only allow 'light' or 'dark-green' — reject any other value
   const safeTheme = savedTheme === 'dark-green' ? 'dark-green' : 'light';
   applyTheme(safeTheme);
 
   document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+    if (btn.dataset.themeBound) return;
+    btn.dataset.themeBound = 'true';
+
     btn.addEventListener('click', () => {
       const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
       const newTheme = currentTheme === 'dark-green' ? 'light' : 'dark-green';
       applyTheme(newTheme);
-      localStorage.setItem('ccms_theme', newTheme);
+      localStorage.setItem(getThemeStorageKey(), newTheme);
     });
   });
 }
